@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>フォームバリデーション — bridge.js</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://jsonplaceholder.typicode.com" />
+  <style>
+    body{font-family:system-ui,"Hiragino Kaku Gothic ProN",Meiryo,sans-serif;max-width:460px;margin:24px auto;padding:0 16px;color:#222;line-height:1.6}
+    .field{margin:14px 0}
+    label{display:block;font-size:13px;font-weight:700;margin-bottom:4px;color:#444}
+    input,textarea{width:100%;font-size:15px;padding:8px 10px;border:1px solid #ccd;border-radius:8px;font-family:inherit}
+    input:focus,textarea:focus{outline:none;border-color:#6d5efc}
+    input.invalid,textarea.invalid{border-color:#e0483a;background:#fff6f5}
+    input.valid{border-color:#22b07a}
+    .err{color:#e0483a;font-size:12px;min-height:16px;margin-top:3px}
+    .hint{color:#999;font-size:12px}
+    .row{display:flex;align-items:center;gap:8px}
+    .row input{width:auto}
+    .meter{height:6px;border-radius:4px;background:#eee;overflow:hidden;margin-top:6px}
+    .meter > i{display:block;height:100%;width:0;transition:width .2s,background .2s}
+    .meter[data-level="1"] > i{width:25%;background:#e0483a}
+    .meter[data-level="2"] > i{width:50%;background:#e0a53a}
+    .meter[data-level="3"] > i{width:75%;background:#7bc043}
+    .meter[data-level="4"] > i{width:100%;background:#22b07a}
+    button{width:100%;font-size:16px;padding:11px;border:0;border-radius:8px;background:#6d5efc;color:#fff;cursor:pointer;margin-top:8px}
+    button:disabled{background:#c7c9d6;cursor:not-allowed}
+    #result{display:none;margin-top:14px;padding:12px;background:#eefaf3;border:1px solid #bfe6cf;border-radius:8px;color:#1a7a4a}
+    #result.err{background:#fff6f5;border-color:#f0c3bd;color:#c0392b}
+    .counter{text-align:right;font-size:12px;color:#999}
+  </style>
+</head>
+<body>
+  <h2 style="font-size:18px">お問い合わせ</h2>
+  <p class="hint">入力するたびに検証。全項目そろうと送信ボタンが有効になります。</p>
+
+  <form id="form" novalidate>
+    <div class="field">
+      <label for="name">お名前 <span style="color:#e0483a">*</span></label>
+      <input id="name" type="text" placeholder="山田 太郎" />
+      <div class="err" id="err-name"></div>
+    </div>
+
+    <div class="field">
+      <label for="email">メールアドレス <span style="color:#e0483a">*</span></label>
+      <input id="email" type="text" placeholder="you@example.com" />
+      <div class="err" id="err-email"></div>
+    </div>
+
+    <div class="field">
+      <label for="password">パスワード <span style="color:#e0483a">*</span></label>
+      <input id="password" type="password" placeholder="8文字以上" />
+      <div class="meter" id="meter" data-level="0"><i></i></div>
+      <div class="err" id="err-password"></div>
+      <div class="hint">強度: <span id="strength">—</span></div>
+    </div>
+
+    <div class="field">
+      <label for="message">メッセージ</label>
+      <textarea id="message" rows="3" maxlength="200" placeholder="ご用件をどうぞ"></textarea>
+      <div class="counter"><span id="counter">0</span> / 200</div>
+    </div>
+
+    <div class="field row">
+      <input id="agree" type="checkbox" />
+      <label for="agree" style="margin:0">利用規約に同意する <span style="color:#e0483a">*</span></label>
+    </div>
+    <div class="err" id="err-agree"></div>
+
+    <button id="submit" type="submit" disabled>送信する</button>
+    <div id="result"></div>
+  </form>
+
+  <script src="./app.js"></script>
+</body>
+</html>

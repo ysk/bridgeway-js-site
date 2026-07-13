@@ -1,0 +1,149 @@
+<div class="wrap">
+  <div class="layout">
+    <aside class="toc">
+      <div class="grp">jQueryの書き味</div>
+      <a href="#compare">$ → $$ にするだけ</a>
+      <a href="#methods">使えるメソッド</a>
+      <div class="grp">実務サンプル</div>
+      <a href="#form">フォームバリデーション</a>
+      <a href="#basics">タブ・合計（基本）</a>
+      <a href="#todo">ToDo リスト</a>
+      <div class="grp">段階移行</div>
+      <a href="#gradation">命令的 → 宣言的</a>
+      <div class="grp">本物の部品</div>
+      <a href="#svelte">Svelte を載せる</a>
+      <a href="#vue">Vue に差し替え</a>
+    </aside>
+
+    <main class="content">
+      <h1>実装サンプル</h1>
+      <p class="muted">まずは<b>jQueryの書き味そのまま</b>から。実務でよくある処理を、いつもの手で。埋め込みは<b>実際に動くデモ</b>です（ローカルは <code>node build.demo.mjs</code> 後に表示）。</p>
+
+      <h2 id="compare" class="anchor">$ → $$ にするだけ</h2>
+      <p>既存のjQueryコードは、ほとんど <code>$</code> を <code>$$</code> に置き換えるだけで動きます。手が覚えた書き方はそのまま。</p>
+      <div class="two">
+        <div>
+          <div class="label"><i class="fa-brands fa-js"></i> jQuery</div>
+          <pre><code><span class="tok-f">$</span>(<span class="tok-s">".tab"</span>).on(<span class="tok-s">"click"</span>, <span class="tok-k">function</span> () {
+  <span class="tok-f">$</span>(<span class="tok-s">".tab"</span>).removeClass(<span class="tok-s">"active"</span>);
+  <span class="tok-f">$</span>(<span class="tok-k">this</span>).addClass(<span class="tok-s">"active"</span>);
+});
+<span class="tok-f">$</span>(<span class="tok-s">"#save"</span>).prop(<span class="tok-s">"disabled"</span>, <span class="tok-k">true</span>).text(<span class="tok-s">"送信中…"</span>);
+<span class="tok-f">$</span>(<span class="tok-s">".alert"</span>).fadeOut();
+<span class="tok-f">$</span>(e.target).closest(<span class="tok-s">"tr"</span>).remove();</code></pre>
+        </div>
+        <div>
+          <div class="label" style="color:var(--accent)"><i class="fa-solid fa-arrow-right"></i> bridgeway</div>
+          <pre><code><span class="tok-f">$$</span>(<span class="tok-s">".tab"</span>).on(<span class="tok-s">"click"</span>, <span class="tok-k">function</span> () {
+  <span class="tok-f">$$</span>(<span class="tok-s">".tab"</span>).removeClass(<span class="tok-s">"active"</span>);
+  <span class="tok-f">$$</span>(<span class="tok-k">this</span>).addClass(<span class="tok-s">"active"</span>);
+});
+<span class="tok-f">$$</span>(<span class="tok-s">"#save"</span>).prop(<span class="tok-s">"disabled"</span>, <span class="tok-k">true</span>).text(<span class="tok-s">"送信中…"</span>);
+<span class="tok-f">$$</span>(<span class="tok-s">".alert"</span>).fadeOut();
+<span class="tok-f">$$</span>(e.target).closest(<span class="tok-s">"tr"</span>).remove();</code></pre>
+        </div>
+      </div>
+      <div class="note"><i class="fa-solid fa-circle-info"></i>チェーン・イベント委譲・<code>this</code>・<code>fadeOut</code>・<code>closest</code>… jQueryの手癖はそのまま使えます。</div>
+
+      <h2 id="methods" class="anchor">使えるメソッド</h2>
+      <p>jQuery定番をひととおり実装しています。</p>
+      <p style="line-height:2.2">
+        <span class="pill">text</span> <span class="pill">html</span> <span class="pill">val</span> <span class="pill">attr</span> <span class="pill">prop</span> <span class="pill">data</span>
+        <span class="pill">addClass</span> <span class="pill">removeClass</span> <span class="pill">toggleClass</span> <span class="pill">hasClass</span>
+        <span class="pill">css</span> <span class="pill">show</span> <span class="pill">hide</span> <span class="pill">toggle</span> <span class="pill">fadeIn</span> <span class="pill">fadeOut</span>
+        <span class="pill">fadeIn</span> <span class="pill">fadeOut</span> <span class="pill">fadeToggle</span> <span class="pill">slideDown</span> <span class="pill">slideUp</span> <span class="pill">slideToggle</span>
+        <span class="pill">on</span> <span class="pill">off</span> <span class="pill">one</span> <span class="pill">trigger</span> <span class="pill">click</span> <span class="pill">change</span> <span class="pill">submit</span> <span class="pill">hover</span> <span class="pill">ready</span> <span class="pill">.on("click.ns")</span>
+        <span class="pill">find</span> <span class="pill">closest</span> <span class="pill">parent</span> <span class="pill">children</span> <span class="pill">siblings</span> <span class="pill">next</span> <span class="pill">prev</span>
+        <span class="pill">first</span> <span class="pill">last</span> <span class="pill">eq</span> <span class="pill">filter</span> <span class="pill">not</span> <span class="pill">each</span> <span class="pill">map</span> <span class="pill">index</span>
+        <span class="pill">append</span> <span class="pill">prepend</span> <span class="pill">before</span> <span class="pill">after</span> <span class="pill">remove</span> <span class="pill">empty</span> <span class="pill">clone</span> <span class="pill">replaceWith</span>
+        <span class="pill">width</span> <span class="pill">height</span> <span class="pill">offset</span> <span class="pill">scrollTop</span>
+      </p>
+      <p class="muted">リアクティブ束縛: <span class="pill">bindText</span> <span class="pill">bindClass</span> <span class="pill">bindAttr</span> <span class="pill">bindValue</span> ／ フォーム: <span class="pill">serialize</span> <span class="pill">serializeArray</span> ／ 通信: <span class="pill">$$.ajax</span> <span class="pill">$$.get</span> <span class="pill">$$.post</span>(<span class="pill">.done/.fail/.always</span>) ／ 静的: <span class="pill">$$.extend</span> <span class="pill">$$.each</span> <span class="pill">$$.map</span> <span class="pill">$$.trim</span> ／ 自作拡張: <span class="pill">$$.fn</span>。詳細は <a href="#/docs">Docs</a>。</p>
+      <div class="note" style="margin-top:14px"><i class="fa-solid fa-circle-info"></i><b>既存のjQueryプラグイン（slick等）はそのまま動きません。</b><code>$$.fn</code> は自作プラグイン用です。既存プラグインは領域を分けて本物のjQueryを併用してください。</div>
+
+      <h2 id="form" class="anchor">フォームバリデーション（実務）</h2>
+      <p>入力ごとの検証・エラー表示・パスワード強度・文字数カウンタ・「全項目OKで送信有効」。検証は <code>$$</code> の書き味、送信可否は <code>state/computed</code> で宣言的に。<b>送信は <code>$$.post</code>（fetch）</b>で実API風に。</p>
+      <div class="example">
+        <div class="head"><i class="fa-solid fa-clipboard-check"></i><h3>Contact form</h3><span class="tag">pure $$ + state</span><a class="tag" href="sample/form/index.html" target="_blank" style="background:none;color:var(--muted)"><i class="fa-solid fa-up-right-from-square"></i> 開く</a></div>
+        <iframe src="sample/form/index.html" title="form validation demo" loading="lazy" style="height:560px"></iframe>
+        <div class="code"><pre><code><span class="tok-c">// 入力のたびに検証（jQueryそのまま）</span>
+<span class="tok-f">$$</span>(<span class="tok-s">"#email"</span>).on(<span class="tok-s">"input blur"</span>, <span class="tok-k">function</span> () {
+  <span class="tok-k">const</span> msg = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(<span class="tok-k">this</span>.value)
+    ? <span class="tok-s">""</span> : <span class="tok-s">"メール形式が正しくありません"</span>;
+  <span class="tok-f">$$</span>(<span class="tok-s">"#err-email"</span>).text(msg);
+  <span class="tok-f">$$</span>(<span class="tok-k">this</span>).toggleClass(<span class="tok-s">"invalid"</span>, !!msg);
+});
+
+<span class="tok-c">// 「全項目OK」は computed で宣言的に → 送信ボタンに束縛</span>
+<span class="tok-k">const</span> valid = <span class="tok-f">computed</span>(() =&gt; ok(form.value));
+valid.subscribe((v) =&gt; <span class="tok-f">$$</span>(<span class="tok-s">"#submit"</span>).prop(<span class="tok-s">"disabled"</span>, !v));</code></pre></div>
+      </div>
+
+      <h2 id="basics" class="anchor">タブ・合計・アニメ（基本）</h2>
+      <p>タブ切り替え（<code>addClass/removeClass</code>＋委譲）、リアルタイム合計（<code>input → state → computed</code>）、<b>アコーディオン（<code>slideToggle</code>）とトースト（<code>fadeIn/fadeOut</code>）</b>。命令的と宣言的を1画面で。</p>
+      <div class="example">
+        <div class="head"><i class="fa-solid fa-table-columns"></i><h3>Tabs &amp; total</h3><span class="tag">pure $$ + state</span><a class="tag" href="sample/jquery/index.html" target="_blank" style="background:none;color:var(--muted)"><i class="fa-solid fa-up-right-from-square"></i> 開く</a></div>
+        <iframe src="sample/jquery/index.html" title="jquery basics demo" loading="lazy" style="height:420px"></iframe>
+        <div class="code"><pre><code><span class="tok-c">// タブ（jQuery定番: 委譲 + addClass/removeClass）</span>
+<span class="tok-f">$$</span>(<span class="tok-s">"#tabs"</span>).on(<span class="tok-s">"click"</span>, <span class="tok-s">".tab"</span>, <span class="tok-k">function</span> () {
+  <span class="tok-f">$$</span>(<span class="tok-s">"#tabs .tab"</span>).removeClass(<span class="tok-s">"active"</span>);
+  <span class="tok-f">$$</span>(<span class="tok-k">this</span>).addClass(<span class="tok-s">"active"</span>);
+});
+
+<span class="tok-c">// リアルタイム合計（input → state → computed → 表示）</span>
+<span class="tok-k">const</span> total = <span class="tok-f">computed</span>(() =&gt; price.value * qty.value);
+<span class="tok-f">$$</span>(<span class="tok-s">"#total"</span>).bindText(total, (v) =&gt; <span class="tok-s">"¥"</span> + v);</code></pre></div>
+      </div>
+
+      <h2 id="todo" class="anchor">ToDo リスト</h2>
+      <p>keyed な差分更新は本物のSvelteに委譲。残り件数は <code>$$</code> グルーでコンポーネント外のバッジへ。</p>
+      <div class="example">
+        <div class="head"><i class="fa-solid fa-list-check"></i><h3>Todo</h3><span class="tag">svelte 部品</span><a class="tag" href="sample/todoapp/index.html" target="_blank" style="background:none;color:var(--muted)"><i class="fa-solid fa-up-right-from-square"></i> 開く</a></div>
+        <iframe src="sample/todoapp/index.html" title="todo demo" loading="lazy" style="height:440px"></iframe>
+      </div>
+
+      <h2 id="gradation" class="anchor">命令的 → 宣言的（段階移行）</h2>
+      <p>bridgeの芯。まずは<b>命令的</b>（jQuery脳のまま手で更新）。慣れたら<b>宣言的</b>（状態を変えるだけで自動反映）へ、同じ画面で少しずつ。</p>
+      <div class="two">
+        <div>
+          <div class="label">① 命令的（いつもの手）</div>
+          <pre><code><span class="tok-k">let</span> n = <span class="tok-s">0</span>;
+<span class="tok-f">$$</span>(<span class="tok-s">"#inc"</span>).on(<span class="tok-s">"click"</span>, () =&gt;
+  <span class="tok-f">$$</span>(<span class="tok-s">"#count"</span>).text(++n)   <span class="tok-c">// 手で更新</span>
+);</code></pre>
+        </div>
+        <div>
+          <div class="label" style="color:var(--accent)">② 宣言的（自動追従）</div>
+          <pre><code><span class="tok-k">const</span> n = <span class="tok-f">state</span>(<span class="tok-s">0</span>);
+<span class="tok-f">$$</span>(<span class="tok-s">"#inc"</span>).on(<span class="tok-s">"click"</span>, () =&gt; n.value++);
+<span class="tok-f">$$</span>(<span class="tok-s">"#count"</span>).bindText(n); <span class="tok-c">// 自動</span></code></pre>
+        </div>
+      </div>
+
+      <h2 id="svelte" class="anchor">本物の部品を載せる（Svelte）</h2>
+      <p>複雑な画面は本物のSvelteへ。<code>mount</code> で載せるだけ。</p>
+      <div class="example">
+        <div class="head"><i class="fa-solid fa-wand-magic-sparkles"></i><h3>Counter component</h3><span class="tag">svelte</span><a class="tag" href="sample/deep/index.html" target="_blank" style="background:none;color:var(--muted)"><i class="fa-solid fa-up-right-from-square"></i> 開く</a></div>
+        <iframe src="sample/deep/index.html" title="svelte component demo" loading="lazy"></iframe>
+        <div class="code"><pre><code><span class="tok-k">import</span> { mount, useEngine } <span class="tok-k">from</span> <span class="tok-s">"bridgeway"</span>;
+<span class="tok-k">import</span> { svelteEngine } <span class="tok-k">from</span> <span class="tok-s">"bridgeway/engines/svelte.js"</span>;
+<span class="tok-f">useEngine</span>(svelteEngine);
+<span class="tok-k">const</span> app = <span class="tok-f">mount</span>(App, { target: <span class="tok-s">"#app"</span> });</code></pre></div>
+      </div>
+
+      <h2 id="vue" class="anchor">Vue に差し替え</h2>
+      <p>同じ利用者コードのまま、エンジンだけVueへ。違いは <code>useEngine(vueEngine)</code> の1行。</p>
+      <div class="example">
+        <div class="head"><i class="fa-brands fa-vuejs"></i><h3>Counter (Vue engine)</h3><span class="tag">vue</span><a class="tag" href="sample/vue/index.html" target="_blank" style="background:none;color:var(--muted)"><i class="fa-solid fa-up-right-from-square"></i> 開く</a></div>
+        <iframe src="sample/vue/index.html" title="vue component demo" loading="lazy"></iframe>
+        <div class="code"><pre><code><span class="tok-k">import</span> { vueEngine } <span class="tok-k">from</span> <span class="tok-s">"bridgeway/engines/vue.js"</span>;
+<span class="tok-f">useEngine</span>(vueEngine); <span class="tok-c">// ← ここだけ違う</span></code></pre></div>
+      </div>
+
+      <div class="pager">
+        <a href="#/docs"><small>← 戻る</small>ドキュメント</a>
+        <a class="next" href="#/"><small>次へ →</small>ダウンロード</a>
+      </div>
+    </main>
+  </div>
+</div>

@@ -1,0 +1,64 @@
+{
+  "name": "bridgeway",
+  "version": "1.0.0",
+  "description": "jQueryの書き味で本物のモダンフレームワーク(Svelte/Vue)を、限りなく楽に。エンジン差し替え式。",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./global": "./src/global.js",
+    "./engines/svelte.js": "./src/engines/svelte.js",
+    "./engines/vue.js": "./src/engines/vue.js"
+  },
+  "bin": {
+    "bridgeway": "bin/bridge.js"
+  },
+  "files": [
+    "src",
+    "bin",
+    "dist",
+    "README.md",
+    "LICENSE",
+    "THIRD-PARTY-NOTICES.md"
+  ],
+  "unpkg": "dist/bridge.vue.js",
+  "jsdelivr": "dist/bridge.vue.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "build:demos": "node build.demo.mjs"
+  },
+  "keywords": [
+    "jquery",
+    "svelte",
+    "vue",
+    "reactive",
+    "legacy-migration"
+  ],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "svelte": "^4",
+    "vue": "^3"
+  },
+  "peerDependenciesMeta": {
+    "svelte": {
+      "optional": true
+    },
+    "vue": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@fortawesome/fontawesome-free": "^6.7.2",
+    "@rollup/plugin-alias": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "jsdom": "^29.1.1",
+    "rollup": "^4.62.2",
+    "rollup-plugin-svelte": "^7.2.3",
+    "svelte": "^4.2.20",
+    "vue": "^3.5.39"
+  }
+}

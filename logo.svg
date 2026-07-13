@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" role="img" aria-label="bridgeway logo">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6d5efc"/>
+      <stop offset="1" stop-color="#22c1a6"/>
+    </linearGradient>
+  </defs>
+  <!-- 橋のデッキ(渡す=bridge) -->
+  <rect x="6" y="30" width="52" height="4" rx="2" fill="url(#bg)"/>
+  <!-- 主塔 -->
+  <rect x="18" y="14" width="3.4" height="20" rx="1.5" fill="url(#bg)"/>
+  <rect x="42.6" y="14" width="3.4" height="20" rx="1.5" fill="url(#bg)"/>
+  <!-- 吊りケーブル(2つの岸をつなぐ弧) -->
+  <path d="M8 32 C 20 12, 44 12, 56 32" stroke="url(#bg)" stroke-width="2.6" stroke-linecap="round"/>
+  <!-- ハンガー -->
+  <g stroke="url(#bg)" stroke-width="1.4" stroke-linecap="round" opacity="0.85">
+    <path d="M14 26.5V30"/><path d="M26 20.5V30"/><path d="M32 19.4V30"/><path d="M38 20.5V30"/><path d="M50 26.5V30"/>
+  </g>
+  <!-- 橋脚 -->
+  <rect x="18" y="34" width="3.4" height="12" rx="1.2" fill="url(#bg)" opacity="0.9"/>
+  <rect x="42.6" y="34" width="3.4" height="12" rx="1.2" fill="url(#bg)" opacity="0.9"/>
+</svg>

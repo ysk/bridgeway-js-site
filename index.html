@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>bridgeway — jQuery感覚で、モダン開発。</title>
+<meta name="description" content="jQueryでできるモダン開発。$$ の書き味そのままで、裏では本物のSvelte/Vueが動く。学習コスト最小でモダンフロントエンドへ。" />
+<link rel="icon" href="./logo.svg" type="image/svg+xml" />
+<link rel="stylesheet" href="./vendor/fontawesome/css/all.min.css" />
+<link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <nav>
+      <a class="brand" href="#/">
+        <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+          <defs><linearGradient id="nb" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse"><stop stop-color="#6d5efc"/><stop offset="1" stop-color="#22c1a6"/></linearGradient></defs>
+          <rect x="6" y="30" width="52" height="4" rx="2" fill="url(#nb)"/>
+          <rect x="18" y="14" width="3.4" height="20" rx="1.5" fill="url(#nb)"/><rect x="42.6" y="14" width="3.4" height="20" rx="1.5" fill="url(#nb)"/>
+          <path d="M8 32 C 20 12, 44 12, 56 32" stroke="url(#nb)" stroke-width="2.6" stroke-linecap="round"/>
+          <g stroke="url(#nb)" stroke-width="1.4" stroke-linecap="round" opacity=".85"><path d="M14 26.5V30"/><path d="M26 20.5V30"/><path d="M32 19.4V30"/><path d="M38 20.5V30"/><path d="M50 26.5V30"/></g>
+        </svg>
+        bridge<span style="color:var(--muted);font-weight:600">way</span>
+      </a>
+      <div class="links">
+        <a href="#/" data-route="home">Home</a>
+        <a href="#why" data-scroll="why" class="hide-sm">Why</a>
+        <a href="#philosophy" data-scroll="philosophy" class="hide-sm">Concept</a>
+        <a href="#start" data-scroll="start" class="hide-sm">Install</a>
+        <a href="#/docs" data-route="docs">Docs</a>
+        <a href="#/examples" data-route="examples">Examples</a>
+        <button class="theme-toggle" id="themeBtn" title="テーマ切替" aria-label="テーマ切替"><i class="fa-solid fa-circle-half-stroke"></i></button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<!-- ビューはここに bridge($$/state/$$.get) で差し込む(SPA) -->
+<main id="app" aria-live="polite"><div class="wrap" style="padding:60px 0;color:var(--muted)">読み込み中…</div></main>
+
+<footer>
+  <div class="wrap">
+    <div>© bridgeway — jQuery感覚で、モダン開発。</div>
+    <div style="display:flex;gap:18px">
+      <a href="#/docs">Docs</a>
+      <a href="#/examples">Examples</a>
+      <a href="#/">Top</a>
+    </div>
+  </div>
+  <div class="wrap" style="margin-top:14px;font-size:12px;line-height:1.6;opacity:.75">
+    MIT License. 独立した非公式プロジェクトです。jQuery / Svelte / Vue の各プロジェクト・団体とは提携・後援・承認の関係にありません（jQuery の書き味に着想を得ていますが、コードは含みません）。各名称は権利者の商標です。
+  </div>
+</footer>
+
+<!-- このサイト自身が bridgeway(Svelte版) で動く = ドッグフーディング -->
+<script src="./dist/bridge.js"></script>
+<script src="./site.js"></script>
+</body>
+</html>

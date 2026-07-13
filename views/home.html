@@ -1,0 +1,138 @@
+<a id="top"></a>
+<div class="wrap">
+  <section class="hero" style="border-top:none">
+    <img class="mark" src="./logo.svg" alt="bridgeway" />
+    <div class="kicker">jQuery感覚のまま、モダンへ。</div>
+    <h1>jQuery感覚で、<br /><span class="grad-text">モダン開発</span>。</h1>
+    <p class="lead">覚えるのは <code>$</code> を <code>$$</code> にすることだけ。いつものjQueryの書き味そのままで、裏では<strong>本物のSvelte／Vue</strong>が動く。学習コストを限りなく下げて、モダンフロントエンドへ。</p>
+    <div class="cta">
+      <a class="btn primary" href="#start">はじめる <i class="fa-solid fa-arrow-right"></i></a>
+      <a class="btn ghost" href="#/examples"><i class="fa-regular fa-circle-play"></i> サンプルを見る</a>
+    </div>
+    <div class="install">
+      <span class="dollar">$</span><span>npm install bridgeway</span>
+      <button class="copy" data-copy="npm install bridgeway"><i class="fa-regular fa-copy"></i> copy</button>
+    </div>
+    <p style="color:var(--muted);font-size:13px;margin-top:14px">もう新しいフロントエンドフレームワークに翻弄されない — <b>エンジンは差し替え式</b>。</p>
+  </section>
+</div>
+
+<!-- WHY -->
+<section id="why" class="anchor">
+  <div class="wrap">
+    <div class="eyebrow">なぜ bridgeway か</div>
+    <h2>レガシーの手を止めずに、本物の恩恵を。</h2>
+    <p class="sub">jQueryが分かるなら、もう入口に立っています。</p>
+    <div class="grid">
+      <div class="card"><div class="ico"><i class="fa-solid fa-puzzle-piece"></i></div><h3>本物のフレームワーク</h3><p>構造・制御構文・DOM差分は本物のSvelte／Vueに委譲。外科手術的な更新で、フォーカスも入力途中も飛ばない。</p></div>
+      <div class="card"><div class="ico"><i class="fa-solid fa-right-left"></i></div><h3>エンジン差し替え式</h3><p>利用者の <code>$$/state/mount</code> は不変のまま、下をSvelte↔Vueに交換。フレームワークの寿命に振り回されない。</p></div>
+      <div class="card"><div class="ico"><i class="fa-solid fa-feather"></i></div><h3>学習コスト最小</h3><p>触るのは3つだけ：<code>$$</code>（jQuery風）・<code>state</code>・<code>mount</code>。「jQuery＋α」で始められる。</p></div>
+      <div class="card"><div class="ico"><i class="fa-solid fa-shield-halved"></i></div><h3>CSPセーフ</h3><p>式は <code>eval</code> せずビルド時コンパイル。<code>script-src 'self'</code> の企業／WordPress環境でも動く。</p></div>
+      <div class="card"><div class="ico"><i class="fa-solid fa-broom"></i></div><h3>自動で後片付け</h3><p><code>mount().destroy()</code> で購読もDOMもフレームワークが破棄。長時間開く画面でもリークしない。</p></div>
+      <div class="card"><div class="ico"><i class="fa-solid fa-terminal"></i></div><h3>CLIで一発</h3><p><code>bridgeway init</code> でフレームワークを選ぶだけ。配線済みスタータが生成される。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PHILOSOPHY -->
+<section id="philosophy" class="anchor">
+  <div class="wrap">
+    <div class="eyebrow">Concept</div>
+    <h2>モダンな技術を、限りなく楽に。</h2>
+    <p class="sub">学習コストの削減。そして「翻弄されない」こと。</p>
+    <div class="two">
+      <div class="card">
+        <div class="label">背景</div>
+        <p>作者はかつてフロントエンドエンジニアとして、jQueryからVueへの移行が難しくとん挫しました。モダン技術に触れられず焦りつつ、日々の業務はレガシー——そんな人は今も多いはず。<b>あの頃の自分を救うための橋</b>を架けたい。それが bridgeway の出発点です。</p>
+      </div>
+      <div class="card">
+        <div class="label">誰のためか</div>
+        <p>・レガシー環境で日々jQueryを保守している人<br/>・WordPress等でモダンFWを導入する機会がない現場<br/>・「jQueryなら分かる」人<br/><br/>全書き換えを迫らず、書き味を残したまま、本物のモダンへ段階的に手を慣らしていけます。</p>
+      </div>
+    </div>
+    <p style="margin-top:22px;font-size:18px;font-weight:700">究極的には——<span class="grad-text">もう新しいフロントエンドフレームワークに翻弄されない。</span></p>
+  </div>
+</section>
+
+<!-- GETTING STARTED -->
+<section id="start" class="anchor">
+  <div class="wrap">
+    <div class="eyebrow">Install</div>
+    <h2>3分ではじめる</h2>
+    <p class="sub">CLIが、選んだフレームワークに配線済みのスタータを生成します。</p>
+    <div class="steps">
+      <div class="step"><div class="n"></div><div>
+        <b>インストール</b>
+        <pre><code><span class="tok-c"># bridge本体を入れる</span>
+npm install bridgeway</code></pre>
+      </div></div>
+      <div class="step"><div class="n"></div><div>
+        <b>フレームワークを選んでスタータ生成</b>
+        <pre><code>npx bridgeway init my-app
+<span class="tok-c">?</span> フレームワークを選択:  <span class="tok-k">1) svelte</span>   2) vue
+<span class="tok-c"># → App.(svelte|js) / main.js / build.mjs / index.html を生成</span></code></pre>
+      </div></div>
+      <div class="step"><div class="n"></div><div>
+        <b>ビルドして開く</b>
+        <pre><code>cd my-app
+npm install
+npm run build        <span class="tok-c"># main.js(+部品) → bundle.js</span>
+npx serve .          <span class="tok-c"># index.html を開く</span></code></pre>
+      </div></div>
+    </div>
+    <p style="margin-top:24px"><a class="btn ghost" href="#/docs"><i class="fa-solid fa-book"></i> フルドキュメントを読む</a></p>
+  </div>
+</section>
+
+<!-- SAMPLES -->
+<section id="samples" class="anchor">
+  <div class="wrap">
+    <div class="eyebrow">Examples</div>
+    <h2>デモ</h2>
+    <p class="sub">同じAPIで、Svelteでも Vueでも。（ローカルで <code>node build.demo.mjs</code> 後に開けます）</p>
+    <div class="grid">
+      <a class="samp" href="sample/deep/index.html">
+        <div class="top"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+        <div class="body"><h3>最小デモ（Svelte）</h3><p>カウンタ・<code>{#if}</code>・破棄。CSP有効、入力フォーカスも保持。</p><div class="go">開く →</div></div>
+      </a>
+      <a class="samp" href="sample/todoapp/index.html">
+        <div class="top"><i class="fa-solid fa-list-check"></i></div>
+        <div class="body"><h3>ToDo（Svelte）</h3><p>keyed <code>{#each}</code> の差分更新。<code>$$</code>グルーで外のバッジも更新。</p><div class="go">開く →</div></div>
+      </a>
+      <a class="samp" href="sample/vue/index.html">
+        <div class="top"><i class="fa-brands fa-vuejs"></i></div>
+        <div class="body"><h3>同じ画面をVueで</h3><p>利用者コードはSvelte版とほぼ同一。<code>useEngine(vueEngine)</code> を足すだけ。</p><div class="go">開く →</div></div>
+      </a>
+    </div>
+    <p style="margin-top:24px"><a class="btn ghost" href="#/examples"><i class="fa-regular fa-circle-play"></i> サンプル一覧（コード付き）</a></p>
+  </div>
+</section>
+
+<!-- DOWNLOAD -->
+<section id="download" class="anchor">
+  <div class="wrap">
+    <div class="eyebrow">ダウンロード</div>
+    <h2>2つの入り方</h2>
+    <p class="sub">きちんと作るなら npm。今すぐ試すなら <code>&lt;script&gt;</code> 一本（ビルド不要）。</p>
+    <div class="two">
+      <div class="card">
+        <div class="label"><i class="fa-brands fa-npm"></i> npm（本格運用）</div>
+        <pre><code>npm install bridgeway
+<span class="tok-c"># 使う方だけ(optional peer)</span>
+npm install svelte   <span class="tok-c"># or</span>  npm install vue</code></pre>
+        <p style="color:var(--muted);font-size:13.5px;margin-top:12px"><code>bridgeway init</code> で配線済みスタータ。部品は <code>.svelte</code> / <code>.vue</code> をビルドします。</p>
+      </div>
+      <div class="card">
+        <div class="label"><i class="fa-solid fa-bolt"></i> &lt;script&gt;（ビルド不要・CDN）</div>
+        <pre><code><span class="tok-c">&lt;!-- Vueフルビルド同梱。mountまで全部動く --&gt;</span>
+&lt;script src=<span class="tok-s">"…/bridge.vue.js"</span>&gt;&lt;/script&gt;
+&lt;script&gt;
+  <span class="tok-k">const</span> App = { data: () =&gt; ({ n: 0 }),
+    template: <span class="tok-s">`&lt;button @click="n++"&gt;{{ n }}&lt;/button&gt;`</span> };
+  <span class="tok-f">mount</span>(App, { target: <span class="tok-s">"#app"</span> });
+&lt;/script&gt;</code></pre>
+        <p style="color:var(--muted);font-size:13.5px;margin-top:12px">Vue公式のCDNフルビルドと同じ発想。<code>$$ / state / mount</code> が <code>window</code> に。軽量な <code>bridgeway</code>(Svelte・$$/state中心)版もあります。</p>
+      </div>
+    </div>
+  </div>
+</section>

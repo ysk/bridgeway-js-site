@@ -1,0 +1,22 @@
+:root { --line: #e6e6e6; --muted: #888; --accent: #4a7dff; }
+* { box-sizing: border-box; }
+body { font-family: system-ui, sans-serif; max-width: 480px; margin: 40px auto; padding: 0 16px; color: #222; }
+h1 { font-size: 22px; }
+.sub { color: var(--muted); font-size: 13px; margin-top: -8px; }
+.input-row { display: flex; gap: 8px; margin: 20px 0 12px; }
+#new { flex: 1; padding: 10px 12px; font-size: 16px; border: 1px solid var(--line); border-radius: 8px; }
+#add { padding: 10px 16px; font-size: 16px; border: 0; border-radius: 8px; background: var(--accent); color: #fff; cursor: pointer; }
+.todos { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
+.todos li { display: flex; align-items: center; gap: 10px; padding: 12px 4px; border-bottom: 1px solid var(--line); }
+.todos .text { flex: 1; font-size: 16px; }
+.todos li.done .text { text-decoration: line-through; color: var(--muted); }
+.toggle { width: 18px; height: 18px; }
+.del { border: 0; background: none; color: #c66; cursor: pointer; font-size: 16px; }
+.empty { color: var(--muted); text-align: center; padding: 32px 0; }
+.bar { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; font-size: 13px; color: var(--muted); }
+.filters button { border: 1px solid var(--line); background: #fff; border-radius: 6px; padding: 4px 10px; margin-left: 4px; cursor: pointer; font-size: 13px; }
+.filters button.active { border-color: var(--accent); color: var(--accent); font-weight: bold; }
+#clear { border: 0; background: none; color: var(--muted); cursor: pointer; font-size: 13px; text-decoration: underline; }
+/* コンポーネント“外”のバッジ。bridgeの $$ が remaining イベントで更新する(領域分離の例) */
+.badge { display: inline-block; min-width: 1.6em; padding: 1px 6px; border-radius: 999px; background: var(--accent); color: #fff; font-size: 13px; text-align: center; vertical-align: middle; }
+.badge.zero { background: #bbb; }

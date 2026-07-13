@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>カウンター — bridge.js</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'" />
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 40px auto; padding: 0 16px; line-height: 1.7; }
+    h1 { margin-bottom: 4px; font-size: 20px; }
+    p.sub { color: #888; font-size: 13px; margin-top: 0; }
+    code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <h1>カウンター</h1>
+  <p class="sub"><code>$$ / state / mount</code> の書き味で、裏はSvelte。</p>
+
+  <div id="app"></div>
+
+  <script src="./app.js"></script>
+</body>
+</html>

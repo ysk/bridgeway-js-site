@@ -1,0 +1,11 @@
+node_modules/
+
+# デモのビルド成果物 (再生成: node build.demo.mjs)
+sample/**/app.js
+sample/todoapp/todo.js
+
+# 一時ファイル
+*.tgz
+scratch-*.mjs
+
+# dist/ は <script>/CDN 配布物なので追跡する（無視しない）

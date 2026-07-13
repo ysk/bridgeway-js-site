@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>カウンター（Vue）— bridge.js</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 40px auto; padding: 0 16px; line-height: 1.7; }
+    h1 { margin-bottom: 4px; font-size: 20px; }
+    p.sub { color: #888; font-size: 13px; margin-top: 0; }
+    .card { background: #fafafa; border: 1px solid #eee; border-radius: 8px; padding: 16px; }
+    .row { display: flex; align-items: center; gap: 12px; margin: 8px 0; }
+    button { font-size: 16px; padding: 4px 12px; cursor: pointer; }
+    .num { font-size: 28px; font-weight: bold; min-width: 2em; text-align: center; }
+    .num.big { color: crimson; }
+    .muted { color: #888; } .hot { color: crimson; } .cold { color: #2b7; }
+    .proof { margin-top: 12px; } input { font-size: 15px; padding: 4px 8px; }
+    #engine { font-weight: bold; color: #4a7dff; }
+    code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <h1>カウンター（エンジン: <span id="engine">?</span>）</h1>
+  <p class="sub">Svelte版と同じ <code>$$ / state / mount</code>。違いは <code>useEngine(vueEngine)</code> の1行だけ。</p>
+
+  <div id="app"></div>
+
+  <script src="./app.js"></script>
+</body>
+</html>

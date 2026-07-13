@@ -1,0 +1,395 @@
+<div class="wrap">
+  <div class="layout">
+    <aside class="toc">
+      <div class="grp">はじめに</div>
+      <a href="#intro">bridgeway とは</a>
+      <a href="#install">インストール</a>
+      <a href="#hello">はじめの一歩</a>
+      <a href="#concept">3つの考え方</a>
+
+      <div class="grp">$$ — DOM & イベント</div>
+      <a href="#dollar">$$( ) の受け取れるもの</a>
+      <a href="#content">内容: text / html / val …</a>
+      <a href="#class">クラス操作</a>
+      <a href="#style">表示・スタイル・アニメ</a>
+      <a href="#manip">DOMの追加・削除</a>
+      <a href="#traverse">走査・絞り込み</a>
+      <a href="#dims">寸法・位置</a>
+      <a href="#events">イベント</a>
+      <a href="#bind">リアクティブ束縛</a>
+
+      <div class="grp">リアクティブ</div>
+      <a href="#state">state( )</a>
+      <a href="#computed">computed( )</a>
+
+      <div class="grp">コンポーネント</div>
+      <a href="#mount">mount( )</a>
+      <a href="#components">部品の書き方</a>
+      <a href="#engine">useEngine / engine</a>
+
+      <div class="grp">ユーティリティ</div>
+      <a href="#ajax">$$.ajax / get / post</a>
+      <a href="#plugin">$$.fn（自作プラグイン）</a>
+
+      <div class="grp">配布 / ツール</div>
+      <a href="#dist">npm と &lt;script&gt;</a>
+      <a href="#noconflict">名前の衝突を避ける</a>
+      <a href="#cli">CLI: bridgeway init</a>
+
+      <div class="grp">その他</div>
+      <a href="#recipes">レシピ集</a>
+      <a href="#limits">制限・非対応</a>
+      <a href="#faq">FAQ</a>
+    </aside>
+
+    <main class="content">
+      <h1>ドキュメント</h1>
+      <p class="muted">利用者が覚えるのは <code>$$</code> / <code>state</code> / <code>computed</code> / <code>mount</code> / <code>useEngine</code> の5つ。<code>$$</code> はjQuery定番メソッドを一通り備え、エンジン(Svelte/Vue)に依らず共通です。</p>
+
+      <!-- ============ はじめに ============ -->
+      <h2 id="intro" class="anchor">bridgeway とは</h2>
+      <p>jQueryの書き味を残したまま、<b>本物のモダンフレームワーク</b>(Svelte、将来はVue等)の恩恵を受けるための薄いレイヤーです。画面の構造・制御構文・DOM差分・リアクティビティ・後片付けは実績あるエンジンに委譲し、bridge自身は次の2つだけを担います。</p>
+      <ul>
+        <li><b><code>$$</code>（命令的グルー）</b> … jQueryの手癖そのままのDOM操作・イベント。既存の手が動く入口。</li>
+        <li><b><code>state</code> / <code>computed</code> / <code>mount</code></b> … リアクティブ状態と、部品を載せる最小ライフサイクル（下のエンジンに委譲）。</li>
+      </ul>
+
+      <h2 id="install" class="anchor">インストール</h2>
+      <p>本格運用は npm。今すぐ試すなら <code>&lt;script&gt;</code>（<a href="#dist">配布</a>参照）。</p>
+      <pre><code>npm install bridgeway
+<span class="tok-c"># 使うフレームワークだけ(optional peer)</span>
+npm install svelte     <span class="tok-c"># もしくは</span>  npm install vue</code></pre>
+
+      <h2 id="hello" class="anchor">はじめの一歩</h2>
+      <p><code>$</code> を <code>$$</code> にするだけ。まずは命令的に、慣れたら宣言的に。</p>
+      <pre><code><span class="tok-k">import</span> { $$, state, computed } <span class="tok-k">from</span> <span class="tok-s">"bridgeway"</span>;
+<span class="tok-k">import</span> { svelteEngine } <span class="tok-k">from</span> <span class="tok-s">"bridgeway/engines/svelte.js"</span>;
+<span class="tok-f">useEngine</span>(svelteEngine); <span class="tok-c">// state/computed を使うなら最初に一度</span>
+
+<span class="tok-c">// 命令的(jQueryそのまま)</span>
+<span class="tok-f">$$</span>(<span class="tok-s">"#btn"</span>).on(<span class="tok-s">"click"</span>, () =&gt; <span class="tok-f">$$</span>(<span class="tok-s">"#msg"</span>).text(<span class="tok-s">"clicked"</span>).addClass(<span class="tok-s">"on"</span>));
+
+<span class="tok-c">// 宣言的(状態を変えるだけ)</span>
+<span class="tok-k">const</span> count = <span class="tok-f">state</span>(<span class="tok-s">0</span>);
+<span class="tok-f">$$</span>(<span class="tok-s">"#plus"</span>).on(<span class="tok-s">"click"</span>, () =&gt; count.value++);
+<span class="tok-f">$$</span>(<span class="tok-s">"#n"</span>).bindText(count);</code></pre>
+
+      <h2 id="concept" class="anchor">3つの考え方</h2>
+      <table>
+        <tr><th>考え方</th><th>意味</th></tr>
+        <tr><td>薄い皮</td><td>bridgeはフレームワークではなくヘルパー。ルーター/スコープCSS等は持たず、最小の <code>mount</code>/<code>destroy</code> だけ。</td></tr>
+        <tr><td>エンジン差し替え</td><td><code>state/computed/mount</code> は現在のエンジンに委譲。<code>useEngine</code> でSvelte↔Vueを選ぶ。利用者コードは不変。</td></tr>
+        <tr><td>命令的→宣言的</td><td>まず <code>$$</code> の手で書き、慣れたら <code>state</code> 束縛へ。同じ画面で少しずつ移行できる。</td></tr>
+      </table>
+
+      <!-- ============ $$ ============ -->
+      <h2 id="dollar" class="anchor">$$( ) が受け取れるもの</h2>
+      <p>jQueryの <code>$</code> 相当。名前衝突を避けて <code>$$</code> を既定にしています。</p>
+      <table>
+        <tr><th>呼び方</th><th>意味</th></tr>
+        <tr><td><code>$$("#id .cls")</code></td><td>CSSセレクタで取得</td></tr>
+        <tr><td><code>$$("&lt;li class='x'&gt;…&lt;/li&gt;")</code></td><td>HTML文字列から要素を生成</td></tr>
+        <tr><td><code>$$(node)</code> / <code>$$(nodeList)</code> / <code>$$(array)</code></td><td>DOMノード・NodeList・配列・jQueryオブジェクトを包む</td></tr>
+        <tr><td><code>$$(otherBridge)</code></td><td>別の <code>$$</code> を複製</td></tr>
+        <tr><td><code>$$(fn)</code></td><td>DOM ready（<code>$(function(){…})</code> の手癖）</td></tr>
+      </table>
+      <pre><code><span class="tok-f">$$</span>(() =&gt; {                       <span class="tok-c">// DOMContentLoaded 後に実行</span>
+  <span class="tok-k">const</span> $li = <span class="tok-f">$$</span>(<span class="tok-s">"&lt;li class='item'&gt;新規&lt;/li&gt;"</span>); <span class="tok-c">// 生成</span>
+  $li.appendTo(<span class="tok-s">"#list"</span>);
+});</code></pre>
+
+      <h2 id="content" class="anchor">内容: text / html / val / attr …</h2>
+      <p>引数なしで取得、引数ありで設定（設定は <code>this</code> を返しチェーン可）。</p>
+      <table>
+        <tr><th>メソッド</th><th>説明</th></tr>
+        <tr><td><code>.text(v?)</code></td><td>textContent の取得/設定</td></tr>
+        <tr><td><code>.html(v?)</code></td><td>innerHTML の取得/設定</td></tr>
+        <tr><td><code>.val(v?)</code></td><td>フォーム値の取得/設定</td></tr>
+        <tr><td><code>.attr(name, v?)</code> / <code>.attr({…})</code></td><td>属性の取得/設定（オブジェクトで一括）</td></tr>
+        <tr><td><code>.removeAttr(name)</code></td><td>属性の削除</td></tr>
+        <tr><td><code>.prop(name, v?)</code></td><td>プロパティ（<code>checked</code>/<code>disabled</code> 等）の取得/設定</td></tr>
+        <tr><td><code>.data(key, v?)</code></td><td><code>data-*</code> の取得/設定</td></tr>
+      </table>
+      <pre><code><span class="tok-f">$$</span>(<span class="tok-s">"#link"</span>).attr({ href: <span class="tok-s">"/next"</span>, title: <span class="tok-s">"次へ"</span> });
+<span class="tok-k">const</span> checked = <span class="tok-f">$$</span>(<span class="tok-s">"#agree"</span>).prop(<span class="tok-s">"checked"</span>);
+<span class="tok-f">$$</span>(<span class="tok-s">"#row"</span>).data(<span class="tok-s">"id"</span>, <span class="tok-s">42</span>);</code></pre>
+
+      <h2 id="class" class="anchor">クラス操作</h2>
+      <p>jQuery同様、空白区切りで複数クラスを渡せます。</p>
+      <table>
+        <tr><th>メソッド</th><th>説明</th></tr>
+        <tr><td><code>.addClass("a b c")</code></td><td>複数クラスを追加</td></tr>
+        <tr><td><code>.removeClass("a b")</code> / <code>.removeClass()</code></td><td>削除（引数なしで全消し）</td></tr>
+        <tr><td><code>.toggleClass("a b", force?)</code></td><td>各クラスを付け外し（<code>force</code>で強制）</td></tr>
+        <tr><td><code>.hasClass("a")</code></td><td>いずれかが持つか（真偽）</td></tr>
+      </table>
+
+      <h2 id="style" class="anchor">表示・スタイル・アニメ</h2>
+      <table>
+        <tr><th>メソッド</th><th>説明</th></tr>
+        <tr><td><code>.show()</code> / <code>.hide()</code> / <code>.toggle(force?)</code></td><td>表示・非表示（<code>display</code>）</td></tr>
+        <tr><td><code>.css(name, v?)</code> / <code>.css({…})</code></td><td>スタイルの取得/設定（オブジェクトで一括）</td></tr>
+        <tr><td><code>.fadeIn(ms=200)</code> / <code>.fadeOut(ms=200)</code> / <code>.fadeToggle(ms=200)</code></td><td>不透明度アニメ</td></tr>
+        <tr><td><code>.slideDown(ms=200)</code> / <code>.slideUp(ms=200)</code> / <code>.slideToggle(ms=200)</code></td><td>高さアニメの開閉</td></tr>
+      </table>
+      <pre><code><span class="tok-f">$$</span>(<span class="tok-s">"#panel"</span>).slideToggle();
+<span class="tok-f">$$</span>(<span class="tok-s">".alert"</span>).fadeOut(<span class="tok-s">300</span>);
+<span class="tok-f">$$</span>(<span class="tok-s">"#box"</span>).css({ color: <span class="tok-s">"crimson"</span>, fontWeight: <span class="tok-s">"bold"</span> });</code></pre>
+
+      <h2 id="manip" class="anchor">DOMの追加・削除</h2>
+      <table>
+        <tr><th>メソッド</th><th>説明</th></tr>
+        <tr><td><code>.append(x)</code> / <code>.prepend(x)</code></td><td>末尾/先頭へ挿入（文字列・ノード・<code>$$</code>・配列）</td></tr>
+        <tr><td><code>.before(html)</code> / <code>.after(html)</code></td><td>要素の前/後に挿入</td></tr>
+        <tr><td><code>.appendTo(t)</code> / <code>.prependTo(t)</code></td><td>自分を対象へ移動</td></tr>
+        <tr><td><code>.empty()</code></td><td>子要素を全削除</td></tr>
+        <tr><td><code>.remove()</code> / <code>.detach()</code></td><td>要素を削除（<code>detach</code>は参照を保持）</td></tr>
+        <tr><td><code>.replaceWith(html)</code></td><td>置き換え</td></tr>
+        <tr><td><code>.clone()</code></td><td>複製（子孫ごと）</td></tr>
+      </table>
+
+      <h2 id="traverse" class="anchor">走査・絞り込み</h2>
+      <table>
+        <tr><th>メソッド</th><th>説明</th></tr>
+        <tr><td><code>.find(sel)</code></td><td>子孫を検索</td></tr>
+        <tr><td><code>.parent()</code> / <code>.closest(sel)</code></td><td>親 / 最も近い祖先</td></tr>
+        <tr><td><code>.children(sel?)</code> / <code>.siblings(sel?)</code></td><td>子 / 兄弟</td></tr>
+        <tr><td><code>.next()</code> / <code>.prev()</code></td><td>次/前の兄弟</td></tr>
+        <tr><td><code>.first()</code> / <code>.last()</code> / <code>.eq(i)</code></td><td>先頭 / 末尾 / i番目（負値可）</td></tr>
+        <tr><td><code>.filter(sel|fn)</code> / <code>.not(sel)</code></td><td>絞り込み / 除外</td></tr>
+        <tr><td><code>.add(x)</code></td><td>集合に追加</td></tr>
+        <tr><td><code>.each(fn)</code> / <code>.map(fn)</code></td><td>反復（<code>this</code>=要素）/ 変換して配列で返す</td></tr>
+        <tr><td><code>.index()</code></td><td>兄弟中の位置</td></tr>
+        <tr><td><code>.get(i?)</code> / <code>.nodes()</code> / <code>.el</code></td><td>生DOM取得（jQuery連携・単一要素）</td></tr>
+      </table>
+      <pre><code><span class="tok-f">$$</span>(<span class="tok-s">"#list"</span>).on(<span class="tok-s">"click"</span>, <span class="tok-s">".del"</span>, <span class="tok-k">function</span> () {
+  <span class="tok-f">$$</span>(<span class="tok-k">this</span>).closest(<span class="tok-s">"li"</span>).fadeOut(<span class="tok-s">150</span>);
+});</code></pre>
+
+      <h2 id="dims" class="anchor">寸法・位置</h2>
+      <table>
+        <tr><th>メソッド</th><th>説明</th></tr>
+        <tr><td><code>.width()</code> / <code>.height()</code></td><td>表示サイズ(px)</td></tr>
+        <tr><td><code>.offset()</code></td><td>文書基準の位置 <code>{ top, left }</code></td></tr>
+        <tr><td><code>.scrollTop(v?)</code></td><td>スクロール位置の取得/設定</td></tr>
+      </table>
+
+      <h2 id="events" class="anchor">イベント</h2>
+      <p>直接バインドとイベント委譲、複数イベント、名前空間、短縮メソッドに対応します。</p>
+      <table>
+        <tr><th>メソッド</th><th>説明</th></tr>
+        <tr><td><code>.on("click", fn)</code></td><td>直接バインド</td></tr>
+        <tr><td><code>.on("click", ".sel", fn)</code></td><td>イベント委譲（<code>this</code>=一致要素。再描画に強い）</td></tr>
+        <tr><td><code>.on("click focus", fn)</code></td><td>複数イベント（空白区切り）</td></tr>
+        <tr><td><code>.on("click.myui", fn)</code></td><td>名前空間つき</td></tr>
+        <tr><td><code>.off()</code> / <code>.off("click")</code> / <code>.off(".myui")</code> / <code>.off("click", fn)</code></td><td>解除（全 / 種別 / 名前空間 / 特定関数）</td></tr>
+        <tr><td><code>.one("click", fn)</code></td><td>一度だけ</td></tr>
+        <tr><td><code>.trigger("click", detail?)</code></td><td>発火（<code>detail</code>は <code>e.detail</code> へ）</td></tr>
+        <tr><td><code>.click(fn?)</code> / <code>.change()</code> / <code>.submit()</code> …</td><td>短縮（引数ありでバインド、無しで発火）</td></tr>
+        <tr><td><code>.hover(enter, leave?)</code></td><td>mouseenter / mouseleave</td></tr>
+        <tr><td><code>.ready(fn)</code></td><td>DOM ready</td></tr>
+      </table>
+      <p>短縮メソッド: <span class="pill">click</span> <span class="pill">dblclick</span> <span class="pill">change</span> <span class="pill">submit</span> <span class="pill">keydown</span> <span class="pill">keyup</span> <span class="pill">keypress</span> <span class="pill">mousedown</span> <span class="pill">mouseup</span> <span class="pill">mouseenter</span> <span class="pill">mouseleave</span> <span class="pill">mouseover</span> <span class="pill">mouseout</span> <span class="pill">input</span> <span class="pill">scroll</span> <span class="pill">contextmenu</span></p>
+      <pre><code><span class="tok-c">// 名前空間: プラグインの後片付けが一発</span>
+<span class="tok-f">$$</span>(document).on(<span class="tok-s">"scroll.myui"</span>, onScroll).on(<span class="tok-s">"resize.myui"</span>, onResize);
+<span class="tok-f">$$</span>(document).off(<span class="tok-s">".myui"</span>); <span class="tok-c">// myui 名前空間をまとめて解除</span></code></pre>
+
+      <h2 id="bind" class="anchor">リアクティブ束縛（$$ × state）</h2>
+      <p><code>state</code> をDOMに束縛します。張った購読は内部に溜まり、<code>.dispose()</code> で一括解除できます（リーク対策）。</p>
+      <table>
+        <tr><th>メソッド</th><th>説明</th></tr>
+        <tr><td><code>.bindText(state, format?)</code></td><td>テキストを束縛。変化で自動更新</td></tr>
+        <tr><td><code>.bindClass(name, state, pred?)</code></td><td>真偽でクラス付け外し</td></tr>
+        <tr><td><code>.bindAttr(name, state, format?)</code></td><td>属性を束縛</td></tr>
+        <tr><td><code>.bindValue(state)</code></td><td><code>input</code> と双方向束縛</td></tr>
+        <tr><td><code>.dispose()</code></td><td>この <code>$$</code> が張った購読を全解除</td></tr>
+      </table>
+      <pre><code><span class="tok-k">const</span> n = <span class="tok-f">state</span>(<span class="tok-s">0</span>);
+<span class="tok-f">$$</span>(<span class="tok-s">"#n"</span>).bindText(n).bindClass(<span class="tok-s">"big"</span>, n, (v) =&gt; v &gt;= <span class="tok-s">10</span>);
+<span class="tok-f">$$</span>(<span class="tok-s">"#name"</span>).bindValue(<span class="tok-f">state</span>(<span class="tok-s">""</span>)); <span class="tok-c">// 双方向</span></code></pre>
+
+      <!-- ============ リアクティブ ============ -->
+      <h2 id="state" class="anchor">state(initial)</h2>
+      <p>リアクティブな状態。<code>.value</code> で読み書き、<code>.update(fn)</code> で関数更新、<code>.subscribe(cb)</code> で購読（解除関数を返す。初回も即時発火）。</p>
+      <pre><code><span class="tok-k">const</span> count = <span class="tok-f">state</span>(<span class="tok-s">0</span>);
+count.value++;                 <span class="tok-c">// 束縛先が自動更新</span>
+count.update((n) =&gt; n + <span class="tok-s">1</span>);
+<span class="tok-k">const</span> off = count.subscribe((v) =&gt; console.log(v)); <span class="tok-c">// off() で解除</span></code></pre>
+      <div class="note"><i class="fa-solid fa-circle-info"></i>配列/オブジェクトは<b>新しい参照を代入</b>して更新します（<code>list.value = [...list.value, x]</code>）。ミューテートだけでは通知されません。</div>
+
+      <h2 id="computed" class="anchor">computed( )</h2>
+      <p>派生状態（読み取り専用）。依存が変わると自動再計算。2つの書き方があります。</p>
+      <pre><code><span class="tok-c">// (A) 関数だけ → 依存を自動追跡（おすすめ）</span>
+<span class="tok-k">const</span> visible = <span class="tok-f">computed</span>(() =&gt;
+  filter.value === <span class="tok-s">"done"</span> ? todos.value.filter((t) =&gt; t.done) : todos.value
+);
+
+<span class="tok-c">// (B) 依存を明示</span>
+<span class="tok-k">const</span> double = <span class="tok-f">computed</span>(count, (n) =&gt; n * <span class="tok-s">2</span>);
+<span class="tok-k">const</span> total  = <span class="tok-f">computed</span>([a, b], (x, y) =&gt; x + y);</code></pre>
+
+      <!-- ============ コンポーネント ============ -->
+      <h2 id="mount" class="anchor">mount(Component, options)</h2>
+      <p>本物のコンポーネントを載せ、ハンドルを返します。<code>options</code> は <code>{ target, props }</code>（<code>target</code> はセレクタ文字列かDOM要素）。</p>
+      <table>
+        <tr><th>ハンドル</th><th>説明</th></tr>
+        <tr><td><code>.instance</code></td><td>生のコンポーネントインスタンス</td></tr>
+        <tr><td><code>.set(props)</code></td><td>props を更新</td></tr>
+        <tr><td><code>.on(event, cb)</code></td><td>コンポーネントの発火を購読</td></tr>
+        <tr><td><code>.destroy()</code></td><td>破棄（購読・DOMの片付けはエンジン責任）</td></tr>
+      </table>
+      <pre><code><span class="tok-k">const</span> app = <span class="tok-f">mount</span>(App, { target: <span class="tok-s">"#app"</span>, props: { name: <span class="tok-s">"world"</span> } });
+app.set({ name: <span class="tok-s">"bridgeway"</span> });
+app.destroy();</code></pre>
+      <div class="note"><i class="fa-solid fa-circle-info"></i>コンポーネント外へ値を渡すなら<b>コールバックprop</b>が便利です（<code>props: { onChange }</code>）。イベントの初期取りこぼしが無く、Svelte/Vue双方で同じに書けます。</div>
+
+      <h2 id="components" class="anchor">部品の書き方</h2>
+      <p><b>Svelte</b>（<code>.svelte</code>、<code>rollup-plugin-svelte</code> でビルド）:</p>
+      <pre><code><span class="tok-c">&lt;!-- App.svelte --&gt;</span>
+<span class="tok-k">&lt;script&gt;</span>
+  <span class="tok-k">export let</span> name = <span class="tok-s">"world"</span>;
+  <span class="tok-k">let</span> count = <span class="tok-s">0</span>;
+  $: doubled = count * <span class="tok-s">2</span>;
+<span class="tok-k">&lt;/script&gt;</span>
+&lt;button on:click={() =&gt; count++}&gt;{count}&lt;/button&gt;
+{#if count &gt;= <span class="tok-s">10</span>}&lt;p&gt;over&lt;/p&gt;{/if}</code></pre>
+      <p><b>Vue</b>（SFC、またはビルド不要のフルビルド＋<code>template</code>文字列）:</p>
+      <pre><code><span class="tok-c">// App.js</span>
+<span class="tok-k">export default</span> {
+  props: { name: { <span class="tok-k">type</span>: String, <span class="tok-k">default</span>: <span class="tok-s">"world"</span> } },
+  data: () =&gt; ({ count: <span class="tok-s">0</span> }),
+  computed: { doubled() { <span class="tok-k">return</span> <span class="tok-k">this</span>.count * <span class="tok-s">2</span>; } },
+  template: <span class="tok-s">`&lt;button @click="count++"&gt;{{ count }}&lt;/button&gt;`</span>,
+};</code></pre>
+
+      <h2 id="engine" class="anchor">useEngine / engine</h2>
+      <p><code>useEngine(adapter)</code> でエンジンを選択（起動時に一度）。未選択で <code>state/mount</code> を使うと分かりやすい例外を投げます。<code>engine()</code> は内部利用。</p>
+      <pre><code><span class="tok-k">import</span> { useEngine } <span class="tok-k">from</span> <span class="tok-s">"bridgeway"</span>;
+<span class="tok-k">import</span> { vueEngine } <span class="tok-k">from</span> <span class="tok-s">"bridgeway/engines/vue.js"</span>; <span class="tok-c">// or svelte</span>
+<span class="tok-f">useEngine</span>(vueEngine);</code></pre>
+
+      <!-- ============ ユーティリティ ============ -->
+      <h2 id="ajax" class="anchor">$$.ajax / $$.get / $$.post</h2>
+      <p>fetch の薄いjQuery風ラッパ。<code>data</code> がオブジェクトならJSON送信、応答は content-type がJSONなら自動パース、失敗時は例外。</p>
+      <table>
+        <tr><th>呼び方</th><th>説明</th></tr>
+        <tr><td><code>$$.get(url, options?)</code></td><td>GET</td></tr>
+        <tr><td><code>$$.post(url, data?, options?)</code></td><td>POST（<code>data</code>オブジェクトはJSON化）</td></tr>
+        <tr><td><code>$$.ajax(url, { method, data, headers, type })</code></td><td>汎用。<code>type:"text"</code>で常にテキスト</td></tr>
+      </table>
+      <p>Promise を返すので <code>await</code> / <code>.then</code> でも、jQuery流の <code>.done() / .fail() / .always()</code> でも、コールバック形でも書けます。</p>
+      <pre><code><span class="tok-c">// await / then</span>
+<span class="tok-k">const</span> users = <span class="tok-k">await</span> $$.get(<span class="tok-s">"/api/users"</span>);
+<span class="tok-c">// jQuery流チェーン</span>
+$$.post(<span class="tok-s">"/api/todos"</span>, { text: <span class="tok-s">"買い物"</span> })
+  .done((res) =&gt; console.log(res))
+  .fail((err) =&gt; console.error(err))
+  .always(() =&gt; done());
+<span class="tok-c">// コールバック形($.get(url, fn) の手癖)</span>
+$$.get(<span class="tok-s">"/api/users"</span>, (users) =&gt; render(users));</code></pre>
+
+      <h3>フォーム送信 (serialize)</h3>
+      <p><code>.serialize()</code> / <code>.serializeArray()</code> で送信対象フィールドをまとめられます（disabled・未チェックは除外、複数selectは複数展開）。</p>
+      <table>
+        <tr><th>メソッド</th><th>説明</th></tr>
+        <tr><td><code>.serialize()</code></td><td>クエリ文字列 <code>"name=太郎&amp;agree=on"</code></td></tr>
+        <tr><td><code>.serializeArray()</code></td><td><code>[{name, value}, …]</code></td></tr>
+      </table>
+      <pre><code>$$(<span class="tok-s">"#form"</span>).on(<span class="tok-s">"submit"</span>, <span class="tok-k">function</span> (e) {
+  e.preventDefault();
+  $$.post(<span class="tok-s">"/api/contact"</span>, $$(<span class="tok-k">this</span>).serialize())
+    .done(() =&gt; $$(<span class="tok-s">"#msg"</span>).text(<span class="tok-s">"送信しました"</span>));
+});</code></pre>
+
+      <h3>静的ユーティリティ</h3>
+      <table>
+        <tr><th>関数</th><th>説明</th></tr>
+        <tr><td><code>$$.extend(target, …src)</code> / <code>$$.extend(true, …)</code></td><td>オブジェクトのマージ（<code>true</code>で深いマージ）</td></tr>
+        <tr><td><code>$$.each(coll, (i, v) =&gt; …)</code></td><td>配列/オブジェクトの反復（<code>false</code>で中断）</td></tr>
+        <tr><td><code>$$.map(coll, (v, i) =&gt; …)</code></td><td>変換して配列に（<code>null</code>は除外）</td></tr>
+        <tr><td><code>$$.trim(str)</code></td><td>前後の空白を除去</td></tr>
+      </table>
+
+      <h2 id="plugin" class="anchor">$$.fn（自作プラグイン）</h2>
+      <p>jQueryプラグインの書き味で、<b>自作の</b>拡張を <code>$$</code> に生やせます。</p>
+      <pre><code>$$.fn.highlight = <span class="tok-k">function</span> () {
+  <span class="tok-k">return</span> <span class="tok-k">this</span>.css(<span class="tok-s">"background"</span>, <span class="tok-s">"yellow"</span>); <span class="tok-c">// this は $$ オブジェクト</span>
+};
+<span class="tok-f">$$</span>(<span class="tok-s">".note"</span>).highlight().addClass(<span class="tok-s">"seen"</span>);</code></pre>
+      <div class="warn"><i class="fa-solid fa-triangle-exclamation"></i><b>既存のjQueryプラグイン(slick / select2 等)はそのままでは動きません。</b>本物のjQuery(<code>$.fn.jquery</code>・独自イベント/データ機構・<code>$.Deferred</code> 等)に依存するためです。<code>$$.fn</code> は自作用の入口であって互換層ではありません。既存プラグインは<b>領域を分けて本物のjQueryを併用</b>してください。</div>
+
+      <!-- ============ 配布 / ツール ============ -->
+      <h2 id="dist" class="anchor">npm と &lt;script&gt;（配布）</h2>
+      <p><b>① npm</b> — <code>import "bridgeway"</code>。部品(<code>.svelte</code>/<code>.vue</code>)はビルドします。</p>
+      <p><b>② &lt;script&gt; / CDN</b> — ビルド不要で <code>$$ / state / computed / mount / useEngine</code> が <code>window</code> に載ります。2種あります。</p>
+      <table>
+        <tr><th>ファイル</th><th>同梱エンジン</th><th>できること</th></tr>
+        <tr><td><code>dist/bridge.vue.js</code></td><td>Vueフルビルド</td><td><b>ビルド不要でフル機能</b>。template文字列のVue部品を <code>mount</code> まで（Vue公式CDNと同発想）</td></tr>
+        <tr><td><code>dist/bridge.js</code></td><td>Svelte(軽量)</td><td><code>$$ / state / computed</code> 中心。<code>mount</code> はコンパイル済みSvelte部品向け</td></tr>
+      </table>
+      <pre><code><span class="tok-c">&lt;!-- ビルド不要でモダン部品まで --&gt;</span>
+&lt;script src=<span class="tok-s">"https://cdn.jsdelivr.net/npm/bridgeway/dist/bridge.vue.js"</span>&gt;&lt;/script&gt;
+&lt;script&gt;
+  <span class="tok-k">const</span> App = { data: () =&gt; ({ n: 0 }),
+    template: <span class="tok-s">`&lt;button @click="n++"&gt;{{ n }}&lt;/button&gt;`</span> };
+  <span class="tok-f">mount</span>(App, { target: <span class="tok-s">"#app"</span> });
+&lt;/script&gt;</code></pre>
+
+      <h2 id="noconflict" class="anchor">名前の衝突を避ける</h2>
+      <p>Prototype.js や独自定義で <code>$$</code> を既に使っている場合の対策です。<b>安定した名前空間 <code>window.bridgeway</code> は常に残る</b>ので、衝突が怖ければ常にこれ経由で使えます（<code>bridge.$$</code> / <code>bridgeway.state</code> …）。</p>
+      <pre><code><span class="tok-k">const</span> b$ = bridgeway.noConflict();     <span class="tok-c">// 既存の $$ を復元し、bridgeの $$ を受け取る</span>
+<span class="tok-k">const</span> B  = bridgeway.noConflict(<span class="tok-k">true</span>); <span class="tok-c">// 触った全グローバルを復元し api を返す</span>
+bridgeway.alias(<span class="tok-s">"jq"</span>);               <span class="tok-c">// window.jq = bridge の $$（既存名は壊さない）</span></code></pre>
+      <div class="note"><i class="fa-solid fa-circle-info"></i>npm版(<code>import</code>)なら衝突は起きません。名前も自由: <code>import { $$ as $ } from "bridgeway"</code>。</div>
+
+      <h2 id="cli" class="anchor">CLI: bridgeway init</h2>
+      <pre><code>bridgeway init [dir] [--framework svelte|vue] [--bridge-dep &lt;spec&gt;]</code></pre>
+      <p>フレームワークを選ぶと、配線済みのスタータ一式（<code>App.(svelte|js)</code> / <code>main.js</code> / <code>build.mjs</code> / <code>index.html</code> / <code>package.json</code>）を生成します。</p>
+      <div class="note"><i class="fa-solid fa-circle-info"></i>エンジンは<b>プロジェクト作成時に一度だけ</b>選びます（後から切り替える機能は持ちません）。別エンジンは別プロジェクトで。利用者コード(<code>$$ / state / mount</code>)は共通なので知識はそのまま移せます。</div>
+
+      <!-- ============ その他 ============ -->
+      <h2 id="recipes" class="anchor">レシピ集</h2>
+      <h3>タブ切り替え</h3>
+      <pre><code><span class="tok-f">$$</span>(<span class="tok-s">"#tabs"</span>).on(<span class="tok-s">"click"</span>, <span class="tok-s">".tab"</span>, <span class="tok-k">function</span> () {
+  <span class="tok-f">$$</span>(<span class="tok-s">"#tabs .tab"</span>).removeClass(<span class="tok-s">"active"</span>);
+  <span class="tok-f">$$</span>(<span class="tok-k">this</span>).addClass(<span class="tok-s">"active"</span>);
+});</code></pre>
+      <h3>フォームの送信可否を宣言的に</h3>
+      <pre><code><span class="tok-k">const</span> valid = <span class="tok-f">computed</span>(() =&gt; ok(form.value));
+valid.subscribe((v) =&gt; <span class="tok-f">$$</span>(<span class="tok-s">"#submit"</span>).prop(<span class="tok-s">"disabled"</span>, !v));</code></pre>
+      <h3>APIから取得して一覧描画（命令的）</h3>
+      <pre><code><span class="tok-k">const</span> users = <span class="tok-k">await</span> $$.get(<span class="tok-s">"/api/users"</span>);
+<span class="tok-f">$$</span>(<span class="tok-s">"#list"</span>).empty();
+users.forEach((u) =&gt; <span class="tok-f">$$</span>(<span class="tok-s">"#list"</span>).append(<span class="tok-s">`&lt;li&gt;${u.name}&lt;/li&gt;`</span>));</code></pre>
+      <h3>領域分離で jQueryプラグインと共存</h3>
+      <pre><code><span class="tok-c">&lt;!-- カルーセルは本物のjQueryの領域 --&gt;</span>
+$(<span class="tok-s">".carousel"</span>).slick();
+<span class="tok-c">// フォームは bridge の領域（別ノード）</span>
+<span class="tok-f">mount</span>(Form, { target: <span class="tok-s">"#form"</span> });</code></pre>
+
+      <h2 id="limits" class="anchor">制限・非対応</h2>
+      <ul>
+        <li><b>ビルドが基本（例外あり）：</b>Svelte部品はコンパイル前提でビルドが要ります。ただし <code>dist/bridge.vue.js</code>（Vueフルビルド同梱）なら <code>&lt;script&gt;</code> 一本・ビルド不要で <code>mount</code> まで動きます。</li>
+        <li><b>jQuery共存はサポートしない：</b>機能として保証・お膳立てはしません。ただし<b>領域を分ければ</b>（例：カルーセル=jQuery / フォーム=Svelte）自己責任で共存可能。禁止は「同一ノードの相乗り」だけです。</li>
+        <li><b>既存のjQueryプラグインは動きません：</b>slick / select2 等は本物のjQuery依存です。<code>$$.fn</code> は自作プラグイン用の入口で、既存プラグインの互換層ではありません。</li>
+        <li><b>薄いヘルパー：</b>ルーター/スコープCSS等は持ちません（下のFWの領分）。</li>
+        <li><b>対象は HTML-first なFW（Svelte / Vue）：</b>React 等の宣言的JSX系は思想が異なるため対象外（命令的DOM操作を避ける設計・単体のリアクティブ原子が無い・JSX前提、と bridge の狙いが噛み合わないため）。</li>
+      </ul>
+
+      <h2 id="faq" class="anchor">FAQ</h2>
+      <h3>jQueryのコードはそのまま動く？</h3>
+      <p>DOM操作・イベント・走査の大半は <code>$</code>→<code>$$</code> で動きます。ただし<b>プラグインは別</b>（上記）。<code>$.ajax</code> は <code>$$.ajax</code>（fetchベース）に置き換えます。</p>
+      <h3>state を使わず $$ だけでも使える？</h3>
+      <p>はい。命令的な <code>$$</code> だけでも使えます。<code>state/computed</code> を使う時だけ <code>useEngine</code> が必要です。</p>
+      <h3>Svelte と Vue、どっちを選ぶ？</h3>
+      <p>どちらでも利用者コードは同じです。テンプレートがHTMLに近いのはSvelte、CDNフルビルドでビルド不要にできるのはVue。迷ったらSvelte（既定）。</p>
+      <h3>後からエンジンを変えられる？</h3>
+      <p>プロジェクト単位で選ぶ設計です（途中変更コマンドは持ちません）。ただし利用者コードは共通なので、新プロジェクトへ移すのは容易です。</p>
+
+      <div class="pager">
+        <a href="#/"><small>← 戻る</small>導入ガイド</a>
+        <a class="next" href="#/examples"><small>次へ →</small>実装サンプル</a>
+      </div>
+    </main>
+  </div>
+</div>
