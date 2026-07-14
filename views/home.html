@@ -15,11 +15,11 @@
       <button class="copy" data-copy="npm install bridgey"><i class="fa-regular fa-copy"></i> copy</button>
     </div>
     <div class="install cdn">
-      <span class="dollar">CDN</span><span class="url">https://cdn.jsdelivr.net/npm/bridgey/dist/bridgey.js</span>
-      <button class="copy" data-copy="https://cdn.jsdelivr.net/npm/bridgey/dist/bridgey.js"><i class="fa-regular fa-copy"></i> copy</button>
+      <span class="dollar">CDN</span><span class="url">https://cdn.jsdelivr.net/npm/bridgey/dist/bridgey.vue.js</span>
+      <button class="copy" data-copy="https://cdn.jsdelivr.net/npm/bridgey/dist/bridgey.vue.js"><i class="fa-regular fa-copy"></i> copy</button>
     </div>
     <p style="color:var(--muted);font-size:13px;margin-top:14px">
-      覚えた書き味（<code>$$ / state / mount</code>）は変わらない。<b>下のSvelteが進化しても、あなたのコードはそのまま</b>。</p>
+      覚えた書き味（<code>$$ / state / mount</code>）は変わらない。<b>下のエンジン（Svelte / Vue）が進化しても、あなたのコードはそのまま</b>。</p>
   </section>
 </div>
 
@@ -50,12 +50,12 @@
       <div class="card">
         <div class="ico"><i class="fa-solid fa-puzzle-piece"></i></div>
         <h3>複雑になったら本物へ</h3>
-        <p>重い画面は <code>mount</code> で本物のSvelteへ引き上げ。DOM差分も後片付けもエンジン任せ。フォーカスも入力途中も飛ばない。</p>
+        <p>重い画面は <code>mount</code> で本物のSvelte／Vueへ引き上げ。DOM差分も後片付けもエンジン任せ。フォーカスも入力途中も飛ばない。</p>
       </div>
       <div class="card">
         <div class="ico"><i class="fa-solid fa-shield-halved"></i></div>
-        <h3>CSPセーフ</h3>
-        <p>式は <code>eval</code> せずビルド時コンパイル。<code>script-src 'self'</code> の企業／WordPress環境でも動く。</p>
+        <h3>CSPセーフ（Svelte）</h3>
+        <p>Svelteは式を <code>eval</code> せずビルド時コンパイル。<code>script-src 'self'</code> の企業／WordPress環境でも動く。<br><span style="font-size:12.5px;opacity:.8">※VueのCDN／既定ビルドは <code>template</code> を実行時コンパイル（<code>new Function</code>）するため <code>unsafe-eval</code> が必要。</span></p>
       </div>
       <div class="card">
         <div class="ico"><i class="fa-solid fa-terminal"></i></div>
@@ -110,12 +110,12 @@
         <div class="step">
           <div class="n"></div>
           <div><b><code>mount</code> で本物の部品を載せる</b>
-            <p style="margin:2px 0 0;color:var(--muted);font-size:13.5px">重い画面だけ本物のSvelteへ。DOM差分も後片付けもエンジン任せ。</p>
+            <p style="margin:2px 0 0;color:var(--muted);font-size:13.5px">重い画面だけ本物のSvelte／Vueへ。DOM差分も後片付けもエンジン任せ。</p>
           </div>
         </div>
         <div class="step">
           <div class="n"></div>
-          <div><b>やがて <code>.svelte</code> を自分で書く</b>
+          <div><b>やがて <code>.svelte</code> / <code>.vue</code> を自分で書く</b>
             <p style="margin:2px 0 0;color:var(--muted);font-size:13.5px">いつのまにか本物を書いている。このライブラリの卒業。</p>
           </div>
         </div>
