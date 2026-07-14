@@ -102,12 +102,14 @@ vercel --prod   # 本番へ反映（bridgey.org）
 
 ## 2つの入り方
 
-**① npm（本格運用）**
+**① npm（本格運用）— `brg init` が入口**
 
 ```bash
-npm install bridgey
-npm install svelte   # または vue（使う方だけ。optional peer）
+npx brg init my-app        # svelte / vue を選択
+cd my-app && npm install   # bridgey と svelte(or vue) をまとめて導入
 ```
+
+生成される `package.json` に svelte(or vue) まで書き込まれるので、**手でライブラリを入れ足す必要はありません**。既存のビルドに組み込む場合だけ `npm install bridgey svelte`（or `vue`）と直接入れます。詳細は下の「新規プロジェクトを作る（CLI）」。
 
 **② `<script>`で読み込む（簡易運用）**
 
