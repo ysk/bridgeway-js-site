@@ -80,6 +80,26 @@ python3 -m http.server 8000   # または npx serve .
 | http://localhost:8000/sample/form/ | フォームバリデーション（純粋 `$$` ＋ `state`/`computed`） |
 | http://localhost:8000/sample/jquery/ | タブ・合計・命令的→宣言的（純粋 `$$`） |
 
+## このサイトを公開する（Vercel）
+
+`vercel.json` は `outputDirectory: "."` / `buildCommand: ""`。**Vercel側ではビルドせず、リポジトリの中身をそのまま静的配信**します。したがって `dist/` とデモの `sample/*/app.js` は**ローカルでビルドしてからデプロイ**します（プロジェクトは `.vercel/` で既にリンク済み）。
+
+```bash
+# 0) Vercel CLI（未導入なら）。以降の vercel を npx vercel で代用しても可
+npm i -g vercel
+vercel login          # 対話（メール/ブラウザ認証）。手元ターミナルで一度だけ
+
+# 1) 配信物をローカルでビルド（← これを忘れると古い内容が公開される）
+node build.mjs        # dist/（このサイト自身が読み込む bridgey 本体）
+node build.demo.mjs   # sample/*/app.js（各デモの本物ビルド）
+
+# 2) デプロイ
+vercel          # プレビュー（確認用の一時URLが出る。まずこれで目視）
+vercel --prod   # 本番へ反映（bridgey.org）
+```
+
+> 初回や未ログイン時は `vercel login` を先に。`.vercelignore` により `node_modules / src / bin / *.md / build*.mjs` は配信対象外です（`dist / sample / views / index.html / site.js / styles.css` が公開されます）。
+
 ## 2つの入り方
 
 **① npm（本格運用）**
