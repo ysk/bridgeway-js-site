@@ -1,4 +1,4 @@
-/*! bridge.js — jQuery感覚でモダン開発 / グローバル版(Svelteエンジン同梱). bridge.js is MIT licensed.
+/*! bridgey — jQuery感覚でモダン開発 / グローバル版(Svelteエンジン同梱). bridgey is MIT licensed.
  * Bundles Svelte (MIT, Copyright (c) 2016-23 the Svelte contributors). See THIRD-PARTY-NOTICES.md. */
 (function () {
   'use strict';
@@ -31,11 +31,11 @@
   // 【将来: Vueなどへ差し替え】
   //   同じ契約を満たす vueEngine(state=ref/reactive, computed=computed, mount=createApp)を
   //   用意し useEngine(vueEngine) で差し替える。利用者の $$/state/mount は変えなくていい。
-  //   ゆくゆくは「npm install bridge → フレームワーク選択(svelte/vue)」でこれを自動配線する。
+  //   ゆくゆくは「npm install bridgey → フレームワーク選択(svelte/vue)」でこれを自動配線する。
   // ────────────────────────────────────────────────────────
 
   // 既定エンジンは静的importしない。
-  // → こうすることで、import "bridge" が特定エンジン(svelte)を巻き込まなくなり、
+  // → こうすることで、import "bridgey" が特定エンジン(svelte)を巻き込まなくなり、
   //   svelte / vue を optional peer にできる(選んだ方だけ npm install すればよい)。
   //   利用者は起動時に useEngine(svelteEngine | vueEngine) を一度だけ呼ぶ。
   //   (グローバル配布版 src/global.js は既定でsvelteを配線して <script> 用途を保つ)
@@ -44,7 +44,7 @@
   /** 使用するエンジンを選択/差し替える。アプリ起動時に一度だけ呼ぶ。 */
   function useEngine(adapter) {
     if (!adapter || typeof adapter.state !== "function") {
-      throw new Error("[bridge] 不正なエンジン: state(initial) を実装してください");
+      throw new Error("[bridgey] 不正なエンジン: state(initial) を実装してください");
     }
     current = adapter;
   }
@@ -53,21 +53,21 @@
   function engine() {
     if (!current) {
       throw new Error(
-        "[bridge] エンジン未選択です。起動時に useEngine(...) を呼んでください。\n" +
-          '  import { svelteEngine } from "bridgeway/engines/svelte.js"; useEngine(svelteEngine);\n' +
-          '  または import { vueEngine } from "bridgeway/engines/vue.js"; useEngine(vueEngine);'
+        "[bridgey] エンジン未選択です。起動時に useEngine(...) を呼んでください。\n" +
+          '  import { svelteEngine } from "bridgey/engines/svelte.js"; useEngine(svelteEngine);\n' +
+          '  または import { vueEngine } from "bridgey/engines/vue.js"; useEngine(vueEngine);'
       );
     }
     return current;
   }
 
-  // bridge.js
+  // bridgey
   // jQueryの書き味 × 本物のモダンフレームワーク。
   //
   // 【このプロジェクトの本質】
   //   モダンな技術(Svelte/将来はVue等)を、限りなく楽に。＝ 学習コストの削減。
   //   「なんちゃって」実装はしない。構造・制御構文・リスト・DOM更新は本物のエンジンに委ねる。
-  //   bridge が受け持つのは2つだけ:
+  //   bridgey が受け持つのは2つだけ:
   //     (1) jQueryの書き味(命令的グルー) … 既存の手がそのまま動く入口
   //     (2) state / computed … リアクティブ状態(下のエンジンに委譲。Svelte↔Vue差し替え可)
   //   ※ 画面の構造・{#if}/{#each}・DOM差分は .svelte(将来 .vue)側の担当。ここでは持たない。
@@ -148,7 +148,7 @@
   // jQueryライクなDOMラッパー(命令的グルー専用。構造描画は持たない)
   // -----------------------------------------------------------------------------
 
-  class Bridge {
+  class Bridgey {
     constructor(selector) {
       if (selector == null) {
         this.els = [];
@@ -162,7 +162,7 @@
         } else {
           this.els = [...document.querySelectorAll(selector)];
         }
-      } else if (selector instanceof Bridge) {
+      } else if (selector instanceof Bridgey) {
         this.els = selector.els.slice();
       } else if (selector.nodeType) {
         this.els = [selector];
@@ -190,7 +190,7 @@
       return this;
     }
     find(sel) {
-      return new Bridge(this.els.flatMap((el) => [...el.querySelectorAll(sel)]));
+      return new Bridgey(this.els.flatMap((el) => [...el.querySelectorAll(sel)]));
     }
 
     // --- 命令的操作(jQuery互換の書き味) -----------------------------------
@@ -241,7 +241,7 @@
       this.els.forEach((el) => cs.forEach((x) => el.classList.toggle(x, force)));
       return this;
     }
-    // 文字列(HTML) / DOMノード / Bridge / 配列 を受け付ける(jQuery互換)
+    // 文字列(HTML) / DOMノード / Bridgey / 配列 を受け付ける(jQuery互換)
     append(content) {
       const nodes = toNodes(content);
       this.els.forEach((el, i) => {
@@ -302,8 +302,8 @@
     fadeToggle(ms = 200) {
       this.els.forEach((el) =>
         window.getComputedStyle(el).display === "none"
-          ? new Bridge(el).fadeIn(ms)
-          : new Bridge(el).fadeOut(ms)
+          ? new Bridgey(el).fadeIn(ms)
+          : new Bridgey(el).fadeOut(ms)
       );
       return this;
     }
@@ -342,8 +342,8 @@
     slideToggle(ms = 200) {
       this.els.forEach((el) =>
         window.getComputedStyle(el).display === "none"
-          ? new Bridge(el).slideDown(ms)
-          : new Bridge(el).slideUp(ms)
+          ? new Bridgey(el).slideDown(ms)
+          : new Bridgey(el).slideUp(ms)
       );
       return this;
     }
@@ -427,24 +427,24 @@
 
     // --- jQuery定番: 走査 -------------------------------------------------
     parent() {
-      return new Bridge(this.els.map((el) => el.parentElement).filter(Boolean));
+      return new Bridgey(this.els.map((el) => el.parentElement).filter(Boolean));
     }
     closest(sel) {
-      return new Bridge(this.els.map((el) => el.closest(sel)).filter(Boolean));
+      return new Bridgey(this.els.map((el) => el.closest(sel)).filter(Boolean));
     }
     children(sel) {
-      return new Bridge(
+      return new Bridgey(
         this.els.flatMap((el) => [...el.children].filter((c) => !sel || c.matches(sel)))
       );
     }
     next() {
-      return new Bridge(this.els.map((el) => el.nextElementSibling).filter(Boolean));
+      return new Bridgey(this.els.map((el) => el.nextElementSibling).filter(Boolean));
     }
     prev() {
-      return new Bridge(this.els.map((el) => el.previousElementSibling).filter(Boolean));
+      return new Bridgey(this.els.map((el) => el.previousElementSibling).filter(Boolean));
     }
     siblings(sel) {
-      return new Bridge(
+      return new Bridgey(
         this.els.flatMap((el) =>
           [...(el.parentElement?.children || [])].filter(
             (c) => c !== el && (!sel || c.matches(sel))
@@ -455,33 +455,33 @@
 
     // --- jQuery定番: 絞り込み ---------------------------------------------
     first() {
-      return new Bridge(this.el ? [this.el] : []);
+      return new Bridgey(this.el ? [this.el] : []);
     }
     last() {
-      return new Bridge(this.els.length ? [this.els[this.els.length - 1]] : []);
+      return new Bridgey(this.els.length ? [this.els[this.els.length - 1]] : []);
     }
     eq(i) {
       const el = this.els.at(i);
-      return new Bridge(el ? [el] : []);
+      return new Bridgey(el ? [el] : []);
     }
     filter(sel) {
-      return new Bridge(
+      return new Bridgey(
         this.els.filter((el) => (typeof sel === "function" ? sel(el) : el.matches(sel)))
       );
     }
     not(sel) {
-      return new Bridge(this.els.filter((el) => !el.matches(sel)));
+      return new Bridgey(this.els.filter((el) => !el.matches(sel)));
     }
     add(other) {
       const more =
-        other instanceof Bridge
+        other instanceof Bridgey
           ? other.els
           : typeof other === "string"
           ? [...document.querySelectorAll(other)]
           : other?.nodeType
           ? [other]
           : [];
-      return new Bridge([...this.els, ...more]);
+      return new Bridgey([...this.els, ...more]);
     }
     index() {
       if (!this.el) return -1;
@@ -504,15 +504,15 @@
       return this;
     }
     clone() {
-      return new Bridge(this.els.map((el) => el.cloneNode(true)));
+      return new Bridgey(this.els.map((el) => el.cloneNode(true)));
     }
     appendTo(target) {
-      const t = target instanceof Bridge ? target.el : typeof target === "string" ? document.querySelector(target) : target;
+      const t = target instanceof Bridgey ? target.el : typeof target === "string" ? document.querySelector(target) : target;
       this.els.forEach((el) => t && t.appendChild(el));
       return this;
     }
     prependTo(target) {
-      const t = target instanceof Bridge ? target.el : typeof target === "string" ? document.querySelector(target) : target;
+      const t = target instanceof Bridgey ? target.el : typeof target === "string" ? document.querySelector(target) : target;
       this.els.forEach((el) => t && t.insertBefore(el, t.firstChild));
       return this;
     }
@@ -689,7 +689,7 @@
     "mousedown", "mouseup", "mouseenter", "mouseleave", "mouseover", "mouseout",
     "input", "scroll", "contextmenu",
   ].forEach((ev) => {
-    Bridge.prototype[ev] = function (handler) {
+    Bridgey.prototype[ev] = function (handler) {
       return handler ? this.on(ev, handler) : this.trigger(ev);
     };
   });
@@ -700,9 +700,9 @@
     return { type, ns };
   }
 
-  // append/prepend 等が受け取る「ノード列」に正規化(Bridge/配列/ノード)。文字列は null。
+  // append/prepend 等が受け取る「ノード列」に正規化(Bridgey/配列/ノード)。文字列は null。
   function toNodes(content) {
-    if (content instanceof Bridge) return content.els.slice();
+    if (content instanceof Bridgey) return content.els.slice();
     if (Array.isArray(content)) return content.flatMap((c) => toNodes(c) || []);
     if (content && content.nodeType) return [content];
     return null; // 文字列(HTML)は呼び出し側で insertAdjacentHTML
@@ -720,14 +720,14 @@
       const fn = selector;
       if (document.readyState !== "loading") fn();
       else document.addEventListener("DOMContentLoaded", () => fn());
-      return new Bridge(document);
+      return new Bridgey(document);
     }
-    return new Bridge(selector);
+    return new Bridgey(selector);
   }
 
   // jQueryプラグインの書き味で「自作の」拡張を書く場所。
   // 注意: 既存のjQueryプラグイン(slick等)がそのまま動くわけではない(本物のjQueryに依存するため)。
-  $$.fn = Bridge.prototype;
+  $$.fn = Bridgey.prototype;
 
   // -----------------------------------------------------------------------------
   // $$.ajax / $$.get / $$.post — fetch の薄いjQuery風ラッパ
@@ -749,7 +749,7 @@
       }
     }
     const res = await fetch(url, opts);
-    if (!res.ok) throw new Error(`[bridge] ${res.status} ${res.statusText}`);
+    if (!res.ok) throw new Error(`[bridgey] ${res.status} ${res.statusText}`);
     if (type === "text") return res.text();
     const ct = res.headers.get("content-type") || "";
     return ct.includes("application/json") ? res.json() : res.text();
@@ -837,7 +837,7 @@
   //     これが「もう新しいフレームワークに翻弄されない」の実体。
   //
   // 使い方(利用者から見たAPIはエンジンに依らず一定):
-  //   const app = mount(App, { target: "#app", props: { name: "bridge" } });
+  //   const app = mount(App, { target: "#app", props: { name: "bridgey" } });
   //   app.set({ name: "world" });   // props更新
   //   app.on("submit", (e) => ...); // コンポーネントのイベント購読
   //   app.destroy();                // 購読もDOMもエンジンが自動片付け(④/⑤が消える)
@@ -847,7 +847,7 @@
     const eng = engine();
     if (typeof eng.mount !== "function") {
       throw new Error(
-        `[bridge] 現在のエンジン(${eng.name || "?"})は mount() 未対応です`
+        `[bridgey] 現在のエンジン(${eng.name || "?"})は mount() 未対応です`
       );
     }
     const target =
@@ -1091,7 +1091,7 @@
   //
   // 中身は正真正銘 Svelte のランタイム(svelte/store)。
   // runes($state)はコンパイラ前提で単体では動かないが、store は実行時APIなので
-  // バンドルして配布版 bridge.js に同梱できる = 利用者は <script> 一本で入る。
+  // バンドルして配布版 bridgey に同梱できる = 利用者は <script> 一本で入る。
   //
   // このファイルは「engine.js が定める Adapter 契約」を満たす一実装にすぎない。
   // 同じ契約を満たせば Vue でも Signals でも差し替えられる。
@@ -1104,7 +1104,7 @@
       get: () => get_store_value(store),
       set: (v) => {
         if (typeof store.set !== "function") {
-          throw new Error("[bridge] computed は読み取り専用です");
+          throw new Error("[bridgey] computed は読み取り専用です");
         }
         store.set(v);
       },
@@ -1143,10 +1143,10 @@
   // attach-global.js — <script>版で window に公開する共通処理。名前衝突に配慮。
   //
   // 方針(jQuery流):
-  //   ・安定した名前空間 window.bridgeway は必ず残す。衝突が怖ければ常にこれ経由で使える。
+  //   ・安定した名前空間 window.bridgey は必ず残す。衝突が怖ければ常にこれ経由で使える。
   //   ・利便性のため $$ / state / … も window に載せるが、上書き前の値は退避しておく。
-  //   ・bridgeway.noConflict() で元に戻して好きな名前に束ね直せる。
-  //   ・bridgeway.alias("名前") で任意名エイリアス(既存名は壊さない)。
+  //   ・bridgey.noConflict() で元に戻して好きな名前に束ね直せる。
+  //   ・bridgey.alias("名前") で任意名エイリアス(既存名は壊さない)。
   //
   // 現場が既に $$ を定義している場合(例: Prototype.js)への対策がこれ。
 
@@ -1158,10 +1158,10 @@
     // 上書き前の値を退避(衝突復元用)
     const prev = {};
     for (const k of NAMES) prev[k] = window[k];
-    const prevNs = window.bridgeway;
+    const prevNs = window.bridgey;
 
     Object.assign(window, api);
-    window.bridgeway = api; // ← 安定名前空間。window.bridgeway.$$ / bridgeway.state で常に届く
+    window.bridgey = api; // ← 安定名前空間。window.bridgey.$$ / bridgey.state で常に届く
 
     const restore = (k, v) => {
       if (v === undefined) delete window[k];
@@ -1170,22 +1170,22 @@
 
     /**
      * 衝突回避。
-     *   const b$ = bridgeway.noConflict();      // $$ を元に戻し、bridgeway の $$ を戻り値で受ける
-     *   const B  = bridgeway.noConflict(true);  // 触った全グローバルを元に戻し、api を返す
+     *   const b$ = bridgey.noConflict();      // $$ を元に戻し、bridgey の $$ を戻り値で受ける
+     *   const B  = bridgey.noConflict(true);  // 触った全グローバルを元に戻し、api を返す
      */
     api.noConflict = function (all) {
       restore("$$", prev["$$"]);
       if (all) {
         NAMES.forEach((k) => restore(k, prev[k]));
-        restore("bridgeway", prevNs);
+        restore("bridgey", prevNs);
       }
       return all ? api : api.$$;
     };
 
-    /** 任意名エイリアス。既存名があれば壊さず警告のみ。 例) bridgeway.alias("jq") → window.jq */
+    /** 任意名エイリアス。既存名があれば壊さず警告のみ。 例) bridgey.alias("jq") → window.jq */
     api.alias = function (name) {
       if (name in window && window[name] !== api.$$) {
-        console.warn(`[bridgeway] window.${name} は既に使われています。alias を中止しました。`);
+        console.warn(`[bridgey] window.${name} は既に使われています。alias を中止しました。`);
         return api.$$;
       }
       window[name] = api.$$;
@@ -1195,9 +1195,9 @@
     return api;
   }
 
-  // global.js — 配布版(bridge.js)のエントリ。
+  // global.js — 配布版(bridgey)のエントリ。
   //
-  // <script src="bridge.js"></script> を読み込むと、$$ / state / computed / mount /
+  // <script src="bridgey.js"></script> を読み込むと、$$ / state / computed / mount /
   // useEngine がグローバル(window)で使える。ライブラリ本体は index.js(window非依存)。
   //
   // 注意: mount() は「コンパイル済みコンポーネント」を渡す前提なので、実運用では
@@ -1206,10 +1206,10 @@
 
 
   // グローバル配布版は「読み込むだけで使える」利便性を優先し、既定でSvelteを配線。
-  // (ESMの import "bridge" 経路はエンジンを巻き込まない = optional peer を保つ)
+  // (ESMの import "bridgey" 経路はエンジンを巻き込まない = optional peer を保つ)
   useEngine(svelteEngine);
 
-  const api = { $$, Bridge, state, computed, mount, useEngine, engine, svelteEngine };
+  const api = { $$, Bridgey, state, computed, mount, useEngine, engine, svelteEngine };
 
   // window へ公開(衝突退避 + noConflict/alias 付き)
   attachGlobal(api);

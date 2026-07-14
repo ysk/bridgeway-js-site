@@ -2,7 +2,7 @@
 //   実行: node build.demo.mjs
 //   各 main.js を rollup でバンドルし、IIFEを出力。
 //
-// これは将来の「npm install bridge → フレームワーク選択」で自動化したい部分の原型。
+// これは将来の「npm install bridgey → フレームワーク選択」で自動化したい部分の原型。
 
 import { rollup } from "rollup";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
@@ -46,6 +46,34 @@ const demos = [
     input: "sample/form/main.js",
     file: "sample/form/app.js",
     name: "FormDemo",
+    plugins: [],
+  },
+  {
+    // 実務: ライブ検索フィルタ(純粋$$ + state/computed)
+    input: "sample/search/main.js",
+    file: "sample/search/app.js",
+    name: "SearchDemo",
+    plugins: [],
+  },
+  {
+    // 実務: ショッピングカート(純粋$$ + state/computed)
+    input: "sample/cart/main.js",
+    file: "sample/cart/app.js",
+    name: "CartDemo",
+    plugins: [],
+  },
+  {
+    // 実務: モーダル/画像ギャラリー(純粋$$ + state)
+    input: "sample/modal/main.js",
+    file: "sample/modal/app.js",
+    name: "ModalDemo",
+    plugins: [],
+  },
+  {
+    // 実務: 星評価 & レビュー(純粋$$ + state/computed)
+    input: "sample/rating/main.js",
+    file: "sample/rating/app.js",
+    name: "RatingDemo",
     plugins: [],
   },
 ];

@@ -3,7 +3,7 @@
 //
 // 中身は正真正銘 Svelte のランタイム(svelte/store)。
 // runes($state)はコンパイラ前提で単体では動かないが、store は実行時APIなので
-// バンドルして配布版 bridge.js に同梱できる = 利用者は <script> 一本で入る。
+// バンドルして配布版 bridgey に同梱できる = 利用者は <script> 一本で入る。
 //
 // このファイルは「engine.js が定める Adapter 契約」を満たす一実装にすぎない。
 // 同じ契約を満たせば Vue でも Signals でも差し替えられる。
@@ -17,7 +17,7 @@ function wrap(store) {
     get: () => get(store),
     set: (v) => {
       if (typeof store.set !== "function") {
-        throw new Error("[bridge] computed は読み取り専用です");
+        throw new Error("[bridgey] computed は読み取り専用です");
       }
       store.set(v);
     },

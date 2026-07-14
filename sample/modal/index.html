@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>モーダル & 画像ギャラリー — bridgey</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'" />
+  <style>
+    body{font-family:system-ui,"Hiragino Kaku Gothic ProN",Meiryo,sans-serif;max-width:600px;margin:24px auto;padding:0 16px;color:#222;line-height:1.7}
+    .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .tile{aspect-ratio:4/3;border-radius:12px;display:grid;place-items:center;font-size:40px;cursor:pointer;position:relative;overflow:hidden;transition:transform .12s}
+    .tile:hover{transform:scale(1.04)}
+    .tile .cap{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);color:#fff;font-size:11px;padding:4px 8px;text-align:left}
+    /* ライトボックス */
+    /* 既定は grid（中央寄せ）。初期非表示は下の inline style="display:none" で。
+       fadeIn は inline display を空にして“CSS既定”へ戻すため、既定を grid にしておく。 */
+    #lb{position:fixed;inset:0;background:rgba(15,15,25,.82);display:grid;place-items:center;z-index:100}
+    #lb .frame{background:#fff;border-radius:14px;max-width:88vw;width:420px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+    #lb .big{aspect-ratio:4/3;display:grid;place-items:center;font-size:110px}
+    #lb .info{padding:14px 18px}
+    #lb .info h3{margin:0 0 3px;font-size:17px}
+    #lb .info p{margin:0;color:#889;font-size:13px}
+    #lb .bar{display:flex;align-items:center;gap:10px;padding:10px 18px 16px}
+    #lb .nav{border:1px solid #ccd;background:#fff;border-radius:8px;padding:6px 14px;cursor:pointer;font-size:14px}
+    #lb .nav:hover{border-color:#6d5efc;color:#6d5efc}
+    #lb .count{margin-left:auto;color:#aab;font-size:13px}
+    #lb .x{position:absolute;top:18px;right:22px;color:#fff;font-size:30px;cursor:pointer;line-height:1;background:none;border:0}
+    kbd{background:#eee;border:1px solid #ddd;border-bottom-width:2px;border-radius:4px;padding:1px 6px;font-size:12px;font-family:inherit}
+  </style>
+</head>
+<body>
+  <p style="color:#888;font-size:13px">タイルをクリックで拡大表示。<b>イベント委譲</b>でカードを開き、<code>fadeIn/fadeOut</code> で開閉。背景クリック・<kbd>Esc</kbd>・<kbd>←</kbd><kbd>→</kbd> にも対応。</p>
+
+  <div class="gallery" id="gallery"></div>
+
+  <!-- ライトボックス（1つを使い回す） -->
+  <div id="lb" style="display:none">
+    <button class="x" id="lb-close" aria-label="閉じる">×</button>
+    <div class="frame">
+      <div class="big" id="lb-img"></div>
+      <div class="info"><h3 id="lb-title"></h3><p id="lb-desc"></p></div>
+      <div class="bar">
+        <button class="nav" id="lb-prev">← 前へ</button>
+        <button class="nav" id="lb-next">次へ →</button>
+        <span class="count" id="lb-count"></span>
+      </div>
+    </div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>

@@ -1,20 +1,29 @@
-// site.js — このサイト自身を bridge.js(Svelte版) で動かすSPAルーター。
+// site.js — このサイト自身を bridgey(Svelte版) で動かすSPAルーター。
 // ＝ ドッグフーディング。ルーティング/描画/テーマ/コピー/目次追従を $$ / state / $$.get で。
 //
-// bridge.js(グローバル/Svelteエンジン)が先に読み込まれ、window に $$ / state / $$ が載っている前提。
+// bridgey(グローバル/Svelteエンジン)が先に読み込まれ、window に $$ / state / $$ が載っている前提。
 
 (function () {
   const root = document.documentElement;
-  const VIEWS = { "": "home", home: "home", docs: "docs", examples: "examples" };
+  const VIEWS = { "": "home", home: "home", tutorial: "tutorial", docs: "docs", examples: "examples" };
 
-  // 現在ハッシュ → ルート名(#/docs → "docs")。#/ 以外(#anchor)は null=ページ内アンカー。
-  const parse = () => {
+  // 現在ハッシュを {route, anchor} に分解する。
+  //   #/docs           → { route:"docs",     anchor:null }
+  //   #/examples#todo  → { route:"examples", anchor:"todo" }  ← ルート＋ページ内アンカーの複合リンク
+  //   #why             → { route:null,       anchor:null }     ← 現ビュー内アンカー(ブラウザがスクロール)
+  const parseHash = () => {
     const h = location.hash;
-    return h.startsWith("#/") ? h.slice(2) || "home" : null;
+    if (!h.startsWith("#/")) return { route: null, anchor: null };
+    const rest = h.slice(2); // "examples#todo" / "docs" / ""
+    const i = rest.indexOf("#");
+    const route = (i >= 0 ? rest.slice(0, i) : rest) || "home";
+    const anchor = i >= 0 ? rest.slice(i + 1) : null;
+    return { route, anchor };
   };
 
-  // ★ルートは state。値が変わると subscribe が描画する = bridge が SPA を駆動している。
-  const route = state(parse() || "home");
+  // ★ルートは state。値が変わると subscribe が描画する = bridgey が SPA を駆動している。
+  const initial = parseHash();
+  const route = state(initial.route || "home");
 
   let tocObserver = null;
   let pendingScroll = null; // home描画後にスクロールしたい要素id
@@ -36,9 +45,9 @@
     // ナビの active
     $$("nav .links a[data-route]").removeClass("active");
     $$(`nav .links a[data-route="${view}"]`).addClass("active");
-    // 描画後フック
+    // 描画後フック（サイドバー付きページは目次スクロール追従を張り直す）
     if (tocObserver) { tocObserver.disconnect(); tocObserver = null; }
-    if (view === "docs") initTOC();
+    if (view === "docs" || view === "tutorial" || view === "examples") initTOC();
     // home描画後に指定セクションへスクロール。無ければ先頭へ。
     if (pendingScroll) {
       const id = pendingScroll;
@@ -49,13 +58,23 @@
     }
   }
 
+  // 初期表示でアンカー付き(#/tutorial#state 等)なら、描画後にそこへスクロール
+  if (initial.anchor) pendingScroll = initial.anchor;
+
   // 値が変わるたび描画(初回も即時発火 → 初期ビュー)
   route.subscribe(render);
 
-  // ハッシュ変化 → ルートなら state 更新、ページ内アンカーは素通り(ブラウザがスクロール)
+  // ハッシュ変化 → ルートなら state 更新。複合リンク(#/route#anchor)は
+  // 描画後にアンカーへスクロール。純粋なページ内アンカーはブラウザに任せる。
   window.addEventListener("hashchange", () => {
-    const r = parse();
-    if (r !== null) route.value = r;
+    const { route: next, anchor } = parseHash();
+    if (next === null) return; // 現ビュー内アンカー → 素通り
+    if (anchor) pendingScroll = anchor;
+    if (next !== route.value) {
+      route.value = next; // 再描画 → render() が pendingScroll へスクロール
+    } else if (anchor) {
+      scrollToId(anchor); // 同じビュー内の別セクションへ
+    }
   });
 
   // ヘッダーの home セクションリンク(Why/Concept/Install)。
@@ -72,14 +91,14 @@
   });
 
   // --- テーマ(localStorageで維持。永続navなので一度だけ) ---
-  const saved = localStorage.getItem("bridge-theme");
+  const saved = localStorage.getItem("bridgey-theme");
   if (saved) root.setAttribute("data-theme", saved);
   $$("#themeBtn").on("click", () => {
     const cur = root.getAttribute("data-theme")
       || (matchMedia("(prefers-color-scheme:dark)").matches ? "dark" : "light");
     const next = cur === "dark" ? "light" : "dark";
     root.setAttribute("data-theme", next);
-    localStorage.setItem("bridge-theme", next);
+    localStorage.setItem("bridgey-theme", next);
   });
 
   // --- コピー(イベント委譲。再描画されても効く) ---

@@ -3,19 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Todo — bridge.js sample (deep Svelte)</title>
+  <title>Todo — bridgey sample (deep Svelte)</title>
   <!-- ③の証拠: eval禁止CSPでも動く -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'" />
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
   <h1>Todo <span id="count" class="badge">0</span></h1>
-  <p class="sub">bridge.js サンプル — jQueryの書き味(<code>$$</code>/<code>mount</code>)で、裏は<strong>本物のSvelte</strong></p>
+  <p class="sub">bridgey サンプル — jQueryの書き味(<code>$$</code>/<code>mount</code>)で、裏は<strong>本物のSvelte</strong></p>
 
   <!-- Svelteの領域。この中はSvelteが管理する -->
   <div id="app"></div>
 
-  <!-- bridge + Todo.svelte を1本にバンドルしたもの -->
+  <!-- bridgey + Todo.svelte を1本にバンドルしたもの -->
   <script src="./todo.js"></script>
 </body>
 </html>

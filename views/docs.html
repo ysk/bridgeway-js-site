@@ -2,7 +2,7 @@
   <div class="layout">
     <aside class="toc">
       <div class="grp">はじめに</div>
-      <a href="#intro">bridgeway とは</a>
+      <a href="#intro">bridgey とは</a>
       <a href="#install">インストール</a>
       <a href="#hello">はじめの一歩</a>
       <a href="#concept">3つの考え方</a>
@@ -34,7 +34,7 @@
       <div class="grp">配布 / ツール</div>
       <a href="#dist">npm と &lt;script&gt;</a>
       <a href="#noconflict">名前の衝突を避ける</a>
-      <a href="#cli">CLI: bridgeway init</a>
+      <a href="#cli">CLI: brg init</a>
 
       <div class="grp">その他</div>
       <a href="#recipes">レシピ集</a>
@@ -47,8 +47,8 @@
       <p class="muted">利用者が覚えるのは <code>$$</code> / <code>state</code> / <code>computed</code> / <code>mount</code> / <code>useEngine</code> の5つ。<code>$$</code> はjQuery定番メソッドを一通り備え、エンジン(Svelte/Vue)に依らず共通です。</p>
 
       <!-- ============ はじめに ============ -->
-      <h2 id="intro" class="anchor">bridgeway とは</h2>
-      <p>jQueryの書き味を残したまま、<b>本物のモダンフレームワーク</b>(Svelte、将来はVue等)の恩恵を受けるための薄いレイヤーです。画面の構造・制御構文・DOM差分・リアクティビティ・後片付けは実績あるエンジンに委譲し、bridge自身は次の2つだけを担います。</p>
+      <h2 id="intro" class="anchor">bridgey とは</h2>
+      <p>jQueryの書き味を残したまま、<b>本物のモダンフレームワーク</b>(Svelte、将来はVue等)の恩恵を受けるための薄いレイヤーです。画面の構造・制御構文・DOM差分・リアクティビティ・後片付けは実績あるエンジンに委譲し、bridgey自身は次の2つだけを担います。</p>
       <ul>
         <li><b><code>$$</code>（命令的グルー）</b> … jQueryの手癖そのままのDOM操作・イベント。既存の手が動く入口。</li>
         <li><b><code>state</code> / <code>computed</code> / <code>mount</code></b> … リアクティブ状態と、部品を載せる最小ライフサイクル（下のエンジンに委譲）。</li>
@@ -56,14 +56,14 @@
 
       <h2 id="install" class="anchor">インストール</h2>
       <p>本格運用は npm。今すぐ試すなら <code>&lt;script&gt;</code>（<a href="#dist">配布</a>参照）。</p>
-      <pre><code>npm install bridgeway
+      <pre><code>npm install bridgey
 <span class="tok-c"># 使うフレームワークだけ(optional peer)</span>
 npm install svelte     <span class="tok-c"># もしくは</span>  npm install vue</code></pre>
 
       <h2 id="hello" class="anchor">はじめの一歩</h2>
       <p><code>$</code> を <code>$$</code> にするだけ。まずは命令的に、慣れたら宣言的に。</p>
-      <pre><code><span class="tok-k">import</span> { $$, state, computed } <span class="tok-k">from</span> <span class="tok-s">"bridgeway"</span>;
-<span class="tok-k">import</span> { svelteEngine } <span class="tok-k">from</span> <span class="tok-s">"bridgeway/engines/svelte.js"</span>;
+      <pre><code><span class="tok-k">import</span> { $$, state, computed } <span class="tok-k">from</span> <span class="tok-s">"bridgey"</span>;
+<span class="tok-k">import</span> { svelteEngine } <span class="tok-k">from</span> <span class="tok-s">"bridgey/engines/svelte.js"</span>;
 <span class="tok-f">useEngine</span>(svelteEngine); <span class="tok-c">// state/computed を使うなら最初に一度</span>
 
 <span class="tok-c">// 命令的(jQueryそのまま)</span>
@@ -77,7 +77,7 @@ npm install svelte     <span class="tok-c"># もしくは</span>  npm install vu
       <h2 id="concept" class="anchor">3つの考え方</h2>
       <table>
         <tr><th>考え方</th><th>意味</th></tr>
-        <tr><td>薄い皮</td><td>bridgeはフレームワークではなくヘルパー。ルーター/スコープCSS等は持たず、最小の <code>mount</code>/<code>destroy</code> だけ。</td></tr>
+        <tr><td>薄い皮</td><td>bridgeyはフレームワークではなくヘルパー。ルーター/スコープCSS等は持たず、最小の <code>mount</code>/<code>destroy</code> だけ。</td></tr>
         <tr><td>エンジン差し替え</td><td><code>state/computed/mount</code> は現在のエンジンに委譲。<code>useEngine</code> でSvelte↔Vueを選ぶ。利用者コードは不変。</td></tr>
         <tr><td>命令的→宣言的</td><td>まず <code>$$</code> の手で書き、慣れたら <code>state</code> 束縛へ。同じ画面で少しずつ移行できる。</td></tr>
       </table>
@@ -90,7 +90,7 @@ npm install svelte     <span class="tok-c"># もしくは</span>  npm install vu
         <tr><td><code>$$("#id .cls")</code></td><td>CSSセレクタで取得</td></tr>
         <tr><td><code>$$("&lt;li class='x'&gt;…&lt;/li&gt;")</code></td><td>HTML文字列から要素を生成</td></tr>
         <tr><td><code>$$(node)</code> / <code>$$(nodeList)</code> / <code>$$(array)</code></td><td>DOMノード・NodeList・配列・jQueryオブジェクトを包む</td></tr>
-        <tr><td><code>$$(otherBridge)</code></td><td>別の <code>$$</code> を複製</td></tr>
+        <tr><td><code>$$(otherBridgey)</code></td><td>別の <code>$$</code> を複製</td></tr>
         <tr><td><code>$$(fn)</code></td><td>DOM ready（<code>$(function(){…})</code> の手癖）</td></tr>
       </table>
       <pre><code><span class="tok-f">$$</span>(() =&gt; {                       <span class="tok-c">// DOMContentLoaded 後に実行</span>
@@ -239,7 +239,7 @@ count.update((n) =&gt; n + <span class="tok-s">1</span>);
         <tr><td><code>.destroy()</code></td><td>破棄（購読・DOMの片付けはエンジン責任）</td></tr>
       </table>
       <pre><code><span class="tok-k">const</span> app = <span class="tok-f">mount</span>(App, { target: <span class="tok-s">"#app"</span>, props: { name: <span class="tok-s">"world"</span> } });
-app.set({ name: <span class="tok-s">"bridgeway"</span> });
+app.set({ name: <span class="tok-s">"bridgey"</span> });
 app.destroy();</code></pre>
       <div class="note"><i class="fa-solid fa-circle-info"></i>コンポーネント外へ値を渡すなら<b>コールバックprop</b>が便利です（<code>props: { onChange }</code>）。イベントの初期取りこぼしが無く、Svelte/Vue双方で同じに書けます。</div>
 
@@ -264,8 +264,8 @@ app.destroy();</code></pre>
 
       <h2 id="engine" class="anchor">useEngine / engine</h2>
       <p><code>useEngine(adapter)</code> でエンジンを選択（起動時に一度）。未選択で <code>state/mount</code> を使うと分かりやすい例外を投げます。<code>engine()</code> は内部利用。</p>
-      <pre><code><span class="tok-k">import</span> { useEngine } <span class="tok-k">from</span> <span class="tok-s">"bridgeway"</span>;
-<span class="tok-k">import</span> { vueEngine } <span class="tok-k">from</span> <span class="tok-s">"bridgeway/engines/vue.js"</span>; <span class="tok-c">// or svelte</span>
+      <pre><code><span class="tok-k">import</span> { useEngine } <span class="tok-k">from</span> <span class="tok-s">"bridgey"</span>;
+<span class="tok-k">import</span> { vueEngine } <span class="tok-k">from</span> <span class="tok-s">"bridgey/engines/vue.js"</span>; <span class="tok-c">// or svelte</span>
 <span class="tok-f">useEngine</span>(vueEngine);</code></pre>
 
       <!-- ============ ユーティリティ ============ -->
@@ -320,15 +320,15 @@ $$.get(<span class="tok-s">"/api/users"</span>, (users) =&gt; render(users));</c
 
       <!-- ============ 配布 / ツール ============ -->
       <h2 id="dist" class="anchor">npm と &lt;script&gt;（配布）</h2>
-      <p><b>① npm</b> — <code>import "bridgeway"</code>。部品(<code>.svelte</code>/<code>.vue</code>)はビルドします。</p>
+      <p><b>① npm</b> — <code>import "bridgey"</code>。部品(<code>.svelte</code>/<code>.vue</code>)はビルドします。</p>
       <p><b>② &lt;script&gt; / CDN</b> — ビルド不要で <code>$$ / state / computed / mount / useEngine</code> が <code>window</code> に載ります。2種あります。</p>
       <table>
         <tr><th>ファイル</th><th>同梱エンジン</th><th>できること</th></tr>
-        <tr><td><code>dist/bridge.vue.js</code></td><td>Vueフルビルド</td><td><b>ビルド不要でフル機能</b>。template文字列のVue部品を <code>mount</code> まで（Vue公式CDNと同発想）</td></tr>
-        <tr><td><code>dist/bridge.js</code></td><td>Svelte(軽量)</td><td><code>$$ / state / computed</code> 中心。<code>mount</code> はコンパイル済みSvelte部品向け</td></tr>
+        <tr><td><code>dist/bridgey.vue.js</code></td><td>Vueフルビルド</td><td><b>ビルド不要でフル機能</b>。template文字列のVue部品を <code>mount</code> まで（Vue公式CDNと同発想）</td></tr>
+        <tr><td><code>dist/bridgey.js</code></td><td>Svelte(軽量)</td><td><code>$$ / state / computed</code> 中心。<code>mount</code> はコンパイル済みSvelte部品向け</td></tr>
       </table>
       <pre><code><span class="tok-c">&lt;!-- ビルド不要でモダン部品まで --&gt;</span>
-&lt;script src=<span class="tok-s">"https://cdn.jsdelivr.net/npm/bridgeway/dist/bridge.vue.js"</span>&gt;&lt;/script&gt;
+&lt;script src=<span class="tok-s">"https://cdn.jsdelivr.net/npm/bridgey/dist/bridgey.vue.js"</span>&gt;&lt;/script&gt;
 &lt;script&gt;
   <span class="tok-k">const</span> App = { data: () =&gt; ({ n: 0 }),
     template: <span class="tok-s">`&lt;button @click="n++"&gt;{{ n }}&lt;/button&gt;`</span> };
@@ -336,14 +336,14 @@ $$.get(<span class="tok-s">"/api/users"</span>, (users) =&gt; render(users));</c
 &lt;/script&gt;</code></pre>
 
       <h2 id="noconflict" class="anchor">名前の衝突を避ける</h2>
-      <p>Prototype.js や独自定義で <code>$$</code> を既に使っている場合の対策です。<b>安定した名前空間 <code>window.bridgeway</code> は常に残る</b>ので、衝突が怖ければ常にこれ経由で使えます（<code>bridge.$$</code> / <code>bridgeway.state</code> …）。</p>
-      <pre><code><span class="tok-k">const</span> b$ = bridgeway.noConflict();     <span class="tok-c">// 既存の $$ を復元し、bridgeの $$ を受け取る</span>
-<span class="tok-k">const</span> B  = bridgeway.noConflict(<span class="tok-k">true</span>); <span class="tok-c">// 触った全グローバルを復元し api を返す</span>
-bridgeway.alias(<span class="tok-s">"jq"</span>);               <span class="tok-c">// window.jq = bridge の $$（既存名は壊さない）</span></code></pre>
-      <div class="note"><i class="fa-solid fa-circle-info"></i>npm版(<code>import</code>)なら衝突は起きません。名前も自由: <code>import { $$ as $ } from "bridgeway"</code>。</div>
+      <p>Prototype.js や独自定義で <code>$$</code> を既に使っている場合の対策です。<b>安定した名前空間 <code>window.bridgey</code> は常に残る</b>ので、衝突が怖ければ常にこれ経由で使えます（<code>bridgey.$$</code> / <code>bridgey.state</code> …）。</p>
+      <pre><code><span class="tok-k">const</span> b$ = bridgey.noConflict();     <span class="tok-c">// 既存の $$ を復元し、bridgeyの $$ を受け取る</span>
+<span class="tok-k">const</span> B  = bridgey.noConflict(<span class="tok-k">true</span>); <span class="tok-c">// 触った全グローバルを復元し api を返す</span>
+bridgey.alias(<span class="tok-s">"jq"</span>);               <span class="tok-c">// window.jq = bridgey の $$（既存名は壊さない）</span></code></pre>
+      <div class="note"><i class="fa-solid fa-circle-info"></i>npm版(<code>import</code>)なら衝突は起きません。名前も自由: <code>import { $$ as $ } from "bridgey"</code>。</div>
 
-      <h2 id="cli" class="anchor">CLI: bridgeway init</h2>
-      <pre><code>bridgeway init [dir] [--framework svelte|vue] [--bridge-dep &lt;spec&gt;]</code></pre>
+      <h2 id="cli" class="anchor">CLI: brg init</h2>
+      <pre><code>brg init [dir] [--framework svelte|vue] [--bridgey-dep &lt;spec&gt;]</code></pre>
       <p>フレームワークを選ぶと、配線済みのスタータ一式（<code>App.(svelte|js)</code> / <code>main.js</code> / <code>build.mjs</code> / <code>index.html</code> / <code>package.json</code>）を生成します。</p>
       <div class="note"><i class="fa-solid fa-circle-info"></i>エンジンは<b>プロジェクト作成時に一度だけ</b>選びます（後から切り替える機能は持ちません）。別エンジンは別プロジェクトで。利用者コード(<code>$$ / state / mount</code>)は共通なので知識はそのまま移せます。</div>
 
@@ -364,16 +364,16 @@ users.forEach((u) =&gt; <span class="tok-f">$$</span>(<span class="tok-s">"#list
       <h3>領域分離で jQueryプラグインと共存</h3>
       <pre><code><span class="tok-c">&lt;!-- カルーセルは本物のjQueryの領域 --&gt;</span>
 $(<span class="tok-s">".carousel"</span>).slick();
-<span class="tok-c">// フォームは bridge の領域（別ノード）</span>
+<span class="tok-c">// フォームは bridgey の領域（別ノード）</span>
 <span class="tok-f">mount</span>(Form, { target: <span class="tok-s">"#form"</span> });</code></pre>
 
       <h2 id="limits" class="anchor">制限・非対応</h2>
       <ul>
-        <li><b>ビルドが基本（例外あり）：</b>Svelte部品はコンパイル前提でビルドが要ります。ただし <code>dist/bridge.vue.js</code>（Vueフルビルド同梱）なら <code>&lt;script&gt;</code> 一本・ビルド不要で <code>mount</code> まで動きます。</li>
+        <li><b>ビルドが基本（例外あり）：</b>Svelte部品はコンパイル前提でビルドが要ります。ただし <code>dist/bridgey.vue.js</code>（Vueフルビルド同梱）なら <code>&lt;script&gt;</code> 一本・ビルド不要で <code>mount</code> まで動きます。</li>
         <li><b>jQuery共存はサポートしない：</b>機能として保証・お膳立てはしません。ただし<b>領域を分ければ</b>（例：カルーセル=jQuery / フォーム=Svelte）自己責任で共存可能。禁止は「同一ノードの相乗り」だけです。</li>
         <li><b>既存のjQueryプラグインは動きません：</b>slick / select2 等は本物のjQuery依存です。<code>$$.fn</code> は自作プラグイン用の入口で、既存プラグインの互換層ではありません。</li>
         <li><b>薄いヘルパー：</b>ルーター/スコープCSS等は持ちません（下のFWの領分）。</li>
-        <li><b>対象は HTML-first なFW（Svelte / Vue）：</b>React 等の宣言的JSX系は思想が異なるため対象外（命令的DOM操作を避ける設計・単体のリアクティブ原子が無い・JSX前提、と bridge の狙いが噛み合わないため）。</li>
+        <li><b>対象は HTML-first なFW（Svelte / Vue）：</b>React 等の宣言的JSX系は思想が異なるため対象外（命令的DOM操作を避ける設計・単体のリアクティブ原子が無い・JSX前提、と bridgey の狙いが噛み合わないため）。</li>
       </ul>
 
       <h2 id="faq" class="anchor">FAQ</h2>

@@ -1,11 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" role="img" aria-label="bridgeway logo">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" role="img" aria-label="bridgey logo">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
       <stop stop-color="#6d5efc"/>
       <stop offset="1" stop-color="#22c1a6"/>
     </linearGradient>
   </defs>
-  <!-- 橋のデッキ(渡す=bridge) -->
+  <!-- 橋のデッキ(渡す=bridgey) -->
   <rect x="6" y="30" width="52" height="4" rx="2" fill="url(#bg)"/>
   <!-- 主塔 -->
   <rect x="18" y="14" width="3.4" height="20" rx="1.5" fill="url(#bg)"/>

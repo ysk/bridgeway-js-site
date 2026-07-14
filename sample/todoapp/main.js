@@ -1,4 +1,4 @@
-// main.js — 利用者コード。bridge の書き味だけで本物のSvelteのToDoを動かす。
+// main.js — 利用者コード。bridgey の書き味だけで本物のSvelteのToDoを動かす。
 // 触るのは $$ / mount の2つだけ = 学習コストは jQuery+α。
 
 import { $$, mount, useEngine } from "../../src/index.js";

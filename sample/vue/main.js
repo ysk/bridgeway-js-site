@@ -10,4 +10,4 @@ useEngine(vueEngine);
 const engineLabel = state("vue");
 $$("#engine").bindText(engineLabel);
 
-mount(Counter, { target: "#app", props: { name: "bridge.js" } });
+mount(Counter, { target: "#app", props: { name: "bridgey" } });

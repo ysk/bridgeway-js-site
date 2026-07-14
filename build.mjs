@@ -2,12 +2,12 @@
 //   実行: node build.mjs   (npm run build)
 //
 // 2種類:
-//   dist/bridge.js      … Svelteエンジン同梱(軽量)。$$ / state / computed 中心。
+//   dist/bridgey.js      … Svelteエンジン同梱(軽量)。$$ / state / computed 中心。
 //                         mount はコンパイル済みSvelte部品向け。
-//   dist/bridge.vue.js  … Vueフルビルド(実行時コンパイラ)同梱。ビルド不要で
+//   dist/bridgey.vue.js  … Vueフルビルド(実行時コンパイラ)同梱。ビルド不要で
 //                         template文字列のVue部品を mount まで動かせる。
 //
-// npm版は import "bridge" (src/index.js)。こちらは <script src> 用。
+// npm版は import "bridgey" (src/index.js)。こちらは <script src> 用。
 
 import { rollup } from "rollup";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
@@ -16,19 +16,19 @@ import alias from "@rollup/plugin-alias";
 const builds = [
   {
     input: "src/global.js",
-    file: "dist/bridge.js",
-    name: "bridgeway",
+    file: "dist/bridgey.js",
+    name: "bridgey",
     banner:
-      "/*! bridge.js — jQuery感覚でモダン開発 / グローバル版(Svelteエンジン同梱). bridge.js is MIT licensed.\n" +
+      "/*! bridgey — jQuery感覚でモダン開発 / グローバル版(Svelteエンジン同梱). bridgey is MIT licensed.\n" +
       " * Bundles Svelte (MIT, Copyright (c) 2016-23 the Svelte contributors). See THIRD-PARTY-NOTICES.md. */",
     plugins: [nodeResolve()],
   },
   {
     input: "src/global.vue.js",
-    file: "dist/bridge.vue.js",
-    name: "bridgeway",
+    file: "dist/bridgey.vue.js",
+    name: "bridgey",
     banner:
-      "/*! bridge.vue.js — jQuery感覚でモダン開発 / グローバル版(Vueフルビルド同梱・ビルド不要). bridge.js is MIT licensed.\n" +
+      "/*! bridgey.vue.js — jQuery感覚でモダン開発 / グローバル版(Vueフルビルド同梱・ビルド不要). bridgey is MIT licensed.\n" +
       " * Bundles Vue (MIT, Copyright (c) 2018-present Yuxi (Evan) You). See THIRD-PARTY-NOTICES.md. */",
     plugins: [
       alias({ entries: [{ find: /^vue$/, replacement: "vue/dist/vue.esm-browser.prod.js" }] }),

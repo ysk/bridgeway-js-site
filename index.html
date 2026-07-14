@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>bridgeway — jQuery感覚で、モダン開発。</title>
+<title>bridgey — jQuery感覚で、モダン開発。</title>
 <meta name="description" content="jQueryでできるモダン開発。$$ の書き味そのままで、裏では本物のSvelte/Vueが動く。学習コスト最小でモダンフロントエンドへ。" />
 <link rel="icon" href="./logo.svg" type="image/svg+xml" />
 <link rel="stylesheet" href="./vendor/fontawesome/css/all.min.css" />
@@ -22,28 +22,31 @@
           <path d="M8 32 C 20 12, 44 12, 56 32" stroke="url(#nb)" stroke-width="2.6" stroke-linecap="round"/>
           <g stroke="url(#nb)" stroke-width="1.4" stroke-linecap="round" opacity=".85"><path d="M14 26.5V30"/><path d="M26 20.5V30"/><path d="M32 19.4V30"/><path d="M38 20.5V30"/><path d="M50 26.5V30"/></g>
         </svg>
-        bridge<span style="color:var(--muted);font-weight:600">way</span>
+        bridgey
       </a>
       <div class="links">
         <a href="#/" data-route="home">Home</a>
         <a href="#why" data-scroll="why" class="hide-sm">Why</a>
         <a href="#philosophy" data-scroll="philosophy" class="hide-sm">Concept</a>
         <a href="#start" data-scroll="start" class="hide-sm">Install</a>
+        <a href="#/tutorial" data-route="tutorial">Tutorial</a>
         <a href="#/docs" data-route="docs">Docs</a>
         <a href="#/examples" data-route="examples">Examples</a>
+        <a href="https://github.com/ysk/bridgeway-js" target="_blank" rel="noopener" title="GitHub" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
         <button class="theme-toggle" id="themeBtn" title="テーマ切替" aria-label="テーマ切替"><i class="fa-solid fa-circle-half-stroke"></i></button>
       </div>
     </nav>
   </div>
 </header>
 
-<!-- ビューはここに bridge($$/state/$$.get) で差し込む(SPA) -->
+<!-- ビューはここに bridgey($$/state/$$.get) で差し込む(SPA) -->
 <main id="app" aria-live="polite"><div class="wrap" style="padding:60px 0;color:var(--muted)">読み込み中…</div></main>
 
 <footer>
   <div class="wrap">
-    <div>© bridgeway — jQuery感覚で、モダン開発。</div>
+    <div>© bridgey — jQuery感覚で、モダン開発。</div>
     <div style="display:flex;gap:18px">
+      <a href="#/tutorial">Tutorial</a>
       <a href="#/docs">Docs</a>
       <a href="#/examples">Examples</a>
       <a href="#/">Top</a>
@@ -54,8 +57,8 @@
   </div>
 </footer>
 
-<!-- このサイト自身が bridgeway(Svelte版) で動く = ドッグフーディング -->
-<script src="./dist/bridge.js"></script>
+<!-- このサイト自身が bridgey(Svelte版) で動く = ドッグフーディング -->
+<script src="./dist/bridgey.js"></script>
 <script src="./site.js"></script>
 </body>
 </html>

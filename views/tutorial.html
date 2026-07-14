@@ -1,0 +1,262 @@
+<div class="wrap">
+  <div class="layout">
+    <aside class="toc">
+      <div class="grp">はじめに</div>
+      <a href="#goal">このチュートリアルで作るもの</a>
+      <a href="#setup">Chapter 0 — 準備</a>
+      <div class="grp">jQuery脳のまま</div>
+      <a href="#dollar">Chapter 1 — $ を $$ に</a>
+      <a href="#add">Chapter 2 — 1件追加する（命令的）</a>
+      <div class="grp">モダンへ一歩ずつ</div>
+      <a href="#state">Chapter 3 — state で件数を自動表示</a>
+      <a href="#computed">Chapter 4 — computed で「残り」を導く</a>
+      <a href="#list">Chapter 5 — 一覧を state で描く</a>
+      <a href="#events">Chapter 6 — 完了・削除（委譲）</a>
+      <a href="#bind">Chapter 7 — 束縛でコードを減らす</a>
+      <div class="grp">実戦</div>
+      <a href="#ajax">Chapter 8 — サーバへ保存（$$.post）</a>
+      <a href="#mount">Chapter 9 — 本物の部品へ卒業</a>
+      <a href="#next">次にどこへ</a>
+    </aside>
+
+    <main class="content">
+      <div class="tut-hero">
+        <h1>チュートリアル</h1>
+        <p class="lead">jQueryが分かれば、もう半分終わっています。<code>$</code> を <code>$$</code> にするところから始めて、<b>命令的（手で更新）→ 宣言的（状態を変えるだけ）</b>へ、同じ小さなアプリを育てながら少しずつ手を慣らします。写経して動かせる9章立てです。</p>
+        <div class="tut-map">
+          <a href="#dollar"><b>Ch 1–2</b>jQueryの手癖そのまま</a>
+          <a href="#state"><b>Ch 3–4</b>state / computed</a>
+          <a href="#list"><b>Ch 5–7</b>一覧・委譲・束縛</a>
+          <a href="#ajax"><b>Ch 8–9</b>送信・本物の部品</a>
+        </div>
+      </div>
+
+      <p class="muted">覚える道具はたった5つ：<code>$$</code> / <code>state</code> / <code>computed</code> / <code>mount</code> / <code>useEngine</code>。この章を終える頃には、全部を一度は自分の手で書いています。</p>
+
+      <!-- ===================== GOAL ===================== -->
+      <h2 id="goal" class="anchor">このチュートリアルで作るもの</h2>
+      <p>お題は誰もが一度は書く <b>「今日のタスク」リスト</b>。追加・完了・削除・残り件数・サーバ保存まで、jQueryの書き味のまま作り、最後に本物のSvelte部品へ“卒業”させます。</p>
+      <div class="two">
+        <div class="card">
+          <div class="label">できあがる機能</div>
+          <p>・入力して <kbd>Enter</kbd> で追加<br/>・クリックで完了トグル<br/>・✕ で削除（フェード付き）<br/>・「残り <b>3</b> 件」を自動表示<br/>・ボタンでサーバへ保存</p>
+        </div>
+        <div class="card">
+          <div class="label">身につくこと</div>
+          <p>・<code>$$</code> のDOM操作・イベント委譲<br/>・<code>state</code> による自動再描画<br/>・<code>computed</code> の派生状態<br/>・<code>bindText/bindClass</code> 束縛<br/>・<code>$$.post</code> と <code>mount</code></p>
+        </div>
+      </div>
+      <div class="note"><i class="fa-solid fa-circle-info"></i>各章のコードは前の章の続きです。上から順に写経していけば、最後に1本のアプリになります。完成形に近い動くデモは <a href="#/examples#todo">Examples の ToDo</a> にあります。</div>
+
+      <!-- ===================== CH0 SETUP ===================== -->
+      <div class="chapter"><div class="cn">0</div><h2 id="setup" class="anchor">準備 — 2つの入り口</h2></div>
+      <p>環境は好きな方でOK。<b>まず触ってみたいだけ</b>なら ①（ビルド不要）。<b>きちんと作る</b>なら ②（npm）。このチュートリアル本文は ① のグローバル前提で進めます（<code>import</code> は不要）。</p>
+      <p><b>① &lt;script&gt; 一本（ビルド不要・今すぐ）</b></p>
+      <pre><code><span class="tok-c">&lt;!-- $$ / state / computed / mount が window に載る --&gt;</span>
+&lt;script src=<span class="tok-s">"https://cdn.jsdelivr.net/npm/bridgey/dist/bridgey.vue.js"</span>&gt;&lt;/script&gt;
+&lt;script&gt;
+  useEngine(vueEngine);   <span class="tok-c">// state/computed/mount を使うので最初に一度</span>
+  <span class="tok-c">// ここから下、この章のコードを書いていく</span>
+&lt;/script&gt;</code></pre>
+      <p><b>② npm（本格運用）</b> — 各章の頭に次の1行があると考えてください。</p>
+      <pre><code><span class="tok-k">import</span> { $$, state, computed, mount, useEngine } <span class="tok-k">from</span> <span class="tok-s">"bridgey"</span>;
+<span class="tok-k">import</span> { svelteEngine } <span class="tok-k">from</span> <span class="tok-s">"bridgey/engines/svelte.js"</span>;
+<span class="tok-f">useEngine</span>(svelteEngine);</code></pre>
+      <p>HTMLはこれだけ用意しておきます。</p>
+      <pre><code>&lt;input id=<span class="tok-s">"new"</span> placeholder=<span class="tok-s">"やることを入力…"</span> /&gt;
+&lt;ul id=<span class="tok-s">"list"</span>&gt;&lt;/ul&gt;
+&lt;p&gt;残り &lt;span id=<span class="tok-s">"remain"</span>&gt;0&lt;/span&gt; 件&lt;/p&gt;
+&lt;button id=<span class="tok-s">"save"</span>&gt;サーバへ保存&lt;/button&gt;</code></pre>
+      <div class="tryit"><i class="fa-solid fa-flask"></i> <b>やってみよう：</b>①のHTMLをコピーして開き、コンソールに <code>$$("#list")</code> と打ってみてください。要素が取れれば準備OKです。</div>
+
+      <!-- ===================== CH1 $$ ===================== -->
+      <div class="chapter"><div class="cn">1</div><h2 id="dollar" class="anchor">$ を $$ に — 手癖はそのまま</h2></div>
+      <div class="goal"><b>ゴール：</b>入力欄で <kbd>Enter</kbd> を押したらコンソールに文字を出す。jQueryと同じ書き方で。</div>
+      <p>bridgeyの入口 <code>$$</code> は、jQueryの <code>$</code> とほぼ同じ。セレクタで取得し、<code>.on()</code> でイベントを張り、チェーンでつなげます。<b>置き換えるのは記号1つだけ</b>です。</p>
+      <div class="two">
+        <div>
+          <div class="label"><i class="fa-brands fa-js"></i> これまで（jQuery）</div>
+          <pre><code><span class="tok-f">$</span>(<span class="tok-s">"#new"</span>).on(<span class="tok-s">"keydown"</span>, <span class="tok-k">function</span> (e) {
+  <span class="tok-k">if</span> (e.key === <span class="tok-s">"Enter"</span>) {
+    console.log(<span class="tok-k">this</span>.value);
+  }
+});</code></pre>
+        </div>
+        <div>
+          <div class="label" style="color:var(--accent)"><i class="fa-solid fa-arrow-right"></i> これから（bridgey）</div>
+          <pre><code><span class="tok-f">$$</span>(<span class="tok-s">"#new"</span>).on(<span class="tok-s">"keydown"</span>, <span class="tok-k">function</span> (e) {
+  <span class="tok-k">if</span> (e.key === <span class="tok-s">"Enter"</span>) {
+    console.log(<span class="tok-k">this</span>.value);
+  }
+});</code></pre>
+        </div>
+      </div>
+      <p><code>this</code> がイベント発火元の生DOMを指すのも、<code>function(){}</code> で書くのも、まったく同じ。<a href="#/docs#events">短縮メソッド</a>（<code>.click()</code> 等）や名前空間（<code>.on("scroll.myui")</code>）も使えます。</p>
+      <div class="tryit"><i class="fa-solid fa-flask"></i> <b>やってみよう：</b>手元のjQueryスニペットを1つ、<code>$</code>→<code>$$</code> にして貼り付けてみましょう。DOM操作・イベント・走査ならほぼそのまま動きます。</div>
+
+      <!-- ===================== CH2 ADD ===================== -->
+      <div class="chapter"><div class="cn">2</div><h2 id="add" class="anchor">1件追加する — まずは命令的に</h2></div>
+      <div class="goal"><b>ゴール：</b><kbd>Enter</kbd> で <code>&lt;li&gt;</code> をリストに追加する。「手で <code>append</code>」する、いつものやり方から。</div>
+      <p>状態管理はまだ登場させません。jQuery脳のまま、<b>要素を作って追加</b>します。</p>
+      <pre><code><span class="tok-f">$$</span>(<span class="tok-s">"#new"</span>).on(<span class="tok-s">"keydown"</span>, <span class="tok-k">function</span> (e) {
+  <span class="tok-k">if</span> (e.key !== <span class="tok-s">"Enter"</span> || !<span class="tok-k">this</span>.value.trim()) <span class="tok-k">return</span>;
+  <span class="tok-c">// jQuery定番：文字列から要素を作って append、入力欄は空に</span>
+  <span class="tok-f">$$</span>(<span class="tok-s">"#list"</span>).append(<span class="tok-s">`&lt;li&gt;&lt;span&gt;${this.value}&lt;/span&gt; &lt;button class="del"&gt;✕&lt;/button&gt;&lt;/li&gt;`</span>);
+  <span class="tok-k">this</span>.value = <span class="tok-s">""</span>;
+});</code></pre>
+      <p>動きます。でも——このやり方だと「今いくつ残っているか」を知りたくなるたびに、<b>DOMを数えて、表示も手で書き換える</b>ことになります。件数表示・完了状態・並び替え…と要求が増えるほど、<b>「本当の状態」がDOMのあちこちに散らばって</b>いきます。ここがjQuery開発のしんどさでした。</p>
+      <div class="note"><i class="fa-solid fa-circle-info"></i>次の章から、この「散らばり」を <code>state</code> に1か所へ集めます。<b>DOMは状態の写し</b>、という考え方へ切り替えていきましょう。</div>
+
+      <!-- ===================== CH3 STATE ===================== -->
+      <div class="chapter"><div class="cn">3</div><h2 id="state" class="anchor">state — 値を変えれば表示が追う</h2></div>
+      <div class="goal"><b>ゴール：</b>タスクを配列の <code>state</code> にまとめ、件数表示を「手で更新しない」ようにする。</div>
+      <p><code>state(初期値)</code> はリアクティブな箱です。<code>.value</code> で読み書きし、<code>.subscribe()</code> で「変わったら実行」を登録します（登録時にも即実行されるので初期表示も任せられます）。</p>
+      <pre><code><span class="tok-c">// タスクの「本当の状態」はここ1か所に集める</span>
+<span class="tok-k">const</span> todos = <span class="tok-f">state</span>([]);  <span class="tok-c">// [{ id, text, done }]</span>
+<span class="tok-k">let</span> seq = <span class="tok-s">0</span>;
+
+<span class="tok-f">$$</span>(<span class="tok-s">"#new"</span>).on(<span class="tok-s">"keydown"</span>, <span class="tok-k">function</span> (e) {
+  <span class="tok-k">if</span> (e.key !== <span class="tok-s">"Enter"</span> || !<span class="tok-k">this</span>.value.trim()) <span class="tok-k">return</span>;
+  <span class="tok-c">// ★配列は“新しい参照を代入”して更新する（ここ重要）</span>
+  todos.value = [...todos.value, { id: ++seq, text: <span class="tok-k">this</span>.value.trim(), done: <span class="tok-k">false</span> }];
+  <span class="tok-k">this</span>.value = <span class="tok-s">""</span>;
+});
+
+<span class="tok-c">// 件数表示は“手で書かない”。todos が変わるたび自動で走る</span>
+todos.subscribe((list) =&gt; <span class="tok-f">$$</span>(<span class="tok-s">"#remain"</span>).text(list.length));</code></pre>
+      <div class="warn"><i class="fa-solid fa-triangle-exclamation"></i><b>つまずきポイント：</b>配列・オブジェクトは <code>push</code> などの<b>破壊的変更では通知されません</b>。<code>todos.value = [...todos.value, x]</code> のように<b>新しい参照を代入</b>してください。「値を差し替える」のがモダンの作法です。</div>
+      <p>もう <code>#remain</code> を手で書き換えるコードはどこにもありません。<b>状態を変えるだけ</b>で、表示がついてきます。これが宣言的ということです。</p>
+
+      <!-- ===================== CH4 COMPUTED ===================== -->
+      <div class="chapter"><div class="cn">4</div><h2 id="computed" class="anchor">computed — 派生する値は計算させる</h2></div>
+      <div class="goal"><b>ゴール：</b>「残り＝未完了の件数」を、<code>todos</code> から自動で導く。</div>
+      <p>「残り件数」は <code>todos</code> から<b>計算で出せる</b>値です。こういう派生値は自分で管理せず、<code>computed</code> に任せます。依存（ここでは <code>todos</code>）が変われば自動で計算し直されます。</p>
+      <pre><code><span class="tok-c">// 関数の中で使った state を自動で追跡してくれる</span>
+<span class="tok-k">const</span> remain = <span class="tok-f">computed</span>(() =&gt; todos.value.filter((t) =&gt; !t.done).length);
+
+remain.subscribe((n) =&gt; <span class="tok-f">$$</span>(<span class="tok-s">"#remain"</span>).text(n));</code></pre>
+      <p>これで「残り」は常に正しい値になります。<code>done</code> を切り替えても、削除しても、追加しても——どこにも「残りを再計算する」コードを書かずに。</p>
+      <div class="note"><i class="fa-solid fa-circle-info"></i><code>computed</code> は<b>読み取り専用</b>。依存を明示する書き方 <code>computed(todos, (list) =&gt; …)</code> もありますが、まずは<b>関数だけ渡す自動追跡</b>を覚えれば十分です。</div>
+
+      <!-- ===================== CH5 LIST ===================== -->
+      <div class="chapter"><div class="cn">5</div><h2 id="list" class="anchor">一覧を state から描く</h2></div>
+      <div class="goal"><b>ゴール：</b>「追加時に append」をやめ、<code>todos</code> が変わったら<b>一覧まるごとを描き直す</b>方式にそろえる。</div>
+      <p>状態が1か所にあるので、描画も1か所にまとめられます。「状態 → HTML」を1つの関数にして、<code>subscribe</code> で呼ぶだけ。追加・完了・削除、どの操作でも同じ描画が走ります。</p>
+      <pre><code>todos.subscribe((list) =&gt; {
+  <span class="tok-f">$$</span>(<span class="tok-s">"#list"</span>).html(
+    list.map((t) =&gt;
+      <span class="tok-s">`&lt;li data-id="${t.id}" class="${t.done ? 'done' : ''}"&gt;`</span> +
+      <span class="tok-s">`&lt;span class="txt"&gt;${t.text}&lt;/span&gt; &lt;button class="del"&gt;✕&lt;/button&gt;&lt;/li&gt;`</span>
+    ).join(<span class="tok-s">""</span>)
+  );
+});</code></pre>
+      <div class="tryit"><i class="fa-solid fa-flask"></i> <b>やってみよう：</b>Chapter 2 の「append する行」はもう不要です。消しても、<kbd>Enter</kbd> でちゃんと増えます（状態が変わって再描画されるから）。<b>DOMは状態の写し</b>を体感しましょう。</div>
+      <div class="warn"><i class="fa-solid fa-triangle-exclamation"></i>ユーザー入力を <code>html()</code> に流すときは<b>エスケープ</b>を。実務では <code>text()</code> や置換でサニタイズしてください（本物の部品＝Svelte/Vueなら自動でエスケープされます。これも“卒業”の動機になります）。</div>
+
+      <!-- ===================== CH6 EVENTS ===================== -->
+      <div class="chapter"><div class="cn">6</div><h2 id="events" class="anchor">完了・削除 — イベント委譲が効く</h2></div>
+      <div class="goal"><b>ゴール：</b>行のクリックで完了トグル、✕ で削除。再描画されても動くように。</div>
+      <p>一覧は毎回描き直されるので、個々の <code>&lt;li&gt;</code> に直接 <code>.on()</code> すると<b>描き直した瞬間に外れます</b>。ここで <b>イベント委譲</b>の出番。親（<code>#list</code>）に1回張れば、中の要素が入れ替わっても効き続けます。jQueryでお馴染みの手ですね。</p>
+      <pre><code><span class="tok-k">const</span> byId = (el) =&gt; Number(<span class="tok-f">$$</span>(el).closest(<span class="tok-s">"li"</span>).data(<span class="tok-s">"id"</span>));
+
+<span class="tok-f">$$</span>(<span class="tok-s">"#list"</span>)
+  <span class="tok-c">// 行文字をクリック → done を反転（this=クリックされた .txt）</span>
+  .on(<span class="tok-s">"click"</span>, <span class="tok-s">".txt"</span>, <span class="tok-k">function</span> () {
+    <span class="tok-k">const</span> id = byId(<span class="tok-k">this</span>);
+    todos.value = todos.value.map((t) =&gt; t.id === id ? { ...t, done: !t.done } : t);
+  })
+  <span class="tok-c">// ✕ → フェードしてから状態から除く（jQueryらしく見た目も気持ちよく）</span>
+  .on(<span class="tok-s">"click"</span>, <span class="tok-s">".del"</span>, <span class="tok-k">function</span> () {
+    <span class="tok-k">const</span> id = byId(<span class="tok-k">this</span>);
+    <span class="tok-f">$$</span>(<span class="tok-k">this</span>).closest(<span class="tok-s">"li"</span>).fadeOut(<span class="tok-s">150</span>);
+    <span class="tok-f">setTimeout</span>(() =&gt; (todos.value = todos.value.filter((t) =&gt; t.id !== id)), <span class="tok-s">160</span>);
+  });</code></pre>
+      <p><code>.closest()</code>・<code>.data()</code>・<code>this</code>・<code>.fadeOut()</code>——全部jQueryの手癖のまま。状態の更新方法だけがモダンです。CSSで <code>li.done .txt{ text-decoration:line-through }</code> とすれば、完了表示も再描画に自動で追従します。</p>
+
+      <!-- ===================== CH7 BIND ===================== -->
+      <div class="chapter"><div class="cn">7</div><h2 id="bind" class="anchor">束縛 — subscribe すら省く</h2></div>
+      <div class="goal"><b>ゴール：</b>「残り件数」の <code>subscribe</code> を <code>bindText</code> に置き換え、後片付けも意識する。</div>
+      <p><code>state</code> を要素へ直接つなぐ<b>束縛メソッド</b>があります。<code>subscribe</code> して <code>.text()</code> する定番を、1行に短縮できます。</p>
+      <div class="two">
+        <div>
+          <div class="label">Chapter 4 の書き方</div>
+          <pre><code>remain.subscribe((n) =&gt;
+  <span class="tok-f">$$</span>(<span class="tok-s">"#remain"</span>).text(n)
+);</code></pre>
+        </div>
+        <div>
+          <div class="label" style="color:var(--accent)">束縛で1行に</div>
+          <pre><code><span class="tok-f">$$</span>(<span class="tok-s">"#remain"</span>).bindText(remain);
+<span class="tok-c">// 加工も渡せる：</span>
+<span class="tok-c">// .bindText(remain, (n) =&gt; n + " 件")</span></code></pre>
+        </div>
+      </div>
+      <p>他にも <code>bindClass</code>（真偽でクラス付け外し）・<code>bindAttr</code>・<code>bindValue</code>（入力と双方向）があります。張った購読は内部にたまり、画面を閉じる時に <code>$$(…).dispose()</code> で<b>まとめて解除</b>できます（長時間開く画面のリーク対策）。</p>
+      <pre><code><span class="tok-c">// 例：残り0なら「完了！」バッジを光らせる</span>
+<span class="tok-f">$$</span>(<span class="tok-s">"#remain"</span>).bindClass(<span class="tok-s">"all-done"</span>, remain, (n) =&gt; n === <span class="tok-s">0</span>);</code></pre>
+
+      <!-- ===================== CH8 AJAX ===================== -->
+      <div class="chapter"><div class="cn">8</div><h2 id="ajax" class="anchor">サーバへ保存 — $$.post</h2></div>
+      <div class="goal"><b>ゴール：</b>「保存」ボタンで現在のタスクをAPIへ送る。<code>$.ajax</code> の手触りのまま。</div>
+      <p>通信は <code>$$.ajax / $$.get / $$.post</code>。中身は <code>fetch</code> ですが、<b>jQuery流の <code>.done()/.fail()/.always()</code> でも <code>await</code> でも</b>書けます。オブジェクトを渡すと自動でJSON送信、JSON応答は自動パースされます。</p>
+      <pre><code><span class="tok-c">// async/await 版</span>
+<span class="tok-f">$$</span>(<span class="tok-s">"#save"</span>).on(<span class="tok-s">"click"</span>, <span class="tok-k">async</span> <span class="tok-k">function</span> () {
+  <span class="tok-f">$$</span>(<span class="tok-k">this</span>).prop(<span class="tok-s">"disabled"</span>, <span class="tok-k">true</span>).text(<span class="tok-s">"保存中…"</span>);   <span class="tok-c">// jQueryそのまま</span>
+  <span class="tok-k">try</span> {
+    <span class="tok-k">const</span> res = <span class="tok-k">await</span> $$.post(<span class="tok-s">"/api/todos"</span>, { items: todos.value });
+    <span class="tok-f">$$</span>(<span class="tok-k">this</span>).text(<span class="tok-s">"保存しました ✓"</span>);
+  } <span class="tok-k">catch</span> (err) {
+    <span class="tok-f">$$</span>(<span class="tok-k">this</span>).prop(<span class="tok-s">"disabled"</span>, <span class="tok-k">false</span>).text(<span class="tok-s">"再試行"</span>);
+  }
+});
+
+<span class="tok-c">// jQuery流チェーンが好みならこちらでも同じことができる</span>
+$$.post(<span class="tok-s">"/api/todos"</span>, { items: todos.value })
+  .done((res) =&gt; console.log(res))
+  .fail((err) =&gt; console.error(err))
+  .always(() =&gt; console.log(<span class="tok-s">"完了"</span>));</code></pre>
+      <div class="tryit"><i class="fa-solid fa-flask"></i> <b>やってみよう：</b>本物のエコーAPIで試すなら <code>https://jsonplaceholder.typicode.com/posts</code> を宛先に。実際に動く送信例は <a href="#/examples#form">Examples のフォーム</a>にあります。</div>
+
+      <!-- ===================== CH9 MOUNT ===================== -->
+      <div class="chapter"><div class="cn">9</div><h2 id="mount" class="anchor">卒業 — 本物の部品へ載せ替える</h2></div>
+      <div class="goal"><b>ゴール：</b>「手で <code>html()</code> して描き直す」一覧を、本物のSvelte部品に置き換える。差分更新・自動エスケープ・キー付き並び替えを“タダで”手に入れる。</div>
+      <p>ここまでで <code>$$</code> と <code>state/computed</code> は手に馴染んだはず。複雑さが増してきたら、描画は<b>本物のフレームワーク</b>に委ねます。利用者側は <code>mount</code> するだけ。keyed な差分更新・フォーカス保持・XSS対策は、実績あるエンジンがやってくれます。</p>
+      <pre><code><span class="tok-c">&lt;!-- Todo.svelte（構造・制御構文・差分はSvelteの領分） --&gt;</span>
+<span class="tok-k">&lt;script&gt;</span>
+  <span class="tok-k">export let</span> items = [];
+  <span class="tok-k">export let</span> onToggle, onRemove;   <span class="tok-c">// 外へはコールバックで渡す</span>
+<span class="tok-k">&lt;/script&gt;</span>
+&lt;ul&gt;
+  {#each items as t (t.id)}          <span class="tok-c">// ← キー付き＝賢い差分更新</span>
+    &lt;li class:done={t.done}&gt;
+      &lt;span on:click={() =&gt; onToggle(t.id)}&gt;{t.text}&lt;/span&gt;
+      &lt;button on:click={() =&gt; onRemove(t.id)}&gt;✕&lt;/button&gt;
+    &lt;/li&gt;
+  {/each}
+&lt;/ul&gt;</code></pre>
+      <pre><code><span class="tok-c">// main.js — mount して、props を更新するだけ</span>
+<span class="tok-k">const</span> app = <span class="tok-f">mount</span>(Todo, { target: <span class="tok-s">"#list"</span>, props: { items: todos.value, onToggle, onRemove } });
+todos.subscribe((items) =&gt; app.set({ items }));   <span class="tok-c">// state が変われば部品へ反映</span>
+
+<span class="tok-c">// 画面を閉じる時：購読もDOMも片付く</span>
+<span class="tok-c">// app.destroy();</span></code></pre>
+      <p>入力欄・保存ボタン・残り件数といった“まわり”は <code>$$</code> のままでOK。<b>複雑なところだけ本物の部品へ</b>——これが段階移行の勘所です。動く完成デモは <a href="#/examples#todo">Examples の ToDo</a> を開いてください。</p>
+      <div class="note"><i class="fa-solid fa-circle-info"></i>Svelteは <code>.svelte</code> のコンパイルにビルドが要ります（<code>rollup-plugin-svelte</code>）。<code>brg init</code> なら配線済みのスタータが一発で生成されます。ビルドを避けたいなら、Vueフルビルド同梱の <code>&lt;script&gt;</code> 版で <code>template</code> 文字列の部品を <code>mount</code> できます。</div>
+
+      <!-- ===================== NEXT ===================== -->
+      <h2 id="next" class="anchor">次にどこへ</h2>
+      <p>おつかれさまでした。<code>$</code>→<code>$$</code> から始めて、状態・派生・束縛・通信・本物の部品まで一周しました。もう「新しいフレームワークを一から覚え直す」必要はありません。</p>
+      <div class="tut-map" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr))">
+        <a href="#/docs"><b>DOCS</b>全メソッドの逆引きリファレンス</a>
+        <a href="#/examples"><b>EXAMPLES</b>動くサンプルとコード集</a>
+        <a href="#/docs#cli"><b>CLI</b>brg init でスタータ生成</a>
+        <a href="#/docs#limits"><b>制限・FAQ</b>できること・できないこと</a>
+      </div>
+
+      <div class="pager">
+        <a href="#/"><small>← 戻る</small>トップ</a>
+        <a class="next" href="#/docs"><small>次へ →</small>ドキュメント</a>
+      </div>
+    </main>
+  </div>
+</div>

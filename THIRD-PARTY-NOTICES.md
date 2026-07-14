@@ -1,21 +1,21 @@
 # Third-Party Notices
 
-bridge.js 本体は MIT License です（`LICENSE` 参照）。
+bridgey 本体は MIT License です（`LICENSE` 参照）。
 
 配布ビルド（`dist/`）には、選択に応じて以下のソフトウェアが**同梱**されます。
 これらはそれぞれの権利者に帰属し、各ライセンス（いずれもMIT）に従います。
 
-- `dist/bridge.js` … Svelte を同梱
-- `dist/bridge.vue.js` … Vue を同梱
+- `dist/bridgey.js` … Svelte を同梱
+- `dist/bridgey.vue.js` … Vue を同梱
 
-npm 版（`import "bridge"`）を使う場合、Svelte / Vue は利用者が自身で
-`npm install` した各パッケージが使われます（bridge には同梱されません）。
+npm 版（`import "bridgey"`）を使う場合、Svelte / Vue は利用者が自身で
+`npm install` した各パッケージが使われます（bridgey には同梱されません）。
 
 ---
 
 ## Svelte
 
-`dist/bridge.js` に同梱。
+`dist/bridgey.js` に同梱。
 
 ```
 Copyright (c) 2016-23 the Svelte contributors
@@ -41,7 +41,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ## Vue.js
 
-`dist/bridge.vue.js` に同梱。
+`dist/bridgey.vue.js` に同梱。
 
 ```
 The MIT License (MIT)
@@ -71,10 +71,10 @@ THE SOFTWARE.
 
 ## 商標・関連プロジェクトについて
 
-bridge.js は独立した非公式プロジェクトです。以下のプロジェクト／団体とは
+bridgey は独立した非公式プロジェクトです。以下のプロジェクト／団体とは
 提携・後援・承認の関係にありません。名称は各所有者の商標です。
 
-- **jQuery** — OpenJS Foundation の商標。bridge.js は jQuery の書き味に着想を得ていますが、
+- **jQuery** — OpenJS Foundation の商標。bridgey は jQuery の書き味に着想を得ていますが、
   jQuery のコードは含みません（API を独自に再実装したものです）。
 - **Svelte** — Svelte プロジェクト／contributors。
 - **Vue.js** — Yuxi (Evan) You および Vue.js プロジェクト。

@@ -18,7 +18,7 @@ function wrap(source, { readonly = false } = {}) {
     _src: source,
     get: () => source.value,
     set: (v) => {
-      if (readonly) throw new Error("[bridge] computed は読み取り専用です");
+      if (readonly) throw new Error("[bridgey] computed は読み取り専用です");
       source.value = v;
     },
     update: (fn) => {

@@ -5,4 +5,4 @@ import App from "./App.svelte";
 
 useEngine(svelteEngine);
 
-mount(App, { target: "#app", props: { name: "bridge.js" } });
+mount(App, { target: "#app", props: { name: "bridgey" } });

@@ -1,6 +1,7 @@
 {
-  "name": "bridgeway",
+  "name": "bridgey-site",
   "version": "1.0.0",
+  "private": true,
   "description": "jQueryの書き味で本物のモダンフレームワーク(Svelte/Vue)を、限りなく楽に。エンジン差し替え式。",
   "type": "module",
   "main": "src/index.js",
@@ -11,7 +12,8 @@
     "./engines/vue.js": "./src/engines/vue.js"
   },
   "bin": {
-    "bridgeway": "bin/bridge.js"
+    "brg": "bin/bridgey.js",
+    "bridgey": "bin/bridgey.js"
   },
   "files": [
     "src",
@@ -21,8 +23,8 @@
     "LICENSE",
     "THIRD-PARTY-NOTICES.md"
   ],
-  "unpkg": "dist/bridge.vue.js",
-  "jsdelivr": "dist/bridge.vue.js",
+  "unpkg": "dist/bridgey.vue.js",
+  "jsdelivr": "dist/bridgey.vue.js",
   "engines": {
     "node": ">=18"
   },
@@ -39,6 +41,14 @@
   ],
   "author": "",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ysk/bridgeway-js.git"
+  },
+  "homepage": "https://github.com/ysk/bridgeway-js#readme",
+  "bugs": {
+    "url": "https://github.com/ysk/bridgeway-js/issues"
+  },
   "peerDependencies": {
     "svelte": "^4",
     "vue": "^3"

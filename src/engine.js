@@ -26,11 +26,11 @@
 // 【将来: Vueなどへ差し替え】
 //   同じ契約を満たす vueEngine(state=ref/reactive, computed=computed, mount=createApp)を
 //   用意し useEngine(vueEngine) で差し替える。利用者の $$/state/mount は変えなくていい。
-//   ゆくゆくは「npm install bridge → フレームワーク選択(svelte/vue)」でこれを自動配線する。
+//   ゆくゆくは「npm install bridgey → フレームワーク選択(svelte/vue)」でこれを自動配線する。
 // ────────────────────────────────────────────────────────
 
 // 既定エンジンは静的importしない。
-// → こうすることで、import "bridge" が特定エンジン(svelte)を巻き込まなくなり、
+// → こうすることで、import "bridgey" が特定エンジン(svelte)を巻き込まなくなり、
 //   svelte / vue を optional peer にできる(選んだ方だけ npm install すればよい)。
 //   利用者は起動時に useEngine(svelteEngine | vueEngine) を一度だけ呼ぶ。
 //   (グローバル配布版 src/global.js は既定でsvelteを配線して <script> 用途を保つ)
@@ -39,7 +39,7 @@ let current = null;
 /** 使用するエンジンを選択/差し替える。アプリ起動時に一度だけ呼ぶ。 */
 export function useEngine(adapter) {
   if (!adapter || typeof adapter.state !== "function") {
-    throw new Error("[bridge] 不正なエンジン: state(initial) を実装してください");
+    throw new Error("[bridgey] 不正なエンジン: state(initial) を実装してください");
   }
   current = adapter;
 }
@@ -48,9 +48,9 @@ export function useEngine(adapter) {
 export function engine() {
   if (!current) {
     throw new Error(
-      "[bridge] エンジン未選択です。起動時に useEngine(...) を呼んでください。\n" +
-        '  import { svelteEngine } from "bridgeway/engines/svelte.js"; useEngine(svelteEngine);\n' +
-        '  または import { vueEngine } from "bridgeway/engines/vue.js"; useEngine(vueEngine);'
+      "[bridgey] エンジン未選択です。起動時に useEngine(...) を呼んでください。\n" +
+        '  import { svelteEngine } from "bridgey/engines/svelte.js"; useEngine(svelteEngine);\n' +
+        '  または import { vueEngine } from "bridgey/engines/vue.js"; useEngine(vueEngine);'
     );
   }
   return current;

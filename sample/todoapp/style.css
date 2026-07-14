@@ -17,6 +17,6 @@ h1 { font-size: 22px; }
 .filters button { border: 1px solid var(--line); background: #fff; border-radius: 6px; padding: 4px 10px; margin-left: 4px; cursor: pointer; font-size: 13px; }
 .filters button.active { border-color: var(--accent); color: var(--accent); font-weight: bold; }
 #clear { border: 0; background: none; color: var(--muted); cursor: pointer; font-size: 13px; text-decoration: underline; }
-/* コンポーネント“外”のバッジ。bridgeの $$ が remaining イベントで更新する(領域分離の例) */
+/* コンポーネント“外”のバッジ。bridgeyの $$ が remaining イベントで更新する(領域分離の例) */
 .badge { display: inline-block; min-width: 1.6em; padding: 1px 6px; border-radius: 999px; background: var(--accent); color: #fff; font-size: 13px; text-align: center; vertical-align: middle; }
 .badge.zero { background: #bbb; }

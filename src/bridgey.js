@@ -1,10 +1,10 @@
-// bridge.js
+// bridgey
 // jQueryの書き味 × 本物のモダンフレームワーク。
 //
 // 【このプロジェクトの本質】
 //   モダンな技術(Svelte/将来はVue等)を、限りなく楽に。＝ 学習コストの削減。
 //   「なんちゃって」実装はしない。構造・制御構文・リスト・DOM更新は本物のエンジンに委ねる。
-//   bridge が受け持つのは2つだけ:
+//   bridgey が受け持つのは2つだけ:
 //     (1) jQueryの書き味(命令的グルー) … 既存の手がそのまま動く入口
 //     (2) state / computed … リアクティブ状態(下のエンジンに委譲。Svelte↔Vue差し替え可)
 //   ※ 画面の構造・{#if}/{#each}・DOM差分は .svelte(将来 .vue)側の担当。ここでは持たない。
@@ -86,7 +86,7 @@ export function computed(depsOrFn, fn) {
 // jQueryライクなDOMラッパー(命令的グルー専用。構造描画は持たない)
 // -----------------------------------------------------------------------------
 
-class Bridge {
+class Bridgey {
   constructor(selector) {
     if (selector == null) {
       this.els = [];
@@ -100,7 +100,7 @@ class Bridge {
       } else {
         this.els = [...document.querySelectorAll(selector)];
       }
-    } else if (selector instanceof Bridge) {
+    } else if (selector instanceof Bridgey) {
       this.els = selector.els.slice();
     } else if (selector.nodeType) {
       this.els = [selector];
@@ -128,7 +128,7 @@ class Bridge {
     return this;
   }
   find(sel) {
-    return new Bridge(this.els.flatMap((el) => [...el.querySelectorAll(sel)]));
+    return new Bridgey(this.els.flatMap((el) => [...el.querySelectorAll(sel)]));
   }
 
   // --- 命令的操作(jQuery互換の書き味) -----------------------------------
@@ -179,7 +179,7 @@ class Bridge {
     this.els.forEach((el) => cs.forEach((x) => el.classList.toggle(x, force)));
     return this;
   }
-  // 文字列(HTML) / DOMノード / Bridge / 配列 を受け付ける(jQuery互換)
+  // 文字列(HTML) / DOMノード / Bridgey / 配列 を受け付ける(jQuery互換)
   append(content) {
     const nodes = toNodes(content);
     this.els.forEach((el, i) => {
@@ -240,8 +240,8 @@ class Bridge {
   fadeToggle(ms = 200) {
     this.els.forEach((el) =>
       window.getComputedStyle(el).display === "none"
-        ? new Bridge(el).fadeIn(ms)
-        : new Bridge(el).fadeOut(ms)
+        ? new Bridgey(el).fadeIn(ms)
+        : new Bridgey(el).fadeOut(ms)
     );
     return this;
   }
@@ -280,8 +280,8 @@ class Bridge {
   slideToggle(ms = 200) {
     this.els.forEach((el) =>
       window.getComputedStyle(el).display === "none"
-        ? new Bridge(el).slideDown(ms)
-        : new Bridge(el).slideUp(ms)
+        ? new Bridgey(el).slideDown(ms)
+        : new Bridgey(el).slideUp(ms)
     );
     return this;
   }
@@ -365,24 +365,24 @@ class Bridge {
 
   // --- jQuery定番: 走査 -------------------------------------------------
   parent() {
-    return new Bridge(this.els.map((el) => el.parentElement).filter(Boolean));
+    return new Bridgey(this.els.map((el) => el.parentElement).filter(Boolean));
   }
   closest(sel) {
-    return new Bridge(this.els.map((el) => el.closest(sel)).filter(Boolean));
+    return new Bridgey(this.els.map((el) => el.closest(sel)).filter(Boolean));
   }
   children(sel) {
-    return new Bridge(
+    return new Bridgey(
       this.els.flatMap((el) => [...el.children].filter((c) => !sel || c.matches(sel)))
     );
   }
   next() {
-    return new Bridge(this.els.map((el) => el.nextElementSibling).filter(Boolean));
+    return new Bridgey(this.els.map((el) => el.nextElementSibling).filter(Boolean));
   }
   prev() {
-    return new Bridge(this.els.map((el) => el.previousElementSibling).filter(Boolean));
+    return new Bridgey(this.els.map((el) => el.previousElementSibling).filter(Boolean));
   }
   siblings(sel) {
-    return new Bridge(
+    return new Bridgey(
       this.els.flatMap((el) =>
         [...(el.parentElement?.children || [])].filter(
           (c) => c !== el && (!sel || c.matches(sel))
@@ -393,33 +393,33 @@ class Bridge {
 
   // --- jQuery定番: 絞り込み ---------------------------------------------
   first() {
-    return new Bridge(this.el ? [this.el] : []);
+    return new Bridgey(this.el ? [this.el] : []);
   }
   last() {
-    return new Bridge(this.els.length ? [this.els[this.els.length - 1]] : []);
+    return new Bridgey(this.els.length ? [this.els[this.els.length - 1]] : []);
   }
   eq(i) {
     const el = this.els.at(i);
-    return new Bridge(el ? [el] : []);
+    return new Bridgey(el ? [el] : []);
   }
   filter(sel) {
-    return new Bridge(
+    return new Bridgey(
       this.els.filter((el) => (typeof sel === "function" ? sel(el) : el.matches(sel)))
     );
   }
   not(sel) {
-    return new Bridge(this.els.filter((el) => !el.matches(sel)));
+    return new Bridgey(this.els.filter((el) => !el.matches(sel)));
   }
   add(other) {
     const more =
-      other instanceof Bridge
+      other instanceof Bridgey
         ? other.els
         : typeof other === "string"
         ? [...document.querySelectorAll(other)]
         : other?.nodeType
         ? [other]
         : [];
-    return new Bridge([...this.els, ...more]);
+    return new Bridgey([...this.els, ...more]);
   }
   index() {
     if (!this.el) return -1;
@@ -442,15 +442,15 @@ class Bridge {
     return this;
   }
   clone() {
-    return new Bridge(this.els.map((el) => el.cloneNode(true)));
+    return new Bridgey(this.els.map((el) => el.cloneNode(true)));
   }
   appendTo(target) {
-    const t = target instanceof Bridge ? target.el : typeof target === "string" ? document.querySelector(target) : target;
+    const t = target instanceof Bridgey ? target.el : typeof target === "string" ? document.querySelector(target) : target;
     this.els.forEach((el) => t && t.appendChild(el));
     return this;
   }
   prependTo(target) {
-    const t = target instanceof Bridge ? target.el : typeof target === "string" ? document.querySelector(target) : target;
+    const t = target instanceof Bridgey ? target.el : typeof target === "string" ? document.querySelector(target) : target;
     this.els.forEach((el) => t && t.insertBefore(el, t.firstChild));
     return this;
   }
@@ -627,7 +627,7 @@ class Bridge {
   "mousedown", "mouseup", "mouseenter", "mouseleave", "mouseover", "mouseout",
   "input", "scroll", "contextmenu",
 ].forEach((ev) => {
-  Bridge.prototype[ev] = function (handler) {
+  Bridgey.prototype[ev] = function (handler) {
     return handler ? this.on(ev, handler) : this.trigger(ev);
   };
 });
@@ -638,9 +638,9 @@ function parseEvent(token) {
   return { type, ns };
 }
 
-// append/prepend 等が受け取る「ノード列」に正規化(Bridge/配列/ノード)。文字列は null。
+// append/prepend 等が受け取る「ノード列」に正規化(Bridgey/配列/ノード)。文字列は null。
 function toNodes(content) {
-  if (content instanceof Bridge) return content.els.slice();
+  if (content instanceof Bridgey) return content.els.slice();
   if (Array.isArray(content)) return content.flatMap((c) => toNodes(c) || []);
   if (content && content.nodeType) return [content];
   return null; // 文字列(HTML)は呼び出し側で insertAdjacentHTML
@@ -658,14 +658,14 @@ export function $$(selector) {
     const fn = selector;
     if (document.readyState !== "loading") fn();
     else document.addEventListener("DOMContentLoaded", () => fn());
-    return new Bridge(document);
+    return new Bridgey(document);
   }
-  return new Bridge(selector);
+  return new Bridgey(selector);
 }
 
 // jQueryプラグインの書き味で「自作の」拡張を書く場所。
 // 注意: 既存のjQueryプラグイン(slick等)がそのまま動くわけではない(本物のjQueryに依存するため)。
-$$.fn = Bridge.prototype;
+$$.fn = Bridgey.prototype;
 
 // -----------------------------------------------------------------------------
 // $$.ajax / $$.get / $$.post — fetch の薄いjQuery風ラッパ
@@ -687,7 +687,7 @@ async function coreAjax(url, options = {}) {
     }
   }
   const res = await fetch(url, opts);
-  if (!res.ok) throw new Error(`[bridge] ${res.status} ${res.statusText}`);
+  if (!res.ok) throw new Error(`[bridgey] ${res.status} ${res.statusText}`);
   if (type === "text") return res.text();
   const ct = res.headers.get("content-type") || "";
   return ct.includes("application/json") ? res.json() : res.text();
@@ -767,4 +767,4 @@ $$.map = function (coll, fn) {
 
 $$.trim = (s) => String(s == null ? "" : s).trim();
 
-export { Bridge };
+export { Bridgey };

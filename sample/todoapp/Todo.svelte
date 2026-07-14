@@ -1,15 +1,15 @@
 <!-- Todo.svelte — 本物のSvelteコンポーネント。
-     一覧描画・{#if}/{#each}・DOM差分は全部ここ(Svelte)の担当。bridgeは関与しない。
+     一覧描画・{#if}/{#each}・DOM差分は全部ここ(Svelte)の担当。bridgeyは関与しない。
      旧実装(bindListでinnerHTML総入れ替え)との違い:
        keyed each {#each visible as t (t.id)} → 差分更新。トグル/削除しても
        他行のDOMは作り直されない = チェックボックスのフォーカスや途中状態が飛ばない(②解消)。 -->
 <script>
-  // 周辺グルー(bridge/jQuery側)へ残り件数を渡すコールバック。
+  // 周辺グルー(bridgey/jQuery側)へ残り件数を渡すコールバック。
   // propなので初期化時から在り、初回の派生値も取りこぼさない(イベントのレースを回避)。
   export let onRemaining = () => {};
 
   let todos = [
-    { id: 1, text: "bridge.js を試す", done: true },
+    { id: 1, text: "bridgey を試す", done: true },
     { id: 2, text: "レガシー脳のまま Todo を書く", done: false },
     { id: 3, text: "モダンJSに移行する", done: false },
   ];
@@ -24,7 +24,7 @@
     : todos;
   $: remaining = todos.filter((t) => !t.done).length;
 
-  // 残り件数が変わるたび、外の世界(bridge/jQuery側)へ通知。周辺の命令的表示に使える。
+  // 残り件数が変わるたび、外の世界(bridgey/jQuery側)へ通知。周辺の命令的表示に使える。
   $: onRemaining(remaining);
 
   function add() {
@@ -47,7 +47,7 @@
 </div>
 
 {#if visible.length === 0}
-  <p class="empty">やることがありません 🎉</p>
+  <p class="empty">やることがありません</p>
 {:else}
   <ul class="todos">
     {#each visible as t (t.id)}

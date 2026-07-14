@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>星評価 & レビュー — bridgey</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'" />
+  <style>
+    body{font-family:system-ui,"Hiragino Kaku Gothic ProN",Meiryo,sans-serif;max-width:520px;margin:24px auto;padding:0 16px;color:#222;line-height:1.7}
+    h2{font-size:15px;color:#444;margin:24px 0 8px}
+    .stars{display:inline-flex;gap:4px;font-size:30px;cursor:pointer;user-select:none}
+    .star{color:#dcdce4;transition:transform .08s,color .08s}
+    .star.on{color:#f5b301}
+    .star:hover{transform:scale(1.15)}
+    .rate-label{margin-left:10px;font-size:14px;color:#889;vertical-align:middle}
+    .summary{display:flex;align-items:center;gap:16px;background:#fbfbfe;border:1px solid #eee;border-radius:12px;padding:16px;margin:8px 0}
+    .avg{font-size:42px;font-weight:800;color:#f5b301;line-height:1}
+    .avg small{font-size:14px;color:#aab;font-weight:normal}
+    .bars{flex:1}
+    .bar-row{display:flex;align-items:center;gap:8px;font-size:12px;color:#889}
+    .bar-row .track{flex:1;height:8px;background:#eee;border-radius:4px;overflow:hidden}
+    .bar-row .fill{height:100%;background:#f5b301;width:0;transition:width .3s}
+    textarea{width:100%;font-size:14px;padding:9px 11px;border:1px solid #ccd;border-radius:9px;font-family:inherit;resize:vertical}
+    textarea:focus{outline:none;border-color:#6d5efc}
+    button.post{border:0;background:#6d5efc;color:#fff;border-radius:9px;padding:9px 18px;cursor:pointer;font-weight:bold;margin-top:8px}
+    button.post:disabled{background:#c7c9d6;cursor:not-allowed}
+    .review{border:1px solid #eee;border-radius:10px;padding:11px 14px;margin:8px 0;background:#fff}
+    .review .rs{color:#f5b301;font-size:14px}
+    .review .cm{margin:4px 0 0;font-size:14px}
+    .review .empty{color:#aab}
+    .hint{font-size:12px;color:#aab}
+  </style>
+</head>
+<body>
+  <p style="color:#888;font-size:13px">ホバーでプレビュー、クリックで確定。平均・分布・投稿はすべて <code>state / computed</code>。星の描画は <code>$$</code> の <code>.each</code> / <code>.toggleClass</code>。</p>
+
+  <h2>この商品を評価する</h2>
+  <div>
+    <span class="stars" id="input-stars">
+      <span class="star" data-v="1">★</span><span class="star" data-v="2">★</span><span class="star" data-v="3">★</span><span class="star" data-v="4">★</span><span class="star" data-v="5">★</span>
+    </span>
+    <span class="rate-label" id="rate-label">タップで評価</span>
+  </div>
+  <textarea id="comment" rows="2" placeholder="コメント（任意）"></textarea><br />
+  <button class="post" id="post" disabled>レビューを投稿</button>
+
+  <h2>みんなの評価</h2>
+  <div class="summary">
+    <div><div class="avg" id="avg">0.0</div><small id="avg-count">0件</small></div>
+    <div class="bars" id="bars"></div>
+  </div>
+
+  <div id="reviews"></div>
+
+  <script src="./app.js"></script>
+</body>
+</html>

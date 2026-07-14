@@ -7,6 +7,10 @@
       <div class="grp">実務サンプル</div>
       <a href="#form">フォームバリデーション</a>
       <a href="#basics">タブ・合計（基本）</a>
+      <a href="#search">ライブ検索フィルタ</a>
+      <a href="#cart">ショッピングカート</a>
+      <a href="#modal">モーダル・ギャラリー</a>
+      <a href="#rating">星評価・レビュー</a>
       <a href="#todo">ToDo リスト</a>
       <div class="grp">段階移行</div>
       <a href="#gradation">命令的 → 宣言的</a>
@@ -33,7 +37,7 @@
 <span class="tok-f">$</span>(e.target).closest(<span class="tok-s">"tr"</span>).remove();</code></pre>
         </div>
         <div>
-          <div class="label" style="color:var(--accent)"><i class="fa-solid fa-arrow-right"></i> bridgeway</div>
+          <div class="label" style="color:var(--accent)"><i class="fa-solid fa-arrow-right"></i> bridgey</div>
           <pre><code><span class="tok-f">$$</span>(<span class="tok-s">".tab"</span>).on(<span class="tok-s">"click"</span>, <span class="tok-k">function</span> () {
   <span class="tok-f">$$</span>(<span class="tok-s">".tab"</span>).removeClass(<span class="tok-s">"active"</span>);
   <span class="tok-f">$$</span>(<span class="tok-k">this</span>).addClass(<span class="tok-s">"active"</span>);
@@ -95,6 +99,92 @@ valid.subscribe((v) =&gt; <span class="tok-f">$$</span>(<span class="tok-s">"#su
 <span class="tok-f">$$</span>(<span class="tok-s">"#total"</span>).bindText(total, (v) =&gt; <span class="tok-s">"¥"</span> + v);</code></pre></div>
       </div>
 
+      <h2 id="search" class="anchor">ライブ検索フィルタ（実務）</h2>
+      <p>入力のたびに一覧を絞り込み、ヒット箇所を <code>&lt;mark&gt;</code> で強調。分類チップとの<b>AND条件</b>も <code>computed</code> で宣言的に。検索語・分類はそれぞれ <code>state</code>、絞り込み結果は <code>computed</code> が導きます。</p>
+      <div class="example">
+        <div class="head"><i class="fa-solid fa-magnifying-glass"></i><h3>Live search</h3><span class="tag">pure $$ + state</span><a class="tag" href="sample/search/index.html" target="_blank" style="background:none;color:var(--muted)"><i class="fa-solid fa-up-right-from-square"></i> 開く</a></div>
+        <iframe src="sample/search/index.html" title="live search demo" loading="lazy" style="height:520px"></iframe>
+        <div class="code"><pre><code><span class="tok-c">// 検索語と分類はそれぞれ state に</span>
+<span class="tok-k">const</span> query = <span class="tok-f">state</span>(<span class="tok-s">""</span>), cat = <span class="tok-f">state</span>(<span class="tok-s">"all"</span>);
+
+<span class="tok-c">// 絞り込みは computed（依存が変われば自動で再計算）</span>
+<span class="tok-k">const</span> filtered = <span class="tok-f">computed</span>(() =&gt; {
+  <span class="tok-k">const</span> q = query.value.trim().toLowerCase();
+  <span class="tok-k">return</span> items.filter((it) =&gt;
+    (cat.value === <span class="tok-s">"all"</span> || it.cat === cat.value) &amp;&amp;
+    (q === <span class="tok-s">""</span> || it.name.toLowerCase().includes(q)));
+});
+filtered.subscribe(render); <span class="tok-c">// 変わるたび一覧を描き直す</span>
+
+<span class="tok-c">// 入力は命令的に受ける（jQueryそのまま）</span>
+<span class="tok-f">$$</span>(<span class="tok-s">"#q"</span>).on(<span class="tok-s">"input"</span>, <span class="tok-k">function</span> () { query.value = <span class="tok-k">this</span>.value; });
+<span class="tok-f">$$</span>(<span class="tok-s">"#chips"</span>).on(<span class="tok-s">"click"</span>, <span class="tok-s">".chip"</span>, <span class="tok-k">function</span> () {
+  <span class="tok-f">$$</span>(<span class="tok-s">"#chips .chip"</span>).removeClass(<span class="tok-s">"active"</span>);
+  <span class="tok-f">$$</span>(<span class="tok-k">this</span>).addClass(<span class="tok-s">"active"</span>);
+  cat.value = <span class="tok-k">this</span>.dataset.cat;
+});</code></pre></div>
+      </div>
+
+      <h2 id="cart" class="anchor">ショッピングカート（実務）</h2>
+      <p>数量の増減・行小計・クーポン・送料無料判定・合計。金額は<b>すべて <code>computed</code></b> で、状態が変わるたび自動再計算。操作はイベント委譲＋<code>closest</code>＋<code>fadeOut</code> の jQuery 定番です。</p>
+      <div class="example">
+        <div class="head"><i class="fa-solid fa-cart-shopping"></i><h3>Shopping cart</h3><span class="tag">pure $$ + computed</span><a class="tag" href="sample/cart/index.html" target="_blank" style="background:none;color:var(--muted)"><i class="fa-solid fa-up-right-from-square"></i> 開く</a></div>
+        <iframe src="sample/cart/index.html" title="shopping cart demo" loading="lazy" style="height:560px"></iframe>
+        <div class="code"><pre><code><span class="tok-c">// 金額は積み上げず computed で導く（cart / coupon に依存）</span>
+<span class="tok-k">const</span> subtotal = <span class="tok-f">computed</span>(() =&gt; cart.value.reduce((s, it) =&gt; s + it.price * it.qty, <span class="tok-s">0</span>));
+<span class="tok-k">const</span> discount = <span class="tok-f">computed</span>(() =&gt; Math.floor(subtotal.value * (coupon.value?.rate ?? <span class="tok-s">0</span>)));
+<span class="tok-k">const</span> total    = <span class="tok-f">computed</span>(() =&gt; subtotal.value - discount.value + shipping.value);
+
+<span class="tok-c">// 増減・削除はイベント委譲（再描画されても効く。this=クリック要素）</span>
+<span class="tok-f">$$</span>(<span class="tok-s">"#cart"</span>)
+  .on(<span class="tok-s">"click"</span>, <span class="tok-s">".plus"</span>, <span class="tok-k">function</span> () { patch(idOf(<span class="tok-k">this</span>), (it) =&gt; ({ ...it, qty: it.qty + <span class="tok-s">1</span> })); })
+  .on(<span class="tok-s">"click"</span>, <span class="tok-s">".del"</span>,  <span class="tok-k">function</span> () { <span class="tok-f">$$</span>(<span class="tok-k">this</span>).closest(<span class="tok-s">".item"</span>).fadeOut(<span class="tok-s">150</span>); <span class="tok-c">/* …state から除去 */</span> });
+
+<span class="tok-c">// サマリー行は computed に束縛（bindText で自動追従）</span>
+<span class="tok-f">$$</span>(<span class="tok-s">"#total"</span>).bindText(total, (v) =&gt; <span class="tok-s">"¥"</span> + v.toLocaleString());</code></pre></div>
+      </div>
+
+      <h2 id="modal" class="anchor">モーダル・画像ギャラリー（実務）</h2>
+      <p>タイルをクリックで拡大するライトボックス。<b>イベント委譲</b>で開き、<code>fadeIn/fadeOut</code> で開閉、背景クリック・<code>Esc</code>・矢印キーにも対応。「今どれを開いているか」だけ <code>state</code> で持ちます。</p>
+      <div class="example">
+        <div class="head"><i class="fa-solid fa-images"></i><h3>Lightbox gallery</h3><span class="tag">pure $$ + state</span><a class="tag" href="sample/modal/index.html" target="_blank" style="background:none;color:var(--muted)"><i class="fa-solid fa-up-right-from-square"></i> 開く</a></div>
+        <iframe src="sample/modal/index.html" title="modal gallery demo" loading="lazy" style="height:520px"></iframe>
+        <div class="code"><pre><code><span class="tok-c">// 開いている index だけ state。前へ/次へで付け替える</span>
+<span class="tok-k">const</span> current = <span class="tok-f">state</span>(-<span class="tok-s">1</span>);
+current.subscribe((i) =&gt; { <span class="tok-k">if</span> (i &gt;= <span class="tok-s">0</span>) fillLightbox(photos[i]); });
+
+<span class="tok-c">// タイルを開く（委譲：後から足した要素にも効く）</span>
+<span class="tok-f">$$</span>(<span class="tok-s">"#gallery"</span>).on(<span class="tok-s">"click"</span>, <span class="tok-s">".tile"</span>, <span class="tok-k">function</span> () {
+  current.value = Number(<span class="tok-f">$$</span>(<span class="tok-k">this</span>).data(<span class="tok-s">"i"</span>));
+  <span class="tok-f">$$</span>(<span class="tok-s">"#lb"</span>).fadeIn(<span class="tok-s">150</span>);
+});
+<span class="tok-c">// 背景クリックで閉じる（オーバーレイ自身を押したときだけ）</span>
+<span class="tok-f">$$</span>(<span class="tok-s">"#lb"</span>).on(<span class="tok-s">"click"</span>, <span class="tok-k">function</span> (e) { <span class="tok-k">if</span> (e.target === <span class="tok-k">this</span>) <span class="tok-f">$$</span>(<span class="tok-s">"#lb"</span>).fadeOut(<span class="tok-s">150</span>); });
+<span class="tok-f">$$</span>(document).on(<span class="tok-s">"keydown"</span>, (e) =&gt; { <span class="tok-k">if</span> (e.key === <span class="tok-s">"Escape"</span>) close(); });</code></pre></div>
+      </div>
+
+      <h2 id="rating" class="anchor">星評価・レビュー（実務）</h2>
+      <p>ホバーでプレビュー、クリックで確定。平均・分布バー・投稿一覧はすべて <code>state / computed</code>。星の塗り分けは <code>$$</code> の <code>.each</code> と <code>.toggleClass</code> で。</p>
+      <div class="example">
+        <div class="head"><i class="fa-solid fa-star"></i><h3>Star rating &amp; reviews</h3><span class="tag">pure $$ + computed</span><a class="tag" href="sample/rating/index.html" target="_blank" style="background:none;color:var(--muted)"><i class="fa-solid fa-up-right-from-square"></i> 開く</a></div>
+        <iframe src="sample/rating/index.html" title="star rating demo" loading="lazy" style="height:560px"></iframe>
+        <div class="code"><pre><code><span class="tok-c">// 星の塗りは jQuery の .each そのまま（n個ぶんを on に）</span>
+<span class="tok-k">function</span> paint(n) {
+  <span class="tok-f">$$</span>(<span class="tok-s">"#input-stars .star"</span>).each(<span class="tok-k">function</span> () {
+    <span class="tok-f">$$</span>(<span class="tok-k">this</span>).toggleClass(<span class="tok-s">"on"</span>, Number(<span class="tok-k">this</span>.dataset.v) &lt;= n);
+  });
+}
+<span class="tok-c">// ホバーは仮表示・クリックで確定値(state)を更新</span>
+<span class="tok-f">$$</span>(<span class="tok-s">"#input-stars"</span>)
+  .on(<span class="tok-s">"mouseover"</span>, <span class="tok-s">".star"</span>, <span class="tok-k">function</span> () { paint(Number(<span class="tok-k">this</span>.dataset.v)); })
+  .on(<span class="tok-s">"mouseleave"</span>, () =&gt; paint(myScore.value))
+  .on(<span class="tok-s">"click"</span>, <span class="tok-s">".star"</span>, <span class="tok-k">function</span> () { myScore.value = Number(<span class="tok-k">this</span>.dataset.v); });
+
+<span class="tok-c">// 平均は computed → bindText で自動追従</span>
+<span class="tok-k">const</span> average = <span class="tok-f">computed</span>(() =&gt; avg(reviews.value));
+<span class="tok-f">$$</span>(<span class="tok-s">"#avg"</span>).bindText(average, (v) =&gt; v.toFixed(<span class="tok-s">1</span>));</code></pre></div>
+      </div>
+
       <h2 id="todo" class="anchor">ToDo リスト</h2>
       <p>keyed な差分更新は本物のSvelteに委譲。残り件数は <code>$$</code> グルーでコンポーネント外のバッジへ。</p>
       <div class="example">
@@ -103,7 +193,7 @@ valid.subscribe((v) =&gt; <span class="tok-f">$$</span>(<span class="tok-s">"#su
       </div>
 
       <h2 id="gradation" class="anchor">命令的 → 宣言的（段階移行）</h2>
-      <p>bridgeの芯。まずは<b>命令的</b>（jQuery脳のまま手で更新）。慣れたら<b>宣言的</b>（状態を変えるだけで自動反映）へ、同じ画面で少しずつ。</p>
+      <p>bridgeyの芯。まずは<b>命令的</b>（jQuery脳のまま手で更新）。慣れたら<b>宣言的</b>（状態を変えるだけで自動反映）へ、同じ画面で少しずつ。</p>
       <div class="two">
         <div>
           <div class="label">① 命令的（いつもの手）</div>
@@ -125,8 +215,8 @@ valid.subscribe((v) =&gt; <span class="tok-f">$$</span>(<span class="tok-s">"#su
       <div class="example">
         <div class="head"><i class="fa-solid fa-wand-magic-sparkles"></i><h3>Counter component</h3><span class="tag">svelte</span><a class="tag" href="sample/deep/index.html" target="_blank" style="background:none;color:var(--muted)"><i class="fa-solid fa-up-right-from-square"></i> 開く</a></div>
         <iframe src="sample/deep/index.html" title="svelte component demo" loading="lazy"></iframe>
-        <div class="code"><pre><code><span class="tok-k">import</span> { mount, useEngine } <span class="tok-k">from</span> <span class="tok-s">"bridgeway"</span>;
-<span class="tok-k">import</span> { svelteEngine } <span class="tok-k">from</span> <span class="tok-s">"bridgeway/engines/svelte.js"</span>;
+        <div class="code"><pre><code><span class="tok-k">import</span> { mount, useEngine } <span class="tok-k">from</span> <span class="tok-s">"bridgey"</span>;
+<span class="tok-k">import</span> { svelteEngine } <span class="tok-k">from</span> <span class="tok-s">"bridgey/engines/svelte.js"</span>;
 <span class="tok-f">useEngine</span>(svelteEngine);
 <span class="tok-k">const</span> app = <span class="tok-f">mount</span>(App, { target: <span class="tok-s">"#app"</span> });</code></pre></div>
       </div>
@@ -136,7 +226,7 @@ valid.subscribe((v) =&gt; <span class="tok-f">$$</span>(<span class="tok-s">"#su
       <div class="example">
         <div class="head"><i class="fa-brands fa-vuejs"></i><h3>Counter (Vue engine)</h3><span class="tag">vue</span><a class="tag" href="sample/vue/index.html" target="_blank" style="background:none;color:var(--muted)"><i class="fa-solid fa-up-right-from-square"></i> 開く</a></div>
         <iframe src="sample/vue/index.html" title="vue component demo" loading="lazy"></iframe>
-        <div class="code"><pre><code><span class="tok-k">import</span> { vueEngine } <span class="tok-k">from</span> <span class="tok-s">"bridgeway/engines/vue.js"</span>;
+        <div class="code"><pre><code><span class="tok-k">import</span> { vueEngine } <span class="tok-k">from</span> <span class="tok-s">"bridgey/engines/vue.js"</span>;
 <span class="tok-f">useEngine</span>(vueEngine); <span class="tok-c">// ← ここだけ違う</span></code></pre></div>
       </div>
 

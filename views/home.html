@@ -1,17 +1,16 @@
 <a id="top"></a>
 <div class="wrap">
   <section class="hero" style="border-top:none">
-    <img class="mark" src="./logo.svg" alt="bridgeway" />
-    <div class="kicker">jQuery感覚のまま、モダンへ。</div>
+    <img class="mark" src="./logo.svg" alt="bridgey" />
     <h1>jQuery感覚で、<br /><span class="grad-text">モダン開発</span>。</h1>
     <p class="lead">覚えるのは <code>$</code> を <code>$$</code> にすることだけ。いつものjQueryの書き味そのままで、裏では<strong>本物のSvelte／Vue</strong>が動く。学習コストを限りなく下げて、モダンフロントエンドへ。</p>
     <div class="cta">
-      <a class="btn primary" href="#start">はじめる <i class="fa-solid fa-arrow-right"></i></a>
+      <a class="btn primary" href="#/tutorial"><i class="fa-solid fa-graduation-cap"></i> チュートリアルを始める</a>
       <a class="btn ghost" href="#/examples"><i class="fa-regular fa-circle-play"></i> サンプルを見る</a>
     </div>
     <div class="install">
-      <span class="dollar">$</span><span>npm install bridgeway</span>
-      <button class="copy" data-copy="npm install bridgeway"><i class="fa-regular fa-copy"></i> copy</button>
+      <span class="dollar">$</span><span>npm install bridgey</span>
+      <button class="copy" data-copy="npm install bridgey"><i class="fa-regular fa-copy"></i> copy</button>
     </div>
     <p style="color:var(--muted);font-size:13px;margin-top:14px">もう新しいフロントエンドフレームワークに翻弄されない — <b>エンジンは差し替え式</b>。</p>
   </section>
@@ -20,7 +19,7 @@
 <!-- WHY -->
 <section id="why" class="anchor">
   <div class="wrap">
-    <div class="eyebrow">なぜ bridgeway か</div>
+    <div class="eyebrow">なぜ bridgey か</div>
     <h2>レガシーの手を止めずに、本物の恩恵を。</h2>
     <p class="sub">jQueryが分かるなら、もう入口に立っています。</p>
     <div class="grid">
@@ -29,7 +28,7 @@
       <div class="card"><div class="ico"><i class="fa-solid fa-feather"></i></div><h3>学習コスト最小</h3><p>触るのは3つだけ：<code>$$</code>（jQuery風）・<code>state</code>・<code>mount</code>。「jQuery＋α」で始められる。</p></div>
       <div class="card"><div class="ico"><i class="fa-solid fa-shield-halved"></i></div><h3>CSPセーフ</h3><p>式は <code>eval</code> せずビルド時コンパイル。<code>script-src 'self'</code> の企業／WordPress環境でも動く。</p></div>
       <div class="card"><div class="ico"><i class="fa-solid fa-broom"></i></div><h3>自動で後片付け</h3><p><code>mount().destroy()</code> で購読もDOMもフレームワークが破棄。長時間開く画面でもリークしない。</p></div>
-      <div class="card"><div class="ico"><i class="fa-solid fa-terminal"></i></div><h3>CLIで一発</h3><p><code>bridgeway init</code> でフレームワークを選ぶだけ。配線済みスタータが生成される。</p></div>
+      <div class="card"><div class="ico"><i class="fa-solid fa-terminal"></i></div><h3>CLIで一発</h3><p><code>brg init</code> でフレームワークを選ぶだけ。配線済みスタータが生成される。</p></div>
     </div>
   </div>
 </section>
@@ -43,7 +42,7 @@
     <div class="two">
       <div class="card">
         <div class="label">背景</div>
-        <p>作者はかつてフロントエンドエンジニアとして、jQueryからVueへの移行が難しくとん挫しました。モダン技術に触れられず焦りつつ、日々の業務はレガシー——そんな人は今も多いはず。<b>あの頃の自分を救うための橋</b>を架けたい。それが bridgeway の出発点です。</p>
+        <p>作者はかつてフロントエンドエンジニアとして、jQueryからVueへの移行が難しくとん挫しました。モダン技術に触れられず焦りつつ、日々の業務はレガシー——そんな人は今も多いはず。<b>あの頃の自分を救うための橋</b>を架けたい。それが bridgey の出発点です。</p>
       </div>
       <div class="card">
         <div class="label">誰のためか</div>
@@ -63,12 +62,12 @@
     <div class="steps">
       <div class="step"><div class="n"></div><div>
         <b>インストール</b>
-        <pre><code><span class="tok-c"># bridge本体を入れる</span>
-npm install bridgeway</code></pre>
+        <pre><code><span class="tok-c"># bridgey本体を入れる</span>
+npm install bridgey</code></pre>
       </div></div>
       <div class="step"><div class="n"></div><div>
         <b>フレームワークを選んでスタータ生成</b>
-        <pre><code>npx bridgeway init my-app
+        <pre><code>npx brg init my-app
 <span class="tok-c">?</span> フレームワークを選択:  <span class="tok-k">1) svelte</span>   2) vue
 <span class="tok-c"># → App.(svelte|js) / main.js / build.mjs / index.html を生成</span></code></pre>
       </div></div>
@@ -89,8 +88,28 @@ npx serve .          <span class="tok-c"># index.html を開く</span></code></p
   <div class="wrap">
     <div class="eyebrow">Examples</div>
     <h2>デモ</h2>
-    <p class="sub">同じAPIで、Svelteでも Vueでも。（ローカルで <code>node build.demo.mjs</code> 後に開けます）</p>
+    <p class="sub">jQueryの手癖のまま作った実務サンプルと、本物の部品のデモ。（ローカルで <code>node build.demo.mjs</code> 後に開けます）</p>
     <div class="grid">
+      <a class="samp" href="#/examples#search">
+        <div class="top"><i class="fa-solid fa-magnifying-glass"></i></div>
+        <div class="body"><h3>ライブ検索フィルタ</h3><p>入力のたびに絞り込み＋ハイライト。分類とのAND条件を <code>computed</code> で。</p><div class="go">見る →</div></div>
+      </a>
+      <a class="samp" href="#/examples#cart">
+        <div class="top"><i class="fa-solid fa-cart-shopping"></i></div>
+        <div class="body"><h3>ショッピングカート</h3><p>数量・クーポン・送料・合計。金額は全部 <code>computed</code> で自動再計算。</p><div class="go">見る →</div></div>
+      </a>
+      <a class="samp" href="#/examples#modal">
+        <div class="top"><i class="fa-solid fa-images"></i></div>
+        <div class="body"><h3>モーダル・ギャラリー</h3><p>委譲で開くライトボックス。<code>fadeIn/fadeOut</code>・Esc・矢印キー対応。</p><div class="go">見る →</div></div>
+      </a>
+      <a class="samp" href="#/examples#rating">
+        <div class="top"><i class="fa-solid fa-star"></i></div>
+        <div class="body"><h3>星評価・レビュー</h3><p>ホバー＆クリック評価、平均・分布・投稿。<code>.each</code>/<code>.toggleClass</code>。</p><div class="go">見る →</div></div>
+      </a>
+      <a class="samp" href="#/examples#form">
+        <div class="top"><i class="fa-solid fa-clipboard-check"></i></div>
+        <div class="body"><h3>フォーム検証</h3><p>入力ごと検証・強度メーター・「全OKで送信」を <code>$$.post</code> で送信。</p><div class="go">見る →</div></div>
+      </a>
       <a class="samp" href="sample/deep/index.html">
         <div class="top"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
         <div class="body"><h3>最小デモ（Svelte）</h3><p>カウンタ・<code>{#if}</code>・破棄。CSP有効、入力フォーカスも保持。</p><div class="go">開く →</div></div>
@@ -104,7 +123,10 @@ npx serve .          <span class="tok-c"># index.html を開く</span></code></p
         <div class="body"><h3>同じ画面をVueで</h3><p>利用者コードはSvelte版とほぼ同一。<code>useEngine(vueEngine)</code> を足すだけ。</p><div class="go">開く →</div></div>
       </a>
     </div>
-    <p style="margin-top:24px"><a class="btn ghost" href="#/examples"><i class="fa-regular fa-circle-play"></i> サンプル一覧（コード付き）</a></p>
+    <p style="margin-top:24px">
+      <a class="btn primary" href="#/tutorial"><i class="fa-solid fa-graduation-cap"></i> チュートリアルで手を動かす</a>
+      <a class="btn ghost" href="#/examples"><i class="fa-regular fa-circle-play"></i> サンプル一覧（コード付き）</a>
+    </p>
   </div>
 </section>
 
@@ -117,21 +139,21 @@ npx serve .          <span class="tok-c"># index.html を開く</span></code></p
     <div class="two">
       <div class="card">
         <div class="label"><i class="fa-brands fa-npm"></i> npm（本格運用）</div>
-        <pre><code>npm install bridgeway
+        <pre><code>npm install bridgey
 <span class="tok-c"># 使う方だけ(optional peer)</span>
 npm install svelte   <span class="tok-c"># or</span>  npm install vue</code></pre>
-        <p style="color:var(--muted);font-size:13.5px;margin-top:12px"><code>bridgeway init</code> で配線済みスタータ。部品は <code>.svelte</code> / <code>.vue</code> をビルドします。</p>
+        <p style="color:var(--muted);font-size:13.5px;margin-top:12px"><code>brg init</code> で配線済みスタータ。部品は <code>.svelte</code> / <code>.vue</code> をビルドします。</p>
       </div>
       <div class="card">
         <div class="label"><i class="fa-solid fa-bolt"></i> &lt;script&gt;（ビルド不要・CDN）</div>
         <pre><code><span class="tok-c">&lt;!-- Vueフルビルド同梱。mountまで全部動く --&gt;</span>
-&lt;script src=<span class="tok-s">"…/bridge.vue.js"</span>&gt;&lt;/script&gt;
+&lt;script src=<span class="tok-s">"…/bridgey.vue.js"</span>&gt;&lt;/script&gt;
 &lt;script&gt;
   <span class="tok-k">const</span> App = { data: () =&gt; ({ n: 0 }),
     template: <span class="tok-s">`&lt;button @click="n++"&gt;{{ n }}&lt;/button&gt;`</span> };
   <span class="tok-f">mount</span>(App, { target: <span class="tok-s">"#app"</span> });
 &lt;/script&gt;</code></pre>
-        <p style="color:var(--muted);font-size:13.5px;margin-top:12px">Vue公式のCDNフルビルドと同じ発想。<code>$$ / state / mount</code> が <code>window</code> に。軽量な <code>bridgeway</code>(Svelte・$$/state中心)版もあります。</p>
+        <p style="color:var(--muted);font-size:13.5px;margin-top:12px">Vue公式のCDNフルビルドと同じ発想。<code>$$ / state / mount</code> が <code>window</code> に。軽量な <code>bridgey</code>(Svelte・$$/state中心)版もあります。</p>
       </div>
     </div>
   </div>
