@@ -106,7 +106,7 @@
     try {
       await navigator.clipboard.writeText(this.dataset.copy);
       const t = this.textContent;
-      this.textContent = "✓ copied";
+      this.textContent = "copied";
       setTimeout(() => (this.textContent = t), 1200);
     } catch (e) {}
   });

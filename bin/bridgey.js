@@ -4,8 +4,8 @@
 // 究極ビジョンの入口:
 //   npm install bridgey
 //   npx brg init my-app
-//     ? フレームワークを選択:  ❯ svelte   vue
-//     ? 言語を選択:            ❯ js       ts
+//     ? フレームワークを選択:  > svelte   vue
+//     ? 言語を選択:            > js       ts
 //   → 選んだエンジン + 言語に配線済みのスタータ一式を生成する。
 //
 // 依存ゼロ(Node標準のみ)。対話選択、または --framework / --lang で非対話。
@@ -448,12 +448,12 @@ async function init(args) {
 
   let framework = args.framework;
   if (framework && !FRAMEWORKS.includes(framework)) {
-    stdout.write(`✗ 未対応のフレームワーク: ${framework}（svelte|vue）\n`);
+    stdout.write(`Error: 未対応のフレームワーク: ${framework}（svelte|vue）\n`);
     process.exit(1);
   }
   let lang = args.lang;
   if (lang && !LANGUAGES.includes(lang)) {
-    stdout.write(`✗ 未対応の言語: ${lang}（js|ts）\n`);
+    stdout.write(`Error: 未対応の言語: ${lang}（js|ts）\n`);
     process.exit(1);
   }
 
@@ -484,7 +484,7 @@ async function init(args) {
 
   // 新規フォルダ生成時のみ「空でないと拒否」。"." は既存カレントへ載せるのでスキップ。
   if (!useCwd && existsSync(target) && (await readdir(target)).length > 0) {
-    stdout.write(`✗ ${dir} は空ではありません。別の場所を指定してください。\n`);
+    stdout.write(`Error: ${dir} は空ではありません。別の場所を指定してください。\n`);
     process.exit(1);
   }
 
@@ -494,7 +494,7 @@ async function init(args) {
     await writeFile(join(target, rel), content);
   }
 
-  stdout.write(`\n✓ ${framework} · ${lang} スタータを生成: ${useCwd ? "現在のフォルダ" : dir + "/"}\n`);
+  stdout.write(`\nOK: ${framework} · ${lang} スタータを生成: ${useCwd ? "現在のフォルダ" : dir + "/"}\n`);
   Object.keys(files).sort().forEach((f) => stdout.write(`    ${f}\n`));
   stdout.write(
     `\n次の手順:\n` +

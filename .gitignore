@@ -9,3 +9,5 @@ sample/todoapp/todo.js
 scratch-*.mjs
 
 # dist/ は <script>/CDN 配布物なので追跡する（無視しない）
+
+.vercel

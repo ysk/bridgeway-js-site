@@ -1,0 +1,13 @@
+node_modules
+src
+bin
+build.mjs
+build.demo.mjs
+package.json
+package-lock.json
+*.md
+LICENSE
+firebase.json
+.git
+.gitignore
+.claude
