@@ -2,8 +2,8 @@
 <div class="wrap">
   <section class="hero" style="border-top:none">
     <img class="mark" src="./logo.svg" alt="bridgey" />
-    <h1>jQuery感覚で、<br /><span class="grad-text">モダン開発</span>。</h1>
-    <p class="lead">覚えるのは <code>$</code> を <code>$$</code> にすることだけ。いつものjQueryの書き味そのままで、裏では<strong>本物のSvelte／Vue</strong>が動く。学習コストを限りなく下げて、モダンフロントエンドへ。</p>
+    <h1>jQueryの手に、<br /><span class="grad-text">リアクティビティ</span>を。</h1>
+    <p class="lead">覚えるのは <code>$</code> を <code>$$</code> にするだけ。使い慣れたjQueryの書き味に、<strong>自動で反映される状態（<code>state</code> / <code>computed</code>）</strong>が加わります。「数量を変えたら合計も勝手に直る」——<strong>ビルドもコンポーネントも要らず</strong>、<code>&lt;script&gt;</code> 一本から。複雑になった画面は、そのまま<strong>本物のSvelte</strong>へ引き上げられます。</p>
     <div class="cta">
       <a class="btn primary" href="#/tutorial"><i class="fa-solid fa-graduation-cap"></i> チュートリアルを始める</a>
       <a class="btn ghost" href="#/examples"><i class="fa-regular fa-circle-play"></i> サンプルを見る</a>
@@ -16,7 +16,7 @@
       <span class="dollar">CDN</span><span class="url">https://cdn.jsdelivr.net/npm/bridgey/dist/bridgey.vue.js</span>
       <button class="copy" data-copy="https://cdn.jsdelivr.net/npm/bridgey/dist/bridgey.vue.js"><i class="fa-regular fa-copy"></i> copy</button>
     </div>
-    <p style="color:var(--muted);font-size:13px;margin-top:14px">もう新しいフロントエンドフレームワークに翻弄されない — <b>エンジンは差し替え式</b>。</p>
+    <p style="color:var(--muted);font-size:13px;margin-top:14px">覚えた書き味（<code>$$ / state / mount</code>）は変わらない。<b>下のSvelteが進化しても、あなたのコードはそのまま</b>。</p>
   </section>
 </div>
 
@@ -24,14 +24,14 @@
 <section id="why" class="anchor">
   <div class="wrap">
     <div class="eyebrow">なぜ bridgey か</div>
-    <h2>レガシーの手を止めずに、本物の恩恵を。</h2>
+    <h2>レガシーの手を止めずに、"変えたら反映"を。</h2>
     <p class="sub">jQueryが分かるなら、もう入口に立っています。</p>
     <div class="grid">
-      <div class="card"><div class="ico"><i class="fa-solid fa-puzzle-piece"></i></div><h3>本物のフレームワーク</h3><p>構造・制御構文・DOM差分は本物のSvelte／Vueに委譲。外科手術的な更新で、フォーカスも入力途中も飛ばない。</p></div>
-      <div class="card"><div class="ico"><i class="fa-solid fa-right-left"></i></div><h3>エンジン差し替え式</h3><p>利用者の <code>$$/state/mount</code> は不変のまま、下をSvelte↔Vueに交換。フレームワークの寿命に振り回されない。</p></div>
-      <div class="card"><div class="ico"><i class="fa-solid fa-feather"></i></div><h3>学習コスト最小</h3><p>触るのは3つだけ：<code>$$</code>（jQuery風）・<code>state</code>・<code>mount</code>。「jQuery＋α」で始められる。</p></div>
+      <div class="card"><div class="ico"><i class="fa-solid fa-arrows-rotate"></i></div><h3>jQueryに、リアクティビティ</h3><p><code>state</code>／<code>computed</code> で「変えたら自動で反映」。合計・絞り込み・出し分けを、もう手で書き直さない。</p></div>
+      <div class="card"><div class="ico"><i class="fa-solid fa-bolt"></i></div><h3>ビルドなしで始まる</h3><p><code>&lt;script&gt;</code> 一本で <code>$$</code>／<code>state</code>／<code>computed</code>。npmもツールチェーンも後回しでいい。</p></div>
+      <div class="card"><div class="ico"><i class="fa-solid fa-feather"></i></div><h3>学習コスト最小</h3><p>触るのは <code>$$</code>（jQuery風）・<code>state</code>・<code>computed</code>・<code>mount</code>。「jQuery＋α」で始められる。</p></div>
+      <div class="card"><div class="ico"><i class="fa-solid fa-puzzle-piece"></i></div><h3>複雑になったら本物へ</h3><p>重い画面は <code>mount</code> で本物のSvelteへ引き上げ。DOM差分も後片付けもエンジン任せ。フォーカスも入力途中も飛ばない。</p></div>
       <div class="card"><div class="ico"><i class="fa-solid fa-shield-halved"></i></div><h3>CSPセーフ</h3><p>式は <code>eval</code> せずビルド時コンパイル。<code>script-src 'self'</code> の企業／WordPress環境でも動く。</p></div>
-      <div class="card"><div class="ico"><i class="fa-solid fa-broom"></i></div><h3>自動で後片付け</h3><p><code>mount().destroy()</code> で購読もDOMもフレームワークが破棄。長時間開く画面でもリークしない。</p></div>
       <div class="card"><div class="ico"><i class="fa-solid fa-terminal"></i></div><h3>CLIで一発</h3><p><code>brg init</code> でフレームワークを選ぶだけ。配線済みスタータが生成される。</p></div>
     </div>
   </div>
@@ -113,6 +113,10 @@ npx serve .          <span class="tok-c"># index.html を開く</span></code></p
       <a class="samp" href="#/examples#form">
         <div class="top"><i class="fa-solid fa-clipboard-check"></i></div>
         <div class="body"><h3>フォーム検証</h3><p>入力ごと検証・強度メーター・「全OKで送信」を <code>$$.post</code> で送信。</p><div class="go">見る →</div></div>
+      </a>
+      <a class="samp" href="#/examples#migrate">
+        <div class="top"><i class="fa-solid fa-bridge"></i></div>
+        <div class="body"><h3>レガシー×Svelte（卒業ルート）</h3><p>入力はjQueryのまま、重い描画だけSvelteへ。共有 <code>state</code> で橋渡し。</p><div class="go">見る →</div></div>
       </a>
       <a class="samp" href="sample/deep/index.html">
         <div class="top"><i class="fa-solid fa-wand-magic-sparkles"></i></div>

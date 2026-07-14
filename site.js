@@ -90,12 +90,26 @@
     }
   });
 
+  // --- ハンバーガーメニュー(モバイル) ---
+  // 永続navなので一度だけ配線。開閉は .open クラス、閉じるのはリンク押下時。
+  const navLinks = $$("#navLinks");
+  const closeMenu = () => {
+    navLinks.removeClass("open");
+    $$("#navToggle").attr("aria-expanded", "false");
+  };
+  $$("#navToggle").on("click", function () {
+    const open = navLinks.toggleClass("open").hasClass("open");
+    this.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+  // ドロワー内のリンク/ボタンを押したら閉じる(テーマ切替は除く=開いたまま切替確認)
+  $$("nav .links a").on("click", closeMenu);
+
   // --- テーマ(localStorageで維持。永続navなので一度だけ) ---
   const saved = localStorage.getItem("bridgey-theme");
   if (saved) root.setAttribute("data-theme", saved);
   $$("#themeBtn").on("click", () => {
-    const cur = root.getAttribute("data-theme")
-      || (matchMedia("(prefers-color-scheme:dark)").matches ? "dark" : "light");
+    // 端末のダーク設定は見ない。未設定＝ライト基準(PCと同じ)。
+    const cur = root.getAttribute("data-theme") || "light";
     const next = cur === "dark" ? "light" : "dark";
     root.setAttribute("data-theme", next);
     localStorage.setItem("bridgey-theme", next);

@@ -14,6 +14,7 @@
       <a href="#todo">ToDo リスト</a>
       <div class="grp">段階移行</div>
       <a href="#gradation">命令的 → 宣言的</a>
+      <a href="#migrate">レガシー×Svelteを橋渡し</a>
       <div class="grp">本物の部品</div>
       <a href="#svelte">Svelte を載せる</a>
       <a href="#vue">Vue に差し替え</a>
@@ -21,7 +22,7 @@
 
     <main class="content">
       <h1>実装サンプル</h1>
-      <p class="muted">まずは<b>jQueryの書き味そのまま</b>から。実務でよくある処理を、いつもの手で。埋め込みは<b>実際に動くデモ</b>です（ローカルは <code>node build.demo.mjs</code> 後に表示）。</p>
+      <p class="muted">まずは<b>jQueryの書き味そのまま</b>から。実務でよくある処理を、いつもの手で——ただし合計・絞り込み・出し分けは <code>state</code>／<code>computed</code> が<b>自動で追従</b>します（手で書き直さない）。埋め込みは<b>実際に動くデモ</b>です（ローカルは <code>node build.demo.mjs</code> 後に表示）。</p>
 
       <h2 id="compare" class="anchor">$ → $$ にするだけ</h2>
       <p>既存のjQueryコードは、ほとんど <code>$</code> を <code>$$</code> に置き換えるだけで動きます。手が覚えた書き方はそのまま。</p>
@@ -209,6 +210,26 @@ current.subscribe((i) =&gt; { <span class="tok-k">if</span> (i &gt;= <span class
 <span class="tok-f">$$</span>(<span class="tok-s">"#count"</span>).bindText(n); <span class="tok-c">// 自動</span></code></pre>
         </div>
       </div>
+
+      <h2 id="migrate" class="anchor">レガシー×Svelteを state で橋渡し（卒業ルート）</h2>
+      <p>全書き換えは要りません。ページを<b>領域で色分け</b>して、<b>入力・イベントは jQuery の領域のまま</b>、複雑な描画だけ<b>Svelteに受け持たせた領域</b>に切り出す。両者は<b>共有 <code>state</code></b> で会話します——お互いのDOMには触らないので<b>ズレません</b>。1ページの中で、少しずつモダンへ卒業していけます。</p>
+      <div class="example">
+        <div class="head"><i class="fa-solid fa-bridge"></i><h3>Legacy × Svelte</h3><span class="tag">$$ + state + svelte</span><a class="tag" href="sample/migrate/index.html" target="_blank" style="background:none;color:var(--muted)"><i class="fa-solid fa-up-right-from-square"></i> 開く</a></div>
+        <iframe src="sample/migrate/index.html" title="legacy x svelte bridge demo" loading="lazy" style="height:360px"></iframe>
+        <div class="code"><pre><code><span class="tok-c">// 共有 state = 橋（どちらのDOMにも相乗りしない）</span>
+<span class="tok-k">const</span> query = <span class="tok-f">state</span>(<span class="tok-s">""</span>);
+<span class="tok-k">const</span> results = <span class="tok-f">computed</span>(query, (q) =&gt; q ? ALL.filter((x) =&gt; x.includes(q)) : ALL);
+
+<span class="tok-c">// jQueryの領域: DOMを直接いじらず state に書くだけ</span>
+<span class="tok-f">$$</span>(<span class="tok-s">"#q"</span>).on(<span class="tok-s">"input"</span>, (e) =&gt; (query.value = e.target.value));
+
+<span class="tok-c">// Svelteの領域: 共有 state を渡して描画を丸投げ</span>
+<span class="tok-k">const</span> app = <span class="tok-f">mount</span>(App, { target: <span class="tok-s">"#panel"</span>, props: { query, items: results } });
+
+<span class="tok-c">// Svelte → jQuery: Svelteが出したイベントを jQuery で受ける</span>
+app.on(<span class="tok-s">"pick"</span>, (e) =&gt; <span class="tok-f">$$</span>(<span class="tok-s">"#picked"</span>).text(<span class="tok-s">"選択: "</span> + e.detail));</code></pre></div>
+      </div>
+      <div class="note"><i class="fa-solid fa-circle-info"></i>逆に、<b>Svelteが描画したノードを <code>$$</code> で直接書き換えるのは避けてください</b>（再描画でズレます）。会話は必ず <code>state</code> かイベント経由で。</div>
 
       <h2 id="svelte" class="anchor">本物の部品を載せる（Svelte）</h2>
       <p>複雑な画面は本物のSvelteへ。<code>mount</code> で載せるだけ。</p>

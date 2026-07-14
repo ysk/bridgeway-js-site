@@ -3,8 +3,10 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>bridgey — jQuery感覚で、モダン開発。</title>
-<meta name="description" content="jQueryでできるモダン開発。$$ の書き味そのままで、裏では本物のSvelte/Vueが動く。学習コスト最小でモダンフロントエンドへ。" />
+<meta name="color-scheme" content="light" />
+<meta name="theme-color" content="#ffffff" />
+<title>bridgey — jQueryの手に、リアクティビティを。</title>
+<meta name="description" content="jQueryの書き味そのままに、自動で反映される状態(state/computed)を。ビルドもコンポーネントも要らず、<script>一本から。複雑な画面は本物のSvelteへ。" />
 <link rel="icon" href="./logo.svg" type="image/svg+xml" />
 <link rel="stylesheet" href="./vendor/fontawesome/css/all.min.css" />
 <link rel="stylesheet" href="./styles.css" />
@@ -24,7 +26,8 @@
         </svg>
         bridgey
       </a>
-      <div class="links">
+      <button class="nav-toggle" id="navToggle" aria-label="メニュー" aria-expanded="false" aria-controls="navLinks"><i class="fa-solid fa-bars"></i></button>
+      <div class="links" id="navLinks">
         <a href="#/" data-route="home">Home</a>
         <a href="#why" data-scroll="why" class="hide-sm">Why</a>
         <a href="#philosophy" data-scroll="philosophy" class="hide-sm">Concept</a>
@@ -40,11 +43,13 @@
 </header>
 
 <!-- ビューはここに bridgey($$/state/$$.get) で差し込む(SPA) -->
-<main id="app" aria-live="polite"><div class="wrap" style="padding:60px 0;color:var(--muted)">読み込み中…</div></main>
+<main id="app" aria-live="polite">
+  <div class="wrap" style="padding:60px 0;color:var(--muted)">読み込み中…</div>
+</main>
 
 <footer>
   <div class="wrap">
-    <div>© bridgey — jQuery感覚で、モダン開発。</div>
+    <div>© bridgey — jQueryの手に、リアクティビティを。</div>
     <div style="display:flex;gap:18px">
       <a href="#/tutorial">Tutorial</a>
       <a href="#/docs">Docs</a>
@@ -57,8 +62,9 @@
   </div>
 </footer>
 
-<!-- このサイト自身が bridgey(Svelte版) で動く = ドッグフーディング -->
+<!-- このサイトもbridgeyを使用しています！ -->
 <script src="./dist/bridgey.js"></script>
 <script src="./site.js"></script>
 </body>
 </html>
+

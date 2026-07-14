@@ -76,6 +76,13 @@ const demos = [
     name: "RatingDemo",
     plugins: [],
   },
+  {
+    // 段階移行の卒業ルート: レガシー($$)×島(Svelte)を共有stateで橋渡し
+    input: "sample/migrate/main.js",
+    file: "sample/migrate/app.js",
+    name: "MigrateDemo",
+    plugins: [svelte({ emitCss: false, compilerOptions: { dev: false } })],
+  },
 ];
 
 for (const demo of demos) {
