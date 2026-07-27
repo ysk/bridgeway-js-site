@@ -113,7 +113,7 @@ var quantity     = 1;
 function render() {
   $("#n").text(quantity);
   $("#doubled").text(quantity * 2);                          // 書き忘れるとここだけ古い
-  $("#total").text((quantity * UNIT_PRICE).toLocaleString()); // 書き忘れると金額が合わない
+  $("#total").text((quantity * UNIT_PRICE).toLocaleString()); // 書き忘れると数値計算が合わない
 
   $("#inc").prop("disabled", quantity >= MAX_QUANTITY);
   $("#dec").prop("disabled", quantity &lt;= 1);
@@ -658,22 +658,22 @@ $("#cart").on("click", ".inc", function () {
   var $qty = $(this).closest(".row").find(".qty");   // 構造に依存する
 
   $qty.text(Number($qty.text()) + 1);
-  calcTotal();          // ← 呼び忘れたら金額が合わない
+  calcTotal();          // ← 呼び忘れたら数値計算が合わない
 });
 
 $("#cart").on("click", ".dec", function () {
   var $qty = $(this).closest(".row").find(".qty");
 
   $qty.text(Math.max(1, Number($qty.text()) - 1));
-  calcTotal();          // ← 呼び忘れたら金額が合わない
+  calcTotal();          // ← 呼び忘れたら数値計算が合わない
 });
 
 $("#cart").on("click", ".del", function () {
   $(this).closest(".row").remove();
-  calcTotal();          // ← 呼び忘れたら金額が合わない
+  calcTotal();          // ← 呼び忘れたら数値計算が合わない
 });
 
-$("#coupon").on("change", calcTotal);   // ← 呼び忘れたら金額が合わない
+$("#coupon").on("change", calcTotal);   // ← 呼び忘れたら数値計算が合わない
 
 calcTotal();            // 初期表示のためにもう1回（これも忘れがち）</code></pre></template>
       </div>

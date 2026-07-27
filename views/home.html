@@ -83,7 +83,7 @@ var quantity   = 1;
 // 表示を更新する関数を1つ作り、変えた場所すべてから呼ぶ
 function render() {
   $("#qty").text(quantity);
-  $("#total").text((quantity * UNIT_PRICE).toLocaleString());  // 書き忘れると金額が合わない
+  $("#total").text((quantity * UNIT_PRICE).toLocaleString());  // 書き忘れると数値計算が合わない
   $("#free").toggle(quantity >= 3);
   $("#bar > i").css("width", Math.min(100, quantity * 20) + "%");
 }
