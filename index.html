@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="color-scheme" content="light" />
 <meta name="theme-color" content="#ffffff" />
-<title>bridgey — jQueryの手に、リアクティビティを。</title>
-<meta name="description" content="jQueryの書き味そのままに、自動で反映される状態(state/computed)を。ビルドもコンポーネントも要らず、<script>一本から。複雑な画面は本物のSvelteへ。" />
+<title>bridgey — jQuery のまま、モダンに。</title>
+<meta name="description" content="保守する人のためのライブラリ。jQueryの書き味そのままに、自動で反映される状態(state/computed)を。ビルド不要・依存ゼロ・gzip16kB・CSPセーフ。HTMLは1文字も変えなくていい。" />
 <link rel="icon" href="./logo.svg" type="image/svg+xml" />
 <link rel="stylesheet" href="./vendor/fontawesome/css/all.min.css" />
 <link rel="stylesheet" href="./dist/styles.css" />
@@ -49,7 +49,7 @@
 
 <footer>
   <div class="wrap">
-    <div>© bridgey — jQueryの手に、リアクティビティを。</div>
+    <div>© bridgey — jQuery のまま、モダンに。</div>
     <div style="display:flex;gap:18px">
       <a href="#/tutorial">Tutorial</a>
       <a href="#/docs">Docs</a>
@@ -58,12 +58,16 @@
     </div>
   </div>
   <div class="wrap" style="margin-top:14px;font-size:12px;line-height:1.6;opacity:.75">
-    MIT License. 独立した非公式プロジェクトです。jQuery / Svelte / Vue の各プロジェクト・団体とは提携・後援・承認の関係にありません（jQuery の書き味に着想を得ていますが、コードは含みません）。各名称は権利者の商標です。
+    MIT License. 依存ゼロの独立した非公式プロジェクトです。jQuery プロジェクト・団体とは提携・後援・承認の関係にありません（jQuery の書き味に着想を得ていますが、コードは含みません）。各名称は権利者の商標です。
   </div>
 </footer>
 
 <!-- このサイトもbridgeyを使用しています！ -->
 <script src="./dist/bridgey.js"></script>
+<!-- ビューは build 時に埋め込む（file:// で直接開いても動くように） -->
+<script src="./dist/views.js"></script>
+<!-- サンプルの HTML と JS（build 時に実装から抜き出したもの） -->
+<script src="./dist/samples.js"></script>
 <script src="./dist/site.js"></script>
 </body>
 </html>
