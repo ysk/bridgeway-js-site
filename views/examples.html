@@ -1,352 +1,923 @@
+<a id="top"></a>
+
+<style>
+  .ex-form { display: grid; gap: 14px; }
+  .ex-row { display: grid; gap: 4px; }
+  .ex-row label { font-size: 12.5px; color: var(--muted); }
+  .ex-row input[type=text], .ex-row input[type=email], .ex-row input[type=tel],
+  .ex-row input[type=password], .ex-row select {
+    width: 100%; padding: 9px 11px; border: 1px solid var(--line); border-radius: 8px;
+    background: transparent; color: inherit; font: inherit;
+  }
+  .ex-row input[data-invalid] { border-color: #d1242f; }
+  .ex-inline { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+  .ex-inline label { display: inline-flex; gap: 6px; align-items: center; color: inherit; font-size: 14px; }
+  .ex-opts { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+  .ex-opts li { display: flex; align-items: center; gap: 8px; padding: 7px 9px; border-radius: 8px; }
+  .ex-opts li[data-selected] { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+  .ex-total { display: flex; justify-content: space-between; align-items: baseline;
+    padding-top: 12px; border-top: 1px dashed var(--line); }
+  .ex-price { font-size: 24px; font-weight: 700; letter-spacing: -.02em; }
+  .ex-price small { font-size: 12px; font-weight: 400; opacity: .7; }
+  [data-brg-error], .bridgey-error { color: #d1242f; font-size: 12.5px; margin: 2px 0 0; }
+  .ex-log { font-size: 12.5px; color: var(--muted); background: var(--code-bg);
+    border-radius: 8px; padding: 10px 12px; white-space: pre-wrap; margin: 12px 0 0; }
+  .ex-hidden-note { font-size: 12px; color: var(--muted); }
+  .diff { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .diff th, .diff td { text-align: left; padding: 9px 11px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .diff th { font-size: 12.5px; opacity: .7; }
+  .diff td:first-child { white-space: nowrap; }
+  .code-tabs { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+  .code-tabs button { font-size: 13px; padding: 7px 14px; border-radius: 8px; cursor: pointer;
+    border: 1px solid var(--line); background: transparent; color: var(--muted); }
+  .code-tabs button[data-selected] { border-color: var(--accent); color: var(--fg);
+    background: color-mix(in srgb, var(--accent) 10%, transparent); font-weight: 600; }
+  .vs h3 { margin: 26px 0 10px; font-size: 15px; }
+  .vs pre { margin: 0; font-size: 12px; line-height: 1.65; }
+  .vs .card { display: grid; gap: 8px; align-content: start; }
+  .vs .label { font-size: 12px; }
+  .bad { color: #d1242f; } .good { color: #1a7f37; }
+  [data-theme="dark"] .good { color: #3fb950; } [data-theme="dark"] .bad { color: #ff7b72; }
+</style>
+
 <div class="wrap">
   <div class="layout">
     <aside class="toc">
-      <div class="grp">jQueryの書き味</div>
-      <a href="#compare">$ → $$ にするだけ</a>
-      <a href="#methods">使えるメソッド</a>
-      <div class="grp">実務サンプル</div>
-      <a href="#form">フォームバリデーション</a>
-      <a href="#basics">タブ・合計（基本）</a>
-      <a href="#search">ライブ検索フィルタ</a>
-      <a href="#cart">ショッピングカート</a>
-      <a href="#modal">モーダル・ギャラリー</a>
-      <a href="#rating">星評価・レビュー</a>
-      <a href="#todo">ToDo リスト</a>
-      <div class="grp">段階移行</div>
-      <a href="#gradation">命令的 → 宣言的</a>
-      <a href="#migrate">レガシー×Svelteを橋渡し</a>
-      <div class="grp">本物の部品</div>
-      <a href="#svelte">Svelte を載せる</a>
-      <a href="#vue">Vue に差し替え</a>
+      <div class="grp">まず最小</div>
+      <a href="#counter">カウンター</a>
+
+      <div class="grp">やや複雑なフォーム</div>
+      <a href="#live">動かしてみる</a>
+      <a href="#compare">コードを並べて比べる</a>
+      <a href="#diff">何が違うのか</a>
+
+      <div class="grp">カート</div>
+      <a href="#cart">金額を全部導出する</a>
+      <a href="#cart-code">カートのコード</a>
+
+      <div class="grp">一覧</div>
+      <a href="#todo">ToDo（追加・絞り込み）</a>
+      <a href="#todo-code">ToDo のコード</a>
+
+      <div class="grp">壊れにくさ</div>
+      <a href="#robust">この節について</a>
+      <a href="#break">1段ラップすると壊れる</a>
+      <a href="#isolate">全機能は死なない</a>
+      <a href="#typo">class 名のタイポ</a>
+
+      <div class="grp">その他</div>
+      <a href="#more">次に読む</a>
     </aside>
 
     <main class="content">
-      <h1>実装サンプル</h1>
-      <p class="muted">まずは<b>jQueryの書き味そのまま</b>から。実務でよくある処理を、いつもの手で——ただし合計・絞り込み・出し分けは
-        <code>state</code>／<code>computed</code> が<b>自動で追従</b>します（手で書き直さない）。埋め込みは<b>実際に動くデモ</b>です（ローカルは
-        <code>node build.demo.mjs</code> 後に表示）。</p>
-
-      <h2 id="compare" class="anchor">$ → $$ にするだけ</h2>
-      <p>既存のjQueryコードは、ほとんど <code>$</code> を <code>$$</code> に置き換えるだけで動きます。手が覚えた書き方はそのまま。</p>
-      <div class="two">
-        <div>
-          <div class="label"><i class="fa-brands fa-js"></i> jQuery</div>
-          <pre><code><span class="tok-f">$</span>(<span class="tok-s">".tab"</span>).on(<span class="tok-s">"click"</span>, <span class="tok-k">function</span> () {
-  <span class="tok-f">$</span>(<span class="tok-s">".tab"</span>).removeClass(<span class="tok-s">"active"</span>);
-  <span class="tok-f">$</span>(<span class="tok-k">this</span>).addClass(<span class="tok-s">"active"</span>);
-});
-<span class="tok-f">$</span>(<span class="tok-s">"#save"</span>).prop(<span class="tok-s">"disabled"</span>, <span class="tok-k">true</span>).text(<span class="tok-s">"送信中…"</span>);
-<span class="tok-f">$</span>(<span class="tok-s">".alert"</span>).fadeOut();
-<span class="tok-f">$</span>(e.target).closest(<span class="tok-s">"tr"</span>).remove();</code></pre>
-        </div>
-        <div>
-          <div class="label" style="color:var(--accent)"><i class="fa-solid fa-arrow-right"></i> bridgey</div>
-          <pre><code><span class="tok-f">$$</span>(<span class="tok-s">".tab"</span>).on(<span class="tok-s">"click"</span>, <span class="tok-k">function</span> () {
-  <span class="tok-f">$$</span>(<span class="tok-s">".tab"</span>).removeClass(<span class="tok-s">"active"</span>);
-  <span class="tok-f">$$</span>(<span class="tok-k">this</span>).addClass(<span class="tok-s">"active"</span>);
-});
-<span class="tok-f">$$</span>(<span class="tok-s">"#save"</span>).prop(<span class="tok-s">"disabled"</span>, <span class="tok-k">true</span>).text(<span class="tok-s">"送信中…"</span>);
-<span class="tok-f">$$</span>(<span class="tok-s">".alert"</span>).fadeOut();
-<span class="tok-f">$$</span>(e.target).closest(<span class="tok-s">"tr"</span>).remove();</code></pre>
-        </div>
-      </div>
-      <div class="note"><i
-          class="fa-solid fa-circle-info"></i>チェーン・イベント委譲・<code>this</code>・<code>fadeOut</code>・<code>closest</code>…
-        jQueryの手癖はそのまま使えます。</div>
-
-      <h2 id="methods" class="anchor">使えるメソッド</h2>
-      <p>jQuery定番をひととおり実装しています。</p>
-      <p style="line-height:2.2">
-        <span class="pill">text</span> <span class="pill">html</span> <span class="pill">val</span> <span
-          class="pill">attr</span> <span class="pill">prop</span> <span class="pill">data</span>
-        <span class="pill">addClass</span> <span class="pill">removeClass</span> <span class="pill">toggleClass</span>
-        <span class="pill">hasClass</span>
-        <span class="pill">css</span> <span class="pill">show</span> <span class="pill">hide</span> <span
-          class="pill">toggle</span> <span class="pill">fadeIn</span> <span class="pill">fadeOut</span>
-        <span class="pill">fadeIn</span> <span class="pill">fadeOut</span> <span class="pill">fadeToggle</span> <span
-          class="pill">slideDown</span> <span class="pill">slideUp</span> <span class="pill">slideToggle</span>
-        <span class="pill">on</span> <span class="pill">off</span> <span class="pill">one</span> <span
-          class="pill">trigger</span> <span class="pill">click</span> <span class="pill">change</span> <span
-          class="pill">submit</span> <span class="pill">hover</span> <span class="pill">ready</span> <span
-          class="pill">.on("click.ns")</span>
-        <span class="pill">find</span> <span class="pill">closest</span> <span class="pill">parent</span> <span
-          class="pill">children</span> <span class="pill">siblings</span> <span class="pill">next</span> <span
-          class="pill">prev</span>
-        <span class="pill">first</span> <span class="pill">last</span> <span class="pill">eq</span> <span
-          class="pill">filter</span> <span class="pill">not</span> <span class="pill">each</span> <span
-          class="pill">map</span> <span class="pill">index</span>
-        <span class="pill">append</span> <span class="pill">prepend</span> <span class="pill">before</span> <span
-          class="pill">after</span> <span class="pill">remove</span> <span class="pill">empty</span> <span
-          class="pill">clone</span> <span class="pill">replaceWith</span>
-        <span class="pill">width</span> <span class="pill">height</span> <span class="pill">offset</span> <span
-          class="pill">scrollTop</span>
+      <h1>Example</h1>
+      <p class="muted">
+        条件付き必須・確認入力・オプションの合計・自動整形——<b>よくある「面倒なフォーム」</b>を1つ作ってあります。<br />
+        <b>下のフォームは本当に動いています。</b>触ってから、コードを比べてください。
       </p>
-      <p class="muted">リアクティブ束縛: <span class="pill">bindText</span> <span class="pill">bindClass</span> <span
-          class="pill">bindAttr</span> <span class="pill">bindValue</span> ／ フォーム: <span class="pill">serialize</span>
-        <span class="pill">serializeArray</span> ／ 通信: <span class="pill">$$.ajax</span> <span
-          class="pill">$$.get</span> <span class="pill">$$.post</span>(<span class="pill">.done/.fail/.always</span>) ／
-        静的: <span class="pill">$$.extend</span> <span class="pill">$$.each</span> <span class="pill">$$.map</span> <span
-          class="pill">$$.trim</span> ／ 自作拡張: <span class="pill">$$.fn</span>。詳細は <a href="#/docs">Docs</a>。</p>
-      <div class="note" style="margin-top:14px"><i
-          class="fa-solid fa-circle-info"></i><b>既存のjQueryプラグイン（slick等）はそのまま動きません。</b><code>$$.fn</code>
-        は自作プラグイン用です。既存プラグインは領域を分けて本物のjQueryを併用してください。</div>
 
-      <h2 id="form" class="anchor">フォームバリデーション（実務）</h2>
-      <p>入力ごとの検証・エラー表示・パスワード強度・文字数カウンタ・「全項目OKで送信有効」。検証は <code>$$</code> の書き味、送信可否は <code>state/computed</code>
-        で宣言的に。<b>送信は <code>$$.post</code>（fetch）</b>で実API風に。</p>
-      <div class="example">
-        <div class="head"><i class="fa-solid fa-clipboard-check"></i>
-          <h3>Contact form</h3><span class="tag">pure $$ + state</span><a class="tag" href="sample/form/index.html"
-            target="_blank" style="background:none;color:var(--muted)"><i class="fa-solid fa-up-right-from-square"></i>
-            開く</a>
+      <!-- ================= COUNTER ================= -->
+      <h2 id="counter" class="anchor">カウンター（最小の状態管理）</h2>
+      <p>状態を1つ持って、そこから表示を導出する。<b>これが全部の基本</b>です。</p>
+
+      <!-- sample:counter:start -->
+<div class="card" data-component="ex-counter">
+          <div class="ex-total" style="border:0;padding-top:0">
+            <span>数量</span>
+            <span class="demo-qty" style="display:inline-flex;align-items:center;gap:14px">
+              <button type="button" data-brg="cnt-dec">−</button>
+              <b data-brg="cnt-n" style="min-width:2em;text-align:center;font-size:20px"></b>
+              <button type="button" data-brg="cnt-inc">＋</button>
+            </span>
+          </div>
+          <div class="ex-total"><span>2倍した値</span><span data-brg="cnt-doubled"></span></div>
+          <div class="ex-total"><span>合計（単価 1,100円）</span>
+            <strong class="ex-price"><span data-brg="cnt-total"></span><small>円</small></strong></div>
+          <p class="good" data-brg="cnt-over">10個以上のまとめ買いです</p>
+          <p class="ex-hidden-note" data-brg="cnt-limit">上限は20個です</p>
+          <div class="ex-inline">
+            <button type="button" class="btn ghost" data-brg="cnt-reset" style="font-size:13px">リセット</button>
+          </div>
         </div>
-        <iframe src="sample/form/index.html" title="form validation demo" loading="lazy" style="height:560px"></iframe>
-        <div class="code">
-          <pre><code><span class="tok-c">// 入力のたびに検証（jQueryそのまま）</span>
-<span class="tok-f">$$</span>(<span class="tok-s">"#email"</span>).on(<span class="tok-s">"input blur"</span>, <span class="tok-k">function</span> () {
-  <span class="tok-k">const</span> msg = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(<span class="tok-k">this</span>.value)
-    ? <span class="tok-s">""</span> : <span class="tok-s">"メール形式が正しくありません"</span>;
-  <span class="tok-f">$$</span>(<span class="tok-s">"#err-email"</span>).text(msg);
-  <span class="tok-f">$$</span>(<span class="tok-k">this</span>).toggleClass(<span class="tok-s">"invalid"</span>, !!msg);
-});
+<!-- sample:counter:end -->
 
-<span class="tok-c">// 「全項目OK」は computed で宣言的に → 送信ボタンに束縛</span>
-<span class="tok-k">const</span> valid = <span class="tok-f">computed</span>(() =&gt; ok(form.value));
-valid.subscribe((v) =&gt; <span class="tok-f">$$</span>(<span class="tok-s">"#submit"</span>).prop(<span class="tok-s">"disabled"</span>, !v));</code></pre>
-        </div>
-      </div>
+      <div class="card" style="margin-top:14px">
+          <div class="label"><i class="fa-solid fa-code"></i> いま動いているコード</div>
+          <div data-brg="counter-source"></div>
+          <template data-brg="counter-source-jquery"><pre><code>// ※ 同じ画面を jQuery で書いた場合。掴む先には id / class を振った前提です。
+var MAX_QUANTITY = 20;
+var UNIT_PRICE   = 1100;
+var quantity     = 1;
 
-      <h2 id="basics" class="anchor">タブ・合計・アニメ（基本）</h2>
-      <p>
-        タブ切り替え（<code>addClass/removeClass</code>＋委譲）、リアルタイム合計（<code>input → state → computed</code>）、<b>アコーディオン（<code>slideToggle</code>）とトースト（<code>fadeIn/fadeOut</code>）</b>。命令的と宣言的を1画面で。
-      </p>
-      <div class="example">
-        <div class="head"><i class="fa-solid fa-table-columns"></i>
-          <h3>Tabs &amp; total</h3><span class="tag">pure $$ + state</span><a class="tag"
-            href="sample/jquery/index.html" target="_blank" style="background:none;color:var(--muted)"><i
-              class="fa-solid fa-up-right-from-square"></i> 開く</a>
-        </div>
-        <iframe src="sample/jquery/index.html" title="jquery basics demo" loading="lazy" style="height:420px"></iframe>
-        <div class="code">
-          <pre><code><span class="tok-c">// タブ（jQuery定番: 委譲 + addClass/removeClass）</span>
-<span class="tok-f">$$</span>(<span class="tok-s">"#tabs"</span>).on(<span class="tok-s">"click"</span>, <span class="tok-s">".tab"</span>, <span class="tok-k">function</span> () {
-  <span class="tok-f">$$</span>(<span class="tok-s">"#tabs .tab"</span>).removeClass(<span class="tok-s">"active"</span>);
-  <span class="tok-f">$$</span>(<span class="tok-k">this</span>).addClass(<span class="tok-s">"active"</span>);
-});
+// 表示を更新する関数を1つ作り、変えた場所すべてから呼ぶ
+function render() {
+  $("#n").text(quantity);
+  $("#doubled").text(quantity * 2);                          // 書き忘れるとここだけ古い
+  $("#total").text((quantity * UNIT_PRICE).toLocaleString()); // 書き忘れると金額が合わない
 
-<span class="tok-c">// リアルタイム合計（input → state → computed → 表示）</span>
-<span class="tok-k">const</span> total = <span class="tok-f">computed</span>(() =&gt; price.value * qty.value);
-<span class="tok-f">$$</span>(<span class="tok-s">"#total"</span>).bindText(total, (v) =&gt; <span class="tok-s">"¥"</span> + v);</code></pre>
-        </div>
-      </div>
-
-      <h2 id="search" class="anchor">ライブ検索フィルタ（実務）</h2>
-      <p>入力のたびに一覧を絞り込み、ヒット箇所を <code>&lt;mark&gt;</code> で強調。分類チップとの<b>AND条件</b>も <code>computed</code> で宣言的に。検索語・分類はそれぞれ
-        <code>state</code>、絞り込み結果は <code>computed</code> が導きます。</p>
-      <div class="example">
-        <div class="head"><i class="fa-solid fa-magnifying-glass"></i>
-          <h3>Live search</h3><span class="tag">pure $$ + state</span><a class="tag" href="sample/search/index.html"
-            target="_blank" style="background:none;color:var(--muted)"><i class="fa-solid fa-up-right-from-square"></i>
-            開く</a>
-        </div>
-        <iframe src="sample/search/index.html" title="live search demo" loading="lazy" style="height:520px"></iframe>
-        <div class="code">
-          <pre><code><span class="tok-c">// 検索語と分類はそれぞれ state に</span>
-<span class="tok-k">const</span> query = <span class="tok-f">state</span>(<span class="tok-s">""</span>), cat = <span class="tok-f">state</span>(<span class="tok-s">"all"</span>);
-
-<span class="tok-c">// 絞り込みは computed（依存が変われば自動で再計算）</span>
-<span class="tok-k">const</span> filtered = <span class="tok-f">computed</span>(() =&gt; {
-  <span class="tok-k">const</span> q = query.value.trim().toLowerCase();
-  <span class="tok-k">return</span> items.filter((it) =&gt;
-    (cat.value === <span class="tok-s">"all"</span> || it.cat === cat.value) &amp;&amp;
-    (q === <span class="tok-s">""</span> || it.name.toLowerCase().includes(q)));
-});
-filtered.subscribe(render); <span class="tok-c">// 変わるたび一覧を描き直す</span>
-
-<span class="tok-c">// 入力は命令的に受ける（jQueryそのまま）</span>
-<span class="tok-f">$$</span>(<span class="tok-s">"#q"</span>).on(<span class="tok-s">"input"</span>, <span class="tok-k">function</span> () { query.value = <span class="tok-k">this</span>.value; });
-<span class="tok-f">$$</span>(<span class="tok-s">"#chips"</span>).on(<span class="tok-s">"click"</span>, <span class="tok-s">".chip"</span>, <span class="tok-k">function</span> () {
-  <span class="tok-f">$$</span>(<span class="tok-s">"#chips .chip"</span>).removeClass(<span class="tok-s">"active"</span>);
-  <span class="tok-f">$$</span>(<span class="tok-k">this</span>).addClass(<span class="tok-s">"active"</span>);
-  cat.value = <span class="tok-k">this</span>.dataset.cat;
-});</code></pre>
-        </div>
-      </div>
-
-      <h2 id="cart" class="anchor">ショッピングカート（実務）</h2>
-      <p>数量の増減・行小計・クーポン・送料無料判定・合計。金額は<b>すべて <code>computed</code></b>
-        で、状態が変わるたび自動再計算。操作はイベント委譲＋<code>closest</code>＋<code>fadeOut</code> の jQuery 定番です。</p>
-      <div class="example">
-        <div class="head"><i class="fa-solid fa-cart-shopping"></i>
-          <h3>Shopping cart</h3><span class="tag">pure $$ + computed</span><a class="tag" href="sample/cart/index.html"
-            target="_blank" style="background:none;color:var(--muted)"><i class="fa-solid fa-up-right-from-square"></i>
-            開く</a>
-        </div>
-        <iframe src="sample/cart/index.html" title="shopping cart demo" loading="lazy" style="height:560px"></iframe>
-        <div class="code">
-          <pre><code><span class="tok-c">// 金額は積み上げず computed で導く（cart / coupon に依存）</span>
-<span class="tok-k">const</span> subtotal = <span class="tok-f">computed</span>(() =&gt; cart.value.reduce((s, it) =&gt; s + it.price * it.qty, <span class="tok-s">0</span>));
-<span class="tok-k">const</span> discount = <span class="tok-f">computed</span>(() =&gt; Math.floor(subtotal.value * (coupon.value?.rate ?? <span class="tok-s">0</span>)));
-<span class="tok-k">const</span> total    = <span class="tok-f">computed</span>(() =&gt; subtotal.value - discount.value + shipping.value);
-
-<span class="tok-c">// 増減・削除はイベント委譲（再描画されても効く。this=クリック要素）</span>
-<span class="tok-f">$$</span>(<span class="tok-s">"#cart"</span>)
-  .on(<span class="tok-s">"click"</span>, <span class="tok-s">".plus"</span>, <span class="tok-k">function</span> () { patch(idOf(<span class="tok-k">this</span>), (it) =&gt; ({ ...it, qty: it.qty + <span class="tok-s">1</span> })); })
-  .on(<span class="tok-s">"click"</span>, <span class="tok-s">".del"</span>,  <span class="tok-k">function</span> () { <span class="tok-f">$$</span>(<span class="tok-k">this</span>).closest(<span class="tok-s">".item"</span>).fadeOut(<span class="tok-s">150</span>); <span class="tok-c">/* …state から除去 */</span> });
-
-<span class="tok-c">// サマリー行は computed に束縛（bindText で自動追従）</span>
-<span class="tok-f">$$</span>(<span class="tok-s">"#total"</span>).bindText(total, (v) =&gt; <span class="tok-s">"¥"</span> + v.toLocaleString());</code></pre>
-        </div>
-      </div>
-
-      <h2 id="modal" class="anchor">モーダル・画像ギャラリー（実務）</h2>
-      <p>タイルをクリックで拡大するライトボックス。<b>イベント委譲</b>で開き、<code>fadeIn/fadeOut</code>
-        で開閉、背景クリック・<code>Esc</code>・矢印キーにも対応。「今どれを開いているか」だけ <code>state</code> で持ちます。</p>
-      <div class="example">
-        <div class="head"><i class="fa-solid fa-images"></i>
-          <h3>Lightbox gallery</h3><span class="tag">pure $$ + state</span><a class="tag" href="sample/modal/index.html"
-            target="_blank" style="background:none;color:var(--muted)"><i class="fa-solid fa-up-right-from-square"></i>
-            開く</a>
-        </div>
-        <iframe src="sample/modal/index.html" title="modal gallery demo" loading="lazy" style="height:520px"></iframe>
-        <div class="code">
-          <pre><code><span class="tok-c">// 開いている index だけ state。前へ/次へで付け替える</span>
-<span class="tok-k">const</span> current = <span class="tok-f">state</span>(-<span class="tok-s">1</span>);
-current.subscribe((i) =&gt; { <span class="tok-k">if</span> (i &gt;= <span class="tok-s">0</span>) fillLightbox(photos[i]); });
-
-<span class="tok-c">// タイルを開く（委譲：後から足した要素にも効く）</span>
-<span class="tok-f">$$</span>(<span class="tok-s">"#gallery"</span>).on(<span class="tok-s">"click"</span>, <span class="tok-s">".tile"</span>, <span class="tok-k">function</span> () {
-  current.value = Number(<span class="tok-f">$$</span>(<span class="tok-k">this</span>).data(<span class="tok-s">"i"</span>));
-  <span class="tok-f">$$</span>(<span class="tok-s">"#lb"</span>).fadeIn(<span class="tok-s">150</span>);
-});
-<span class="tok-c">// 背景クリックで閉じる（オーバーレイ自身を押したときだけ）</span>
-<span class="tok-f">$$</span>(<span class="tok-s">"#lb"</span>).on(<span class="tok-s">"click"</span>, <span class="tok-k">function</span> (e) { <span class="tok-k">if</span> (e.target === <span class="tok-k">this</span>) <span class="tok-f">$$</span>(<span class="tok-s">"#lb"</span>).fadeOut(<span class="tok-s">150</span>); });
-<span class="tok-f">$$</span>(document).on(<span class="tok-s">"keydown"</span>, (e) =&gt; { <span class="tok-k">if</span> (e.key === <span class="tok-s">"Escape"</span>) close(); });</code></pre>
-        </div>
-      </div>
-
-      <h2 id="rating" class="anchor">星評価・レビュー（実務）</h2>
-      <p>ホバーでプレビュー、クリックで確定。平均・分布バー・投稿一覧はすべて <code>state / computed</code>。星の塗り分けは <code>$$</code> の <code>.each</code> と
-        <code>.toggleClass</code> で。</p>
-      <div class="example">
-        <div class="head"><i class="fa-solid fa-star"></i>
-          <h3>Star rating &amp; reviews</h3><span class="tag">pure $$ + computed</span><a class="tag"
-            href="sample/rating/index.html" target="_blank" style="background:none;color:var(--muted)"><i
-              class="fa-solid fa-up-right-from-square"></i> 開く</a>
-        </div>
-        <iframe src="sample/rating/index.html" title="star rating demo" loading="lazy" style="height:560px"></iframe>
-        <div class="code">
-          <pre><code><span class="tok-c">// 星の塗りは jQuery の .each そのまま（n個ぶんを on に）</span>
-<span class="tok-k">function</span> paint(n) {
-  <span class="tok-f">$$</span>(<span class="tok-s">"#input-stars .star"</span>).each(<span class="tok-k">function</span> () {
-    <span class="tok-f">$$</span>(<span class="tok-k">this</span>).toggleClass(<span class="tok-s">"on"</span>, Number(<span class="tok-k">this</span>.dataset.v) &lt;= n);
-  });
+  $("#inc").prop("disabled", quantity >= MAX_QUANTITY);
+  $("#dec").prop("disabled", quantity &lt;= 1);
+  $("#over").toggle(quantity >= 10);
+  $("#limit").toggle(quantity >= MAX_QUANTITY);
 }
-<span class="tok-c">// ホバーは仮表示・クリックで確定値(state)を更新</span>
-<span class="tok-f">$$</span>(<span class="tok-s">"#input-stars"</span>)
-  .on(<span class="tok-s">"mouseover"</span>, <span class="tok-s">".star"</span>, <span class="tok-k">function</span> () { paint(Number(<span class="tok-k">this</span>.dataset.v)); })
-  .on(<span class="tok-s">"mouseleave"</span>, () =&gt; paint(myScore.value))
-  .on(<span class="tok-s">"click"</span>, <span class="tok-s">".star"</span>, <span class="tok-k">function</span> () { myScore.value = Number(<span class="tok-k">this</span>.dataset.v); });
 
-<span class="tok-c">// 平均は computed → bindText で自動追従</span>
-<span class="tok-k">const</span> average = <span class="tok-f">computed</span>(() =&gt; avg(reviews.value));
-<span class="tok-f">$$</span>(<span class="tok-s">"#avg"</span>).bindText(average, (v) =&gt; v.toFixed(<span class="tok-s">1</span>));</code></pre>
+$("#inc").on("click", function () {
+  quantity = Math.min(MAX_QUANTITY, quantity + 1);
+  render();          // ← 呼び忘れたら画面が止まる
+});
+
+$("#dec").on("click", function () {
+  quantity = Math.max(1, quantity - 1);
+  render();          // ← 呼び忘れたら画面が止まる
+});
+
+$("#reset").on("click", function () {
+  quantity = 1;
+  render();          // ← 呼び忘れたら画面が止まる
+});
+
+render();            // 初期表示のためにもう1回
+
+// 表示を1つ足すたびに render() に行を足す。
+// 足し忘れたところだけが、黙って古い値のまま残る。</code></pre></template>
+          <p style="color:var(--muted);font-size:13px;margin:0">
+            <code>doubled</code> <code>total</code> <code>over</code> <code>limit</code> ——
+            <b>どれも代入していません。</b><code>quantity</code> ひとつから導出しているだけです。
+          </p>
+      </div>
+
+      <!-- ================= LIVE ================= -->
+      <h2 id="live" class="anchor">やや複雑なフォーム</h2>
+
+      <!-- sample:form:start -->
+<div class="card" data-component="ex-form">
+        <form class="ex-form" data-brg="form">
+          <div class="ex-row">
+            <label>お申し込み種別</label>
+            <div class="ex-inline">
+              <label><input type="radio" name="plan" value="personal" data-brg="plan" checked> 個人</label>
+              <label><input type="radio" name="plan" value="corp" data-brg="plan"> 法人</label>
+            </div>
+          </div>
+
+          <div class="ex-row" data-brg="corp-box">
+            <label for="ex-company">会社名（法人のときだけ必須）</label>
+            <input id="ex-company" name="company" type="text" autocomplete="organization">
+          </div>
+
+          <div class="ex-row">
+            <label for="ex-mail">メールアドレス（必須）</label>
+            <input id="ex-mail" name="mail" type="email" required autocomplete="email">
+          </div>
+
+          <div class="ex-row">
+            <label for="ex-tel">電話番号（必須・ハイフンなし）</label>
+            <input id="ex-tel" name="tel" type="tel" required autocomplete="tel">
+          </div>
+
+          <div class="ex-row">
+            <label for="ex-zip">郵便番号（入力すると自動でハイフンが入ります）</label>
+            <input id="ex-zip" name="zip" type="text" autocomplete="postal-code" placeholder="1000001">
+          </div>
+
+          <div class="ex-row">
+            <label for="ex-pass">パスワード（8文字以上）</label>
+            <input id="ex-pass" name="password" type="password" minlength="8">
+          </div>
+          <div class="ex-row">
+            <label for="ex-pass2">パスワード（確認）</label>
+            <input id="ex-pass2" name="confirm" type="password">
+          </div>
+
+          <div class="ex-row">
+            <label>オプション</label>
+            <ul class="ex-opts" data-brg="opts"></ul>
+            <template data-brg="opt-tpl">
+              <li data-brg="opt-row">
+                <input type="checkbox" data-brg="opt-check">
+                <span data-brg="opt-name" style="flex:1"></span>
+                <span data-brg="opt-price" class="ex-hidden-note"></span>
+              </li>
+            </template>
+          </div>
+
+          <!-- 画面に出ていない必須項目。旧来のやり方だとここで CV が死ぬ -->
+          <div data-brg="hidden-box" style="display:none">
+            <label for="ex-promo">キャンペーンコード（画面に出ていない必須項目）</label>
+            <input id="ex-promo" name="promo" type="text" required>
+          </div>
+
+          <div class="ex-inline">
+            <label><input type="checkbox" name="agree" data-brg="agree" required> 規約に同意する（必須）</label>
+          </div>
+
+          <div class="ex-total">
+            <span>オプション合計</span>
+            <strong class="ex-price"><span data-brg="opt-total">0</span><small>円/月</small></strong>
+          </div>
+
+          <div class="ex-total" style="border:0">
+            <span class="bad" data-brg="err-summary"></span>
+            <button type="submit" class="btn primary" data-brg="submit">この内容で申し込む</button>
+          </div>
+          <p class="good" data-brg="done">送信しました</p>
+        </form>
+      </div>
+<!-- sample:form:end -->
+
+      <!-- ================= CODE（横並び） ================= -->
+      <h2 id="compare" class="anchor">コードを並べて比べる</h2>
+      <p class="muted">
+        タブで切り替えてください。<b>bridgey 側は、いま上で動いているコードそのもの</b>です（手書きの写しではありません）。
+      </p>
+
+      <div class="card">
+        <div data-brg="ex-source"></div>
+        <template data-brg="ex-source-jquery"><pre><code>// ※ 同じ画面を jQuery で書いた場合。掴む先には id / class を振った前提です。
+$(function () {
+  // 種別で会社名の表示と必須を切り替える
+  $('input[name="plan"]').on("change", function () {
+    if ($(this).val() === "corp") {
+      $("#ex-company").closest(".ex-row").show();
+      $("#ex-company").attr("required", true);
+    } else {
+      $("#ex-company").closest(".ex-row").hide();
+      $("#ex-company").removeAttr("required");
+      // ↑ 消し忘れると永久に送信できない
+    }
+    validate();   // 呼び忘れると表示がズレる
+  });
+
+  // 郵便番号の自動整形
+  $("#ex-zip").on("input", function () {
+    var v = $(this).val().replace(/[^0-9]/g, "");
+    if (v.length > 3) v = v.slice(0,3) + "-" + v.slice(3,7);
+    $(this).val(v);
+    // ↑ 日本語変換中にこれをやると変換が壊れる
+  });
+
+  // オプションの合計
+  function calcTotal() {
+    var total = 0;
+    $(".ex-opts input:checked").each(function () {
+      total += parseInt($(this).data("price"), 10);
+    });
+    $("#opt-total").text(total.toLocaleString());
+  }
+  $(".ex-opts input").on("change", calcTotal);
+  // ↑ 動的に足した項目には効かない
+  calcTotal();
+  // ↑ 初期表示のために別途呼ぶ（忘れると 0 のまま）
+
+  // 検証
+  function validate() {
+    var errors = 0;
+    $("#ex-mail, #ex-tel, #ex-company, #ex-promo").each(function () {
+      var $f = $(this);
+      if (!$f.attr("required")) return;
+      if (!$f.is(":visible")) return;
+      // ↑ :visible を忘れると隠れた必須項目で
+      //   送信できず理由も出ない（CVが死ぬ）
+      var ok = $.trim($f.val()) !== "";
+      $f.toggleClass("error", !ok);
+      // ↑ クラス名のタイポは誰も気づかない
+      if (!ok) errors++;
+    });
+    if ($("#ex-pass").val() !== $("#ex-pass2").val()) errors++;
+    if (!$('input[name="agree"]').prop("checked")) errors++;
+    $("#err-summary").text(errors ? errors + "件の未入力" : "");
+    return errors === 0;
+  }
+  $("#ex-form input").on("blur change", validate);
+  // ↑ blur なのでオートフィルでは走らない
+
+  // 送信
+  var sending = false;
+  $("#ex-form").on("submit", function (e) {
+    e.preventDefault();
+    if (!validate()) return;
+    if (sending) return;   // 手で書かないと二重送信する
+    sending = true;
+    $("#submit").prop("disabled", true);
+    $.post("/api/signup", $(this).serialize())
+      .done(function () { $("#done").show(); })
+      .always(function () {
+        sending = false;
+        $("#submit").prop("disabled", false);
+        // ↑ 戻し忘れると永久に押せない
+      });
+  });
+});</code></pre></template>
+      </div>
+
+      <!-- ================= DIFF ================= -->
+      <h2 id="diff" class="anchor">何が違うのか（コードで見る）</h2>
+      <p class="muted">同じ要件を、それぞれどう書くか。<b>タブで切り替えて見比べてください。</b></p>
+
+      <div class="vs">
+        <h3>① 合計金額</h3>
+        <div class="card" data-component="code-tabs">
+          <div class="code-tabs">
+            <button type="button" data-brg="code-tab" data-tab="bridgey">bridgey</button>
+            <button type="button" data-brg="code-tab" data-tab="jquery">jQuery</button>
+          </div>
+
+          <div data-brg="code-pane" data-tab="bridgey">
+            <div class="label good">bridgey — 代入する場所が無い</div>
+<pre><code>const picked = $$(".opts input").group();
+const total  = $$.computed(() =&gt;
+  picked().reduce((s, id) =&gt; s + PRICE[id], 0)
+);
+
+$$("#total").text(total, $$.money);
+
+// 初期表示も更新も同じ式
+// 動的に足した項目も自動で入る</code></pre>
+          </div>
+
+          <div data-brg="code-pane" data-tab="jquery">
+            <div class="label bad">jQuery — 3箇所から呼ぶ</div>
+<pre><code>function calcTotal() {
+  var total = 0;
+  $(".opts input:checked").each(function () {
+    total += parseInt($(this).data("price"), 10);
+  });
+  $("#total").text(total.toLocaleString());
+}
+$(".opts input").on("change", calcTotal);
+calcTotal();   // 初期表示のために別途呼ぶ
+
+// 動的に足した項目には効かない
+// 呼び忘れた画面だけ数値がズレる</code></pre>
+          </div>
+        </div>
+
+        <h3>② 画面に出ていない必須項目</h3>
+        <div class="card" data-component="code-tabs">
+          <div class="code-tabs">
+            <button type="button" data-brg="code-tab" data-tab="bridgey">bridgey</button>
+            <button type="button" data-brg="code-tab" data-tab="jquery">jQuery</button>
+          </div>
+
+          <div data-brg="code-pane" data-tab="bridgey">
+            <div class="label good">bridgey — 書くことが無い</div>
+<pre><code>const f = $$("#form").form();
+
+// 見えているフィールドだけを毎回判定する。
+// これが既定の動作なので、書き忘れようがない。</code></pre>
+          </div>
+
+          <div data-brg="code-pane" data-tab="jquery">
+            <div class="label bad">jQuery — 自分で :visible を見る</div>
+<pre><code>$("#form input[required]").each(function () {
+  var $f = $(this);
+  if (!$f.is(":visible")) return;
+  // ↑ この1行を忘れると、画面に出ていない
+  //   required で送信がブロックされ、
+  //   エラーも表示できない（理由が出ない）
+  if ($.trim($f.val()) === "") errors++;
+});</code></pre>
+          </div>
+        </div>
+
+        <h3>③ 条件付き必須（法人のときだけ会社名）</h3>
+        <div class="card" data-component="code-tabs">
+          <div class="code-tabs">
+            <button type="button" data-brg="code-tab" data-tab="bridgey">bridgey</button>
+            <button type="button" data-brg="code-tab" data-tab="jquery">jQuery</button>
+          </div>
+
+          <div data-brg="code-pane" data-tab="bridgey">
+            <div class="label good">bridgey — 条件を1行書く</div>
+<pre><code>const plan = $$('input[name="plan"]').group();
+
+$$("#company-box").when(() =&gt; plan() === "corp");
+
+const f = $$("#form").form({
+  company: { required: () =&gt; plan() === "corp" },
+});
+
+// 表示条件と必須条件が同じ state から出るので
+// 片方だけ直し忘れることが起きない</code></pre>
+          </div>
+
+          <div data-brg="code-pane" data-tab="jquery">
+            <div class="label bad">jQuery — 属性を付け外しする</div>
+<pre><code>$('input[name="plan"]').on("change", function () {
+  if ($(this).val() === "corp") {
+    $("#company").closest(".row").show();
+    $("#company").attr("required", true);
+  } else {
+    $("#company").closest(".row").hide();
+    $("#company").removeAttr("required");
+    // ↑ 消し忘れると永久に送信できない
+  }
+  validate();   // 呼び忘れると表示がズレる
+});</code></pre>
+          </div>
+        </div>
+
+        <h3>④ オートフィル・JS 代入で値が入ったとき</h3>
+        <div class="card" data-component="code-tabs">
+          <div class="code-tabs">
+            <button type="button" data-brg="code-tab" data-tab="bridgey">bridgey</button>
+            <button type="button" data-brg="code-tab" data-tab="jquery">jQuery</button>
+          </div>
+
+          <div data-brg="code-pane" data-tab="bridgey">
+            <div class="label good">bridgey — 値の代入自体を見る</div>
+<pre><code>const f = $$("#form").form();
+
+// input / change に加えて
+//   ・value プロパティへの代入
+//   ・:-webkit-autofill の検知
+//   ・送信時の再読み込み
+// の4段で拾うので取りこぼさない</code></pre>
+          </div>
+
+          <div data-brg="code-pane" data-tab="jquery">
+            <div class="label bad">jQuery — イベント待ちなので走らない</div>
+<pre><code>$("#form input").on("blur change", validate);
+
+// ブラウザの自動入力は input を飛ばさない。
+// $("#mail").val("a@b.com") でも飛ばない。
+// → 埋まっているのに「未入力」のまま
+//    ボタンが押せず、理由も分からない</code></pre>
+          </div>
+        </div>
+
+        <h3>⑤ 二重送信</h3>
+        <div class="card" data-component="code-tabs">
+          <div class="code-tabs">
+            <button type="button" data-brg="code-tab" data-tab="bridgey">bridgey</button>
+            <button type="button" data-brg="code-tab" data-tab="jquery">jQuery</button>
+          </div>
+
+          <div data-brg="code-pane" data-tab="bridgey">
+            <div class="label good">bridgey — 送信処理だけ書く</div>
+<pre><code>const f = $$("#form").form();
+
+$$("#submit").disabled(f.submitting);
+
+f.submit(async (values) =&gt; {
+  await fetch("/api", {
+    method: "POST", body: JSON.stringify(values),
+  });
+});
+
+// 実行中の再送信は無視される
+// 失敗しても submitting は必ず戻る</code></pre>
+          </div>
+
+          <div data-brg="code-pane" data-tab="jquery">
+            <div class="label bad">jQuery — フラグを手で管理する</div>
+<pre><code>var sending = false;
+$("#form").on("submit", function (e) {
+  e.preventDefault();
+  if (sending) return;
+  sending = true;
+  $("#submit").prop("disabled", true);
+  $.post("/api", $(this).serialize())
+    .always(function () {
+      sending = false;
+      $("#submit").prop("disabled", false);
+      // ↑ 戻し忘れると永久に押せない
+    });
+});</code></pre>
+          </div>
+        </div>
+
+        <h3>⑥ 日本語入力（郵便番号の自動整形）</h3>
+        <div class="card" data-component="code-tabs">
+          <div class="code-tabs">
+            <button type="button" data-brg="code-tab" data-tab="bridgey">bridgey</button>
+            <button type="button" data-brg="code-tab" data-tab="jquery">jQuery</button>
+          </div>
+
+          <div data-brg="code-pane" data-tab="bridgey">
+            <div class="label good">bridgey — 同じ整形を書いても壊れない</div>
+<pre><code>const zip = $$("#zip").state("");
+
+$$("#zip").val(() =&gt; {
+  const d = zip().replace(/[^0-9]/g, "").slice(0, 7);
+  return d.length &gt; 3 ? d.slice(0,3) + "-" + d.slice(3) : d;
+});
+
+// 変換中は state も DOM も触らない。
+// 確定した瞬間に一度だけ同期する</code></pre>
+          </div>
+
+          <div data-brg="code-pane" data-tab="jquery">
+            <div class="label bad">jQuery — 変換中に書き戻して壊れる</div>
+<pre><code>$("#zip").on("input", function () {
+  var v = $(this).val().replace(/[^0-9]/g, "");
+  if (v.length &gt; 3) v = v.slice(0,3) + "-" + v.slice(3,7);
+  $(this).val(v);
+  // ↑ 漢字変換の最中にも input は飛ぶ。
+  //   ここで書き戻すと変換候補が消え、
+  //   確定できず、文字が化ける
+});</code></pre>
+          </div>
+        </div>
+
+        <h3>⑦ エラー表示</h3>
+        <div class="card" data-component="code-tabs">
+          <div class="code-tabs">
+            <button type="button" data-brg="code-tab" data-tab="bridgey">bridgey</button>
+            <button type="button" data-brg="code-tab" data-tab="jquery">jQuery</button>
+          </div>
+
+          <div data-brg="code-pane" data-tab="bridgey">
+            <div class="label good">bridgey — 自動で付く</div>
+<pre><code>const f = $$("#form").form();
+
+// aria-invalid と data-invalid が自動で付き、
+// エラー文の置き場所も自動で用意される。
+// CSS に無いクラス名を使ったら警告が出る</code></pre>
+          </div>
+
+          <div data-brg="code-pane" data-tab="jquery">
+            <div class="label bad">jQuery — クラス名の文字列</div>
+<pre><code>$f.toggleClass("error", !ok);
+$("#mail-err").text(ok ? "" : "入力してください");
+
+// "error" が "eror" でも例外は出ない。
+// CSS に届かないので赤くならず、誰も気づかない</code></pre>
+          </div>
         </div>
       </div>
 
-      <h2 id="todo" class="anchor">ToDo リスト</h2>
-      <p>keyed な差分更新は本物のSvelteに委譲。残り件数は <code>$$</code> グルーでコンポーネント外のバッジへ。</p>
-      <div class="example">
-        <div class="head"><i class="fa-solid fa-list-check"></i>
-          <h3>Todo</h3><span class="tag">svelte 部品</span><a class="tag" href="sample/todoapp/index.html" target="_blank"
-            style="background:none;color:var(--muted)"><i class="fa-solid fa-up-right-from-square"></i> 開く</a>
-        </div>
-        <iframe src="sample/todoapp/index.html" title="todo demo" loading="lazy" style="height:440px"></iframe>
+      <div class="card" style="margin-top:22px">
+        <table class="diff">
+          <thead><tr><th></th><th>jQuery</th><th>bridgey</th></tr></thead>
+          <tbody>
+            <tr><td>行数</td><td class="bad">約 70 行</td><td class="good">約 25 行</td></tr>
+            <tr><td>「呼び忘れ」で壊れる箇所</td><td class="bad">4箇所（初期表示・変更・削除・追加）</td><td class="good">0（導出しているだけ）</td></tr>
+            <tr><td>自分で書かないと事故る対策</td><td class="bad">:visible / 二重送信フラグ / 再バインド / 日本語入力</td><td class="good">全部、既定の動作</td></tr>
+          </tbody>
+        </table>
       </div>
 
-      <h2 id="gradation" class="anchor">命令的 → 宣言的（段階移行）</h2>
-      <p>bridgeyの芯。まずは<b>命令的</b>（jQuery脳のまま手で更新）。慣れたら<b>宣言的</b>（状態を変えるだけで自動反映）へ、同じ画面で少しずつ。</p>
-      <div class="two">
-        <div>
-          <div class="label">① 命令的（いつもの手）</div>
-          <pre><code><span class="tok-k">let</span> n = <span class="tok-s">0</span>;
-<span class="tok-f">$$</span>(<span class="tok-s">"#inc"</span>).on(<span class="tok-s">"click"</span>, () =&gt;
-  <span class="tok-f">$$</span>(<span class="tok-s">"#count"</span>).text(++n)   <span class="tok-c">// 手で更新</span>
-);</code></pre>
-        </div>
-        <div>
-          <div class="label" style="color:var(--accent)">② 宣言的（自動追従）</div>
-          <pre><code><span class="tok-k">const</span> n = <span class="tok-f">state</span>(<span class="tok-s">0</span>);
-<span class="tok-f">$$</span>(<span class="tok-s">"#inc"</span>).on(<span class="tok-s">"click"</span>, () =&gt; n.value++);
-<span class="tok-f">$$</span>(<span class="tok-s">"#count"</span>).bindText(n); <span class="tok-c">// 自動</span></code></pre>
-        </div>
+      <div class="note" style="margin-top:16px">
+        <p style="margin:0">
+          <b>jQuery を消す必要はありません。</b>入力周りは既存のまま残して、
+          <b>検証と合計だけ</b>を bridgey に移せます（<code>$(el).val(…)</code> で入れた値も追従します）。
+          1機能ずつ小さく始められます。
+        </p>
       </div>
 
-      <h2 id="migrate" class="anchor">レガシー×Svelteを state で橋渡し（卒業ルート）</h2>
-      <p>全書き換えは要りません。ページを<b>領域で色分け</b>して、<b>入力・イベントは jQuery の領域のまま</b>、複雑な描画だけ<b>Svelteに受け持たせた領域</b>に切り出す。両者は<b>共有
-          <code>state</code></b> で会話します——お互いのDOMには触らないので<b>ズレません</b>。1ページの中で、少しずつモダンへ卒業していけます。</p>
-      <div class="example">
-        <div class="head"><i class="fa-solid fa-bridge"></i>
-          <h3>Legacy × Svelte</h3><span class="tag">$$ + state + svelte</span><a class="tag"
-            href="sample/migrate/index.html" target="_blank" style="background:none;color:var(--muted)"><i
-              class="fa-solid fa-up-right-from-square"></i> 開く</a>
-        </div>
-        <iframe src="sample/migrate/index.html" title="legacy x svelte bridge demo" loading="lazy"
-          style="height:360px"></iframe>
-        <div class="code">
-          <pre><code><span class="tok-c">// 共有 state = 橋（どちらのDOMにも相乗りしない）</span>
-<span class="tok-k">const</span> query = <span class="tok-f">state</span>(<span class="tok-s">""</span>);
-<span class="tok-k">const</span> results = <span class="tok-f">computed</span>(query, (q) =&gt; q ? ALL.filter((x) =&gt; x.includes(q)) : ALL);
+      <!-- ================= CART ================= -->
+      <h2 id="cart" class="anchor">カート — 金額を全部導出する</h2>
+      <p>
+        小計・送料・クーポン・消費税・合計。<b>金額に代入している行が1つもありません。</b><br />
+        数量を変えても、行を消しても、クーポンを外しても、合計が合わなくなる余地がありません。
+      </p>
 
-<span class="tok-c">// jQueryの領域: DOMを直接いじらず state に書くだけ</span>
-<span class="tok-f">$$</span>(<span class="tok-s">"#q"</span>).on(<span class="tok-s">"input"</span>, (e) =&gt; (query.value = e.target.value));
+      <!-- sample:cart:start -->
+<div class="card" data-component="ex-cart">
+        <ul class="ex-opts" data-brg="rows" style="gap:2px"></ul>
+        <template data-brg="row-tpl">
+          <li data-brg="row" style="gap:12px">
+            <span data-brg="name" style="flex:1"></span>
+            <span class="ex-hidden-note" data-brg="unit"></span>
+            <span style="display:inline-flex;align-items:center;gap:8px">
+              <button type="button" data-brg="dec" aria-label="減らす">−</button>
+              <b data-brg="qty" style="min-width:1.6em;text-align:center"></b>
+              <button type="button" data-brg="inc" aria-label="増やす">＋</button>
+            </span>
+            <span data-brg="line" style="min-width:5.5em;text-align:right"></span>
+            <button type="button" data-brg="del" aria-label="削除">×</button>
+          </li>
+        </template>
 
-<span class="tok-c">// Svelteの領域: 共有 state を渡して描画を丸投げ</span>
-<span class="tok-k">const</span> app = <span class="tok-f">mount</span>(App, { target: <span class="tok-s">"#panel"</span>, props: { query, items: results } });
+        <p data-brg="empty" style="text-align:center;color:var(--muted);padding:18px 0">
+          カートは空です
+        </p>
 
-<span class="tok-c">// Svelte → jQuery: Svelteが出したイベントを jQuery で受ける</span>
-app.on(<span class="tok-s">"pick"</span>, (e) =&gt; <span class="tok-f">$$</span>(<span class="tok-s">"#picked"</span>).text(<span class="tok-s">"選択: "</span> + e.detail));</code></pre>
+        <div data-brg="summary">
+          <div class="ex-total"><span>小計</span><span data-brg="subtotal"></span></div>
+          <div class="ex-total"><span data-brg="ship-label">送料</span><span data-brg="ship"></span></div>
+          <div class="ex-total"><span>クーポン</span><span data-brg="discount"></span></div>
+          <div class="ex-total"><span>消費税（10%）</span><span data-brg="tax"></span></div>
+          <div class="ex-total" style="border-top:2px solid var(--line)">
+            <b>合計</b>
+            <strong class="ex-price"><span data-brg="total"></span><small>円</small></strong>
+          </div>
         </div>
-      </div>
-      <div class="note"><i class="fa-solid fa-circle-info"></i>逆に、<b>Svelteが描画したノードを <code>$$</code>
-          で直接書き換えるのは避けてください</b>（再描画でズレます）。会話は必ず <code>state</code> かイベント経由で。</div>
 
-      <h2 id="svelte" class="anchor">本物の部品を載せる（Svelte）</h2>
-      <p>複雑な画面は本物のSvelteへ。<code>mount</code> で載せるだけ。</p>
-      <div class="example">
-        <div class="head"><i class="fa-solid fa-wand-magic-sparkles"></i>
-          <h3>Counter component</h3><span class="tag">svelte</span><a class="tag" href="sample/deep/index.html"
-            target="_blank" style="background:none;color:var(--muted)"><i class="fa-solid fa-up-right-from-square"></i>
-            開く</a>
+        <div class="ex-inline" style="margin-top:14px">
+          <label><input type="checkbox" data-brg="coupon"> クーポンを使う（10% OFF）</label>
+          <button type="button" class="btn ghost" data-brg="restore" style="font-size:13px">商品を戻す</button>
         </div>
-        <iframe src="sample/deep/index.html" title="svelte component demo" loading="lazy"></iframe>
-        <div class="code">
-          <pre><code><span class="tok-k">import</span> { mount, useEngine } <span class="tok-k">from</span> <span class="tok-s">"bridgey"</span>;
-<span class="tok-k">import</span> { svelteEngine } <span class="tok-k">from</span> <span class="tok-s">"bridgey/engines/svelte.js"</span>;
-<span class="tok-f">useEngine</span>(svelteEngine);
-<span class="tok-k">const</span> app = <span class="tok-f">mount</span>(App, { target: <span class="tok-s">"#app"</span> });</code></pre>
-        </div>
-      </div>
-
-      <h2 id="vue" class="anchor">Vue に差し替え</h2>
-      <p>同じ利用者コードのまま、エンジンだけVueへ。違いは <code>useEngine(vueEngine)</code> の1行。</p>
-      <div class="example">
-        <div class="head"><i class="fa-brands fa-vuejs"></i>
-          <h3>Counter (Vue engine)</h3><span class="tag">vue</span><a class="tag" href="sample/vue/index.html"
-            target="_blank" style="background:none;color:var(--muted)"><i class="fa-solid fa-up-right-from-square"></i>
-            開く</a>
-        </div>
-        <iframe src="sample/vue/index.html" title="vue component demo" loading="lazy"></iframe>
-        <div class="code">
-          <pre><code><span class="tok-k">import</span> { vueEngine } <span class="tok-k">from</span> <span class="tok-s">"bridgey/engines/vue.js"</span>;
-<span class="tok-f">useEngine</span>(vueEngine); <span class="tok-c">// ← ここだけ違う</span></code></pre>
-        </div>
+        <p class="ex-hidden-note" data-brg="free-note">
+<!-- sample:cart:end -->
+          あと <b data-brg="to-free"></b> 円で送料無料になります
+        </p>
       </div>
 
-      <div class="pager">
-        <a href="#/docs"><small>← 戻る</small>ドキュメント</a>
-        <a class="next" href="#/"><small>次へ →</small>ダウンロード</a>
+      <h2 id="cart-code" class="anchor">カートのコード</h2>
+      <p class="muted">
+        <b>bridgey 側は、いま上で動いているコードそのもの</b>です。タブで切り替えてください。
+      </p>
+
+      <div class="card">
+        <div data-brg="cart-source"></div>
+        <template data-brg="cart-source-jquery"><pre><code>// ※ 同じ画面を jQuery で書いた場合。掴む先には id / class を振った前提です。
+// 金額を計算して「書き込む」関数を1つ作る。ここが事故の入口。
+function calcTotal() {
+  var subtotal = 0;
+
+  $("#cart .row").each(function () {
+    var unit = Number($(this).data("unit"));
+    var qty  = Number($(this).find(".qty").text());
+
+    subtotal += unit * qty;
+    $(this).find(".line").text((unit * qty).toLocaleString() + "円");
+  });
+
+  var ship     = subtotal === 0 ? 0 : (subtotal >= 30000 ? 0 : 550);
+  var discount = $("#coupon").prop("checked") ? Math.floor(subtotal * 0.1) : 0;
+  var taxable  = subtotal - discount + ship;
+  var tax      = Math.floor(taxable * 0.1);
+
+  // 表示する場所の数だけ「代入」が並ぶ。1つ書き忘れるとそこだけ古い値が残る
+  $("#subtotal").text(subtotal.toLocaleString() + "円");
+  $("#ship").text(ship === 0 ? "無料" : ship.toLocaleString() + "円");
+  $("#discount").text("-" + discount.toLocaleString() + "円");
+  $("#tax").text(tax.toLocaleString() + "円");
+  $("#total").text((taxable + tax).toLocaleString());
+
+  // 空になったときの表示も、ここで面倒を見るしかない
+  if ($("#cart .row").length === 0) {
+    $("#empty").show();
+    $("#summary").hide();
+  }
+}
+
+$("#cart").on("click", ".inc", function () {
+  var $qty = $(this).closest(".row").find(".qty");   // 構造に依存する
+
+  $qty.text(Number($qty.text()) + 1);
+  calcTotal();          // ← 呼び忘れたら金額が合わない
+});
+
+$("#cart").on("click", ".dec", function () {
+  var $qty = $(this).closest(".row").find(".qty");
+
+  $qty.text(Math.max(1, Number($qty.text()) - 1));
+  calcTotal();          // ← 呼び忘れたら金額が合わない
+});
+
+$("#cart").on("click", ".del", function () {
+  $(this).closest(".row").remove();
+  calcTotal();          // ← 呼び忘れたら金額が合わない
+});
+
+$("#coupon").on("change", calcTotal);   // ← 呼び忘れたら金額が合わない
+
+calcTotal();            // 初期表示のためにもう1回（これも忘れがち）</code></pre></template>
       </div>
+
+      <div class="note">
+        <p style="margin:0">
+          <b>右は「計算して代入する」、左は「導出する」。</b>
+          jQuery 側は <code>calcTotal()</code> を<b>数量変更・削除・クーポン・初期表示の4箇所から呼び</b>、
+          さらに表示先の数だけ <code>.text()</code> で代入しています。
+          <b>呼び忘れも書き忘れも起こりうる場所が、それだけあるということです。</b>
+          bridgey 側には金額に代入している行が1つもないので、ズレようがありません。
+        </p>
+      </div>
+
+      <!-- ================= TODO ================= -->
+      <h2 id="todo" class="anchor">ToDo（一覧の状態管理）</h2>
+      <p>
+        追加・完了・削除・絞り込み・残り件数。<b>一覧は <code>repeat()</code> が描くので、
+        入力途中の文字やチェック状態が消えません。</b>
+      </p>
+
+      <!-- sample:todo:start -->
+<div class="card" data-component="ex-todo">
+        <div class="ex-inline" style="gap:8px">
+          <input type="text" data-brg="input" placeholder="やることを入力して Enter"
+                 style="flex:1;min-width:12em;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:transparent;color:inherit;font:inherit">
+          <button type="button" class="btn primary" data-brg="add" style="font-size:13px">追加</button>
+        </div>
+
+        <div class="ex-inline" style="margin-top:12px">
+          <label><input type="radio" name="todo-filter" value="all" data-brg="filter" checked> すべて</label>
+          <label><input type="radio" name="todo-filter" value="open" data-brg="filter"> 未完了</label>
+          <label><input type="radio" name="todo-filter" value="done" data-brg="filter"> 完了</label>
+          <span class="ex-hidden-note" data-brg="counts"></span>
+        </div>
+
+        <ul class="ex-opts" data-brg="list" style="margin-top:10px"></ul>
+        <template data-brg="todo-tpl">
+          <li data-brg="item">
+            <input type="checkbox" data-brg="check">
+            <span data-brg="title" style="flex:1"></span>
+            <input type="text" data-brg="memo" placeholder="メモ"
+                   style="width:9em;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:transparent;color:inherit;font:inherit;font-size:12px">
+            <button type="button" data-brg="del">×</button>
+          </li>
+        </template>
+
+        <p data-brg="empty" style="text-align:center;color:var(--muted);padding:14px 0">該当するものがありません</p>
+<!-- sample:todo:end -->
+        <p class="ex-hidden-note">
+          メモ欄に何か入力してから、別の項目を追加・完了・削除してみてください。<b>入力した文字は消えません。</b>
+        </p>
+      </div>
+
+      <h2 id="todo-code" class="anchor">ToDo のコード</h2>
+      <p class="muted">
+        <b>bridgey 側は、いま上で動いているコードそのもの</b>です。タブで切り替えてください。
+      </p>
+
+      <div class="card">
+        <div data-brg="todo-source"></div>
+        <template data-brg="todo-source-jquery"><pre><code>// ※ 同じ画面を jQuery で書いた場合。掴む先には id / class を振った前提です。
+var todos  = [
+  { id: 1, title: "見積書を送る", done: false },
+  { id: 2, title: "請求書を確認する", done: true }
+];
+var nextId = 3;
+var filter = "all";
+
+// 一覧を作り直す。1行変えるだけでも全部作り直すことになる
+function render() {
+  var html = "";
+
+  $.each(todos, function (i, todo) {
+    if (filter === "open" && todo.done) return;
+    if (filter === "done" && !todo.done) return;
+
+    html += '&lt;li class="item' + (todo.done ? " done" : "") + '" data-id="' + todo.id + '"&gt;'
+          +   '&lt;input type="checkbox" class="check"' + (todo.done ? " checked" : "") + '&gt;'
+          +   '&lt;span class="title"&gt;' + todo.title + "&lt;/span&gt;"
+          +   '&lt;input type="text" class="memo" placeholder="メモ"&gt;'
+          +   '&lt;button class="del"&gt;削除&lt;/button&gt;'
+          + "&lt;/li&gt;";
+  });
+
+  $("#list").html(html);   // ← ここで起きること:
+                           //    ・メモ欄に入力途中だった文字が消える
+                           //    ・フォーカスもスクロール位置も飛ぶ
+                           //    ・開いていた行が閉じる
+  updateCounts();          // ← 呼び忘れたら件数だけ古いまま
+}
+
+function updateCounts() {
+  var remaining = $.grep(todos, function (t) { return !t.done; }).length;
+
+  $("#counts").text(remaining + "件が未完了");
+  $("#empty").toggle($("#list .item").length === 0);
+}
+
+// 作り直すので、ハンドラは毎回張り直すか委譲するしかない
+$("#list").on("change", ".check", function () {
+  var id = $(this).closest(".item").data("id");   // 構造に依存する
+
+  $.each(todos, function (i, todo) {
+    if (todo.id === id) todo.done = $(this).prop("checked");
+  }.bind(this));
+
+  render();
+});
+
+$("#list").on("click", ".del", function () {
+  var id = $(this).closest(".item").data("id");
+
+  todos = $.grep(todos, function (t) { return t.id !== id; });
+  render();
+});
+
+$("#add").on("click", function () {
+  var title = $.trim($("#input").val());
+  if (!title) return;
+
+  todos.push({ id: nextId++, title: title, done: false });
+  $("#input").val("");
+  render();
+});
+
+$(".filter").on("change", function () {
+  filter = $(this).val();
+  render();
+});
+
+render();   // 初期表示のためにもう1回</code></pre></template>
+      </div>
+
+      <div class="note">
+        <p style="margin:0">
+          <b><code>.html()</code> で作り直すと、入力途中の文字もフォーカスも消えます。</b>
+          bridgey の <code>repeat()</code> はキーが同じ行の DOM を使い回すので、
+          <b>上のデモでメモ欄に入力したまま追加や絞り込みをしても消えません。</b>
+          件数の更新も導出なので、<code>updateCounts()</code> の呼び忘れ自体が存在しません。
+        </p>
+      </div>
+
+      <!-- ================= 壊れにくさ ================= -->
+      <hr style="border:0;border-top:1px solid var(--line);margin:56px 0 0" />
+
+      <h2 id="robust" class="anchor">壊れにくさ — bridgey が黙らせない事故</h2>
+      <p class="muted">
+        ここから下は「同じ画面をどう書くか」ではなく、
+        <b>書き方に関係なく襲ってくる事故</b>を bridgey がどう止めるかの実演です。
+        どれも<b>その場で触って確かめられます</b>。
+      </p>
+
+      <h3 id="break" class="anchor">HTML を1段ラップすると、黙って壊れる</h3>
+      <p>
+        <code>next()</code> や <code>children()</code> で「隣の要素」を掴んでいるコードは、
+        <b>HTML に要素を1つ挟むだけで動かなくなります。しかも例外は出ません。</b><br />
+        デザイナーが <code>&lt;div&gt;</code> を1枚足しただけ——という壊れ方です。
+      </p>
+
+      <div data-component="ex-structure">
+        <div class="two">
+          <div class="card">
+            <div class="label"><i class="fa-solid fa-triangle-exclamation"></i> 従来のやり方（隣を掴む）</div>
+            <div>
+              <button type="button" class="btn ghost" data-brg="old-head">内訳を開く</button>
+              <div data-brg="old-body" style="display:none;padding-top:10px">
+                基本料金 23,800円 ／ 追加料金 2,200円
+              </div>
+            </div>
+            <p class="ex-log" data-brg="old-log">まだ壊れていません。</p>
+          </div>
+
+          <div class="card">
+            <div class="label"><i class="fa-solid fa-check"></i> bridgey（名前で引く）</div>
+            <div>
+              <button type="button" class="btn ghost" data-brg="new-head">内訳を開く</button>
+              <div data-brg="new-body" style="padding-top:10px">
+                基本料金 23,800円 ／ 追加料金 2,200円
+              </div>
+            </div>
+            <p class="ex-log" data-brg="new-log">まだ壊れていません。</p>
+          </div>
+        </div>
+
+        <p style="margin-top:14px">
+          <button type="button" class="btn" data-brg="wrap">
+            <i class="fa-solid fa-layer-group"></i> 両方の HTML を &lt;div&gt; で1段ラップする
+          </button>
+        </p>
+      </div>
+
+      <h3 id="isolate" class="anchor">1つの undefined で、全機能は死なない</h3>
+      <p>
+        同じ <code>$(function(){})</code> の中に全部書いていると、
+        <b>最初の1行が落ちた時点で、後ろのタブもカウンターも巻き添えで死にます。</b><br />
+        bridgey は部品ごとに切り離すので、壊れた部品だけが止まります。
+      </p>
+
+      <div class="card">
+        <!-- わざと初期化に失敗する部品。存在しない要素を触る -->
+        <div data-component="ex-broken"></div>
+
+        <div data-component="ex-tabs" style="margin-bottom:12px">
+          <div class="code-tabs">
+            <button type="button" data-brg="tab" data-tab="a">料金</button>
+            <button type="button" data-brg="tab" data-tab="b">スペック</button>
+          </div>
+          <div data-brg="pane" data-tab="a">料金の中身です。</div>
+          <div data-brg="pane" data-tab="b">スペックの中身です。</div>
+        </div>
+
+        <div class="ex-inline" data-component="ex-mini">
+          <button type="button" class="btn ghost" data-brg="mini-dec">−</button>
+          <b data-brg="mini-n" style="min-width:2em;text-align:center"></b>
+          <button type="button" class="btn ghost" data-brg="mini-inc">＋</button>
+        </div>
+
+        <p class="ex-log">
+          この上には<b>初期化に失敗した部品が1つ混ざっています</b>（コンソールに理由が出ています）。
+          それでもタブとカウンターは動きます。
+        </p>
+      </div>
+
+      <h3 id="typo" class="anchor">class 名のタイポは、その場で教える</h3>
+      <p>
+        表示の出し入れを class で行っていると、<b>綴りを間違えた瞬間に「隠したはずのものが見えたまま」</b>になります。
+        CSS に無いクラスで状態を切り替えようとしたら、bridgey は似ている名前を添えて知らせます。
+      </p>
+
+      <div class="card" data-component="ex-typo">
+        <p style="margin:0 0 10px">
+          <button type="button" class="btn" data-brg="run">
+            <i class="fa-solid fa-spell-check"></i> CSS に無いクラスで表示を切り替える
+          </button>
+        </p>
+        <p class="ex-log" data-brg="typo-log">押すと、bridgey が出す警告をそのまま表示します。</p>
+      </div>
+
+      <h2 id="more" class="anchor">次に読む</h2>
+      <p>
+        <a class="btn ghost" href="#/tutorial"><i class="fa-solid fa-graduation-cap"></i> チュートリアル</a>
+        <a class="btn ghost" href="#/docs"><i class="fa-solid fa-book"></i> ドキュメント</a>
+      </p>
     </main>
   </div>
 </div>

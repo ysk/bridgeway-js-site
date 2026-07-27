@@ -1,75 +1,33 @@
 {
   "name": "bridgey-site",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
-  "description": "jQueryの書き味で本物のモダンフレームワーク(Svelte/Vue)を、限りなく楽に。エンジン差し替え式。",
+  "description": "bridgey の公式サイト。サイト自身も bridgey v2 で動いている（ドッグフーディング）。",
   "type": "module",
-  "main": "src/index.js",
-  "exports": {
-    ".": "./src/index.js",
-    "./global": "./src/global.js",
-    "./engines/svelte.js": "./src/engines/svelte.js",
-    "./engines/vue.js": "./src/engines/vue.js"
-  },
-  "bin": {
-    "brg": "bin/bridgey.js",
-    "bridgey": "bin/bridgey.js"
-  },
-  "files": [
-    "src",
-    "bin",
-    "dist",
-    "README.md",
-    "LICENSE",
-    "THIRD-PARTY-NOTICES.md"
-  ],
-  "unpkg": "dist/bridgey.vue.js",
-  "jsdelivr": "dist/bridgey.vue.js",
   "engines": {
     "node": ">=18"
   },
   "scripts": {
-    "build": "node build.mjs",
-    "build:demos": "node build.demo.mjs"
+    "sync": "node sync-bridgey.mjs",
+    "build": "node sync-bridgey.mjs && node build.mjs",
+    "test": "node --test"
   },
   "keywords": [
     "jquery",
-    "svelte",
-    "vue",
+    "signals",
     "reactive",
-    "legacy-migration"
+    "no-build",
+    "legacy"
   ],
   "author": "",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ysk/bridgeway-js.git"
-  },
-  "homepage": "https://github.com/ysk/bridgeway-js#readme",
-  "bugs": {
-    "url": "https://github.com/ysk/bridgeway-js/issues"
-  },
-  "peerDependencies": {
-    "svelte": "^4",
-    "vue": "^3"
-  },
-  "peerDependenciesMeta": {
-    "svelte": {
-      "optional": true
-    },
-    "vue": {
-      "optional": true
-    }
+    "url": "git+https://github.com/ysk/bridgeway-js-site.git"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^6.7.2",
-    "@rollup/plugin-alias": "^6.0.0",
-    "@rollup/plugin-node-resolve": "^16.0.3",
     "esbuild": "^0.24.2",
-    "jsdom": "^29.1.1",
-    "rollup": "^4.62.2",
-    "rollup-plugin-svelte": "^7.2.3",
-    "svelte": "^4.2.20",
-    "vue": "^3.5.39"
+    "jsdom": "^29.1.1"
   }
 }

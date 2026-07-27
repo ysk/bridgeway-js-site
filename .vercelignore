@@ -1,13 +1,11 @@
 node_modules
-src
-bin
 build.mjs
-build.demo.mjs
+sync-bridgey.mjs
 package.json
 package-lock.json
+test
 *.md
 LICENSE
-firebase.json
 .git
 .gitignore
 .claude

@@ -1,282 +1,324 @@
 <a id="top"></a>
+
+<style>
+  /* この画面のデモ用。ライブラリの機能ではなく、ページの装飾。 */
+  .demo-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; }
+  .demo-row + .demo-row { border-top: 1px dashed var(--line, #e3e6ea); }
+  .demo-qty { display: inline-flex; align-items: center; gap: 14px; }
+  .demo-qty button { width: 38px; height: 38px; border-radius: 50%; font-size: 17px; cursor: pointer; border: 1px solid var(--line, #e3e6ea); background: transparent; color: inherit; }
+  .demo-qty b { min-width: 2.2em; text-align: center; font-size: 20px; font-variant-numeric: tabular-nums; }
+  .demo-price { font-size: 26px; font-weight: 700; letter-spacing: -.02em; }
+  .demo-price small { font-size: 12px; font-weight: 400; opacity: .7; margin-left: 2px; }
+  .demo-free { color: #1a7f37; font-size: 13px; margin: 8px 0 0; }
+  [data-theme="dark"] .demo-free { color: #3fb950; }
+  .demo-bar { height: 8px; border-radius: 99px; background: var(--line, #e3e6ea); overflow: hidden; margin-top: 12px; }
+  .demo-bar > i { display: block; height: 100%; width: var(--progress, 0%); background: linear-gradient(90deg, #6d5efc, #22c1a6); transition: width .3s; }
+  .accident { list-style: none; padding: 0; margin: 0; }
+  .accident li { padding: 12px 0; border-top: 1px solid var(--line, #e3e6ea); font-size: 14.5px; }
+  .accident li:first-child { border-top: none; }
+  .accident b { display: block; margin-bottom: 2px; }
+  .compare { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .compare th, .compare td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line, #e3e6ea); }
+  .compare th { font-weight: 600; opacity: .7; font-size: 12.5px; }
+  .compare code { font-size: 12.5px; }
+  .compare tr td:first-child { white-space: nowrap; }
+</style>
+
 <div class="wrap">
   <section class="hero" style="border-top:none">
     <img class="mark" src="./logo.svg" alt="bridgey" />
-    <h1>jQueryの書き方で<br /><span class="grad-text">モダン開発の体験を</span></h1>
-    <p class="lead">覚えるのは <code>$</code> を <code>$$</code> にするだけ。<br>
-      慣れたjQueryの書き方で、<strong><code>state</code> / <code>computed</code></strong>が加わります。<br>
-      モダン開発の体験をjQueryの書き心地で。</p>
+    <h1>jQuery のまま、<br /><span class="grad-text">モダンに。</span></h1>
+    <p class="lead">
+      <strong>レガシーな現場を少しモダンにするライブラリです。</strong><br />
+      導入は<code>&lt;script&gt;</code> 1行。<b>HTMLは1文字も変えなくていい</b>し、<br>いま動いているjQueryも1行も変えなくていい。
+    </p>
     <div class="cta">
       <a class="btn primary" href="#/tutorial"><i class="fa-solid fa-graduation-cap"></i> チュートリアルを始める</a>
-      <a class="btn ghost" href="#/examples"><i class="fa-regular fa-circle-play"></i> サンプルを見る</a>
+      <a class="btn ghost" href="#/examples"><i class="fa-regular fa-circle-play"></i> デモを見る</a>
+    </div>
+    <div class="install cdn">
+      <span class="dollar">CDN</span><span class="url">https://cdn.jsdelivr.net/npm/bridgey@2</span>
+      <button class="copy" data-copy="&lt;script src=&quot;https://cdn.jsdelivr.net/npm/bridgey@2&quot;&gt;&lt;/script&gt;"><i class="fa-regular fa-copy"></i> copy</button>
     </div>
     <div class="install">
       <span class="dollar">$</span><span>npm install bridgey</span>
       <button class="copy" data-copy="npm install bridgey"><i class="fa-regular fa-copy"></i> copy</button>
     </div>
-    <div class="install cdn">
-      <span class="dollar">CDN</span><span class="url">https://cdn.jsdelivr.net/npm/bridgey/dist/bridgey.vue.js</span>
-      <button class="copy" data-copy="https://cdn.jsdelivr.net/npm/bridgey/dist/bridgey.vue.js"><i class="fa-regular fa-copy"></i> copy</button>
-    </div>
-    <p style="color:var(--muted);font-size:13px;margin-top:14px">
-      覚えた書き味（<code>$$ / state / mount</code>）は変わらない。<b>下のエンジン（Svelte / Vue）が進化しても、あなたのコードはそのまま</b>。</p>
   </section>
 </div>
+
+<!-- ライブデモ -->
+<section id="live" class="anchor">
+  <div class="wrap">
+    <div class="eyebrow">動いています</div>
+    <h2>状態が変わると、画面が追いつく。</h2>
+    <p class="sub">下のカードは <b>このページの中で実際に動いています</b>。増えた概念は1つだけです。</p>
+
+    <!-- sample:home-demo:start -->
+<div class="card" data-component="home-demo">
+        <div class="demo-row">
+          <span>数量</span>
+          <span class="demo-qty">
+            <button data-brg="dec" aria-label="減らす">−</button>
+            <b data-brg="qty"></b>
+            <button data-brg="inc" aria-label="増やす">＋</button>
+          </span>
+        </div>
+        <div class="demo-row">
+          <span>合計</span>
+          <span class="demo-price"><span data-brg="total"></span><small>円</small></span>
+        </div>
+        <p class="demo-free" data-brg="free">3個以上で送料無料になりました</p>
+        <div class="demo-bar" data-brg="bar"><i></i></div>
+      </div>
+<!-- sample:home-demo:end -->
+
+      <div class="card">
+        <div class="label"><i class="fa-solid fa-code"></i> いま動いているコード</div>
+        <div data-brg="home-demo-source"></div>
+        <template data-brg="home-demo-source-jquery"><pre><code>// ※ 同じ画面を jQuery で書いた場合。掴む先には id / class を振った前提です。
+var UNIT_PRICE = 1100;
+var quantity   = 1;
+
+// 表示を更新する関数を1つ作り、変えた場所すべてから呼ぶ
+function render() {
+  $("#qty").text(quantity);
+  $("#total").text((quantity * UNIT_PRICE).toLocaleString());  // 書き忘れると金額が合わない
+  $("#free").toggle(quantity >= 3);
+  $("#bar > i").css("width", Math.min(100, quantity * 20) + "%");
+}
+
+$("#inc").on("click", function () {
+  quantity = quantity + 1;
+  render();          // ← 呼び忘れたら画面が止まる
+});
+
+$("#dec").on("click", function () {
+  quantity = Math.max(1, quantity - 1);
+  render();          // ← 呼び忘れたら画面が止まる
+});
+
+render();            // 初期表示のためにもう1回</code></pre></template>
+        <p style="color:var(--muted);font-size:13px;margin-top:10px">
+          <code>total</code> に<b>代入している行はどこにもありません</b>。導出しているだけです。<br />
+          だから「更新を忘れて数値計算が合わない」が起きません。
+        </p>
+    </div>
+
+    <p style="color:var(--muted);font-size:13px;margin-top:14px">
+      ※ HTML に出てくる <code>data-brg</code> は<b>推奨であって、必須ではありません</b>。
+      <code>$$("#total")</code> <code>$$(".total")</code> のように<b>いま付いている id や class のまま書けます</b>
+      （HTML を触れない現場のため）。触れるなら <code>data-brg</code> に分けておくと、
+      デザイナーが class を変えても JS が壊れなくなります。<br />
+      ※ このサイト自身も bridgey で動いています（ルーティング・テーマ・このデモ全部）。
+      SPA で差し込まれた HTML にも <code>data-component</code> だけで自動適用されます。
+    </p>
+  </div>
+</section>
 
 <!-- WHY -->
 <section id="why" class="anchor">
   <div class="wrap">
     <div class="eyebrow">なぜ bridgey か</div>
-    <h2>レガシーの手を止めずに、"変えたら反映"を。</h2>
-    <p class="sub">jQueryが分かるなら、もう入口に立っています。</p>
+    <h2>jQuery でよく起きる事故を、止めます。</h2>
+    <p class="sub">どれも保守の現場で繰り返し起きている問題への対策です。</p>
+
     <div class="grid">
       <div class="card">
-        <div class="ico"><i class="fa-solid fa-arrows-rotate"></i></div>
-        <h3>jQueryに、リアクティビティ</h3>
-        <p><code>state</code>／<code>computed</code> で「変えたら自動で反映」。合計・絞り込み・出し分けを、もう手で書き直さない。</p>
+        <div class="ico"><i class="fa-solid fa-calculator"></i></div>
+        <h3>数値計算が合わない</h3>
+        <p><code>change</code> の中で合計を計算して代入していた。初期表示で走らない／別の箇所で上書き／動的に足した項目に効かない。<br />
+          <b>→ 合計は導出値。代入する場所が存在しないので、更新漏れが起きません。</b></p>
       </div>
       <div class="card">
-        <div class="ico"><i class="fa-solid fa-bolt"></i></div>
-        <h3>ビルドなしで始まる</h3>
-        <p><code>&lt;script&gt;</code> 一本で <code>$$</code>／<code>state</code>／<code>computed</code>。npmもツールチェーンも後回しでいい。
-        </p>
+        <div class="ico"><i class="fa-solid fa-eye-slash"></i></div>
+        <h3>非表示の必須項目で送信できない</h3>
+        <p>画面に出ていない <code>required</code> で送信がブロックされ、理由も表示されない。ユーザーは離脱し、CVが消える。<br />
+          <b>→ 見えているフィールドだけを検証します。</b></p>
       </div>
       <div class="card">
-        <div class="ico"><i class="fa-solid fa-feather"></i></div>
-        <h3>学習コスト最小</h3>
-        <p>触るのは <code>$$</code>（jQuery風）・<code>state</code>・<code>computed</code>・<code>mount</code>。「jQuery＋α」で始められる。
-        </p>
+        <div class="ico"><i class="fa-solid fa-keyboard"></i></div>
+        <h3>オートフィルで入力しても未入力扱い</h3>
+        <p>自動入力や JS 代入では <code>input</code> が飛ばないので、検証が走らない。埋まっているのに送信できない。<br />
+          <b>→ 値の代入自体を検知します（既存 jQuery の <code>.val()</code> 経由でも）。</b></p>
       </div>
       <div class="card">
-        <div class="ico"><i class="fa-solid fa-puzzle-piece"></i></div>
-        <h3>複雑になったら本物へ</h3>
-        <p>重い画面は <code>mount</code> で本物のSvelte／Vueへ引き上げ。DOM差分も後片付けもエンジン任せ。フォーカスも入力途中も飛ばない。</p>
+        <div class="ico"><i class="fa-solid fa-link-slash"></i></div>
+        <h3>HTMLを1つ挟むと静かに壊れる</h3>
+        <p><code>next()</code> <code>children()</code> <code>eq()</code> は構造に依存する。要素を1つラップしただけで、例外も出ないまま動かなくなる。<br />
+          <b>→ 名前で引きます。0件なら警告します（jQueryは黙ります）。</b></p>
       </div>
       <div class="card">
-        <div class="ico"><i class="fa-solid fa-shield-halved"></i></div>
-        <h3>CSPセーフ（Svelte）</h3>
-        <p>Svelteは式を <code>eval</code> せずビルド時コンパイル。<code>script-src 'self'</code> の企業／WordPress環境でも動く。<br><span style="font-size:12.5px;opacity:.8">※VueのCDN／既定ビルドは <code>template</code> を実行時コンパイル（<code>new Function</code>）するため <code>unsafe-eval</code> が必要。</span></p>
+        <div class="ico"><i class="fa-solid fa-skull"></i></div>
+        <h3>1つの undefined で全機能が死ぬ</h3>
+        <p><code>common.js</code> の <code>$(function(){})</code> の中で1箇所 undefined を踏むと、以降に登録されるタブ・モーダル・アコーディオンが全部死ぬ。<br />
+          <b>→ 部品単位でエラーを隔離します。壊れたものだけが止まります。</b></p>
       </div>
       <div class="card">
-        <div class="ico"><i class="fa-solid fa-terminal"></i></div>
-        <h3>CLIで一発</h3>
-        <p><code>brg init</code> でフレームワークを選ぶだけ。配線済みスタータが生成される。</p>
+        <div class="ico"><i class="fa-solid fa-language"></i></div>
+        <h3>日本語入力で壊れる</h3>
+        <p>変換中に値を書き戻すと、変換候補が消える・確定できない・文字が化ける。電話番号や全角半角の自動整形で必ず起きる。<br />
+          <b>→ 変換中は値を触りません。海外製ライブラリはここを見ていません。</b></p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- PHILOSOPHY -->
+<!-- MIGRATION -->
 <section id="philosophy" class="anchor">
   <div class="wrap">
-    <div class="eyebrow">Concept</div>
-    <h2>モダンな技術を、限りなく楽に。</h2>
-    <p class="sub">学習コストの削減。そして「翻弄されない」こと。</p>
-    <div class="two">
-      <div class="card">
-        <div class="label">背景</div>
-        <p>
-          作者はかつてフロントエンドエンジニアとして、jQueryからVueへの移行が難しくとん挫しました。モダン技術に触れられず焦りつつ、日々の業務はレガシー——そんな人は今も多いはず。<b>あの頃の自分を救うための橋</b>を架けたい。それが
-          bridgey の出発点です。</p>
-      </div>
-      <div class="card">
-        <div class="label">誰のためか</div>
-        <p>
-          ・レガシー環境で日々jQueryを保守している人<br />・WordPress等でモダンFWを導入する機会がない現場<br />・「jQueryなら分かる」人<br /><br />全書き換えを迫らず、書き味を残したまま、本物のモダンへ段階的に手を慣らしていけます。
-        </p>
-      </div>
-    </div>
-    <p style="margin-top:22px;font-size:18px;font-weight:700">究極的には——<span
-        class="grad-text">もう新しいフロントエンドフレームワークに翻弄されない。</span></p>
-    <div class="card" style="margin-top:26px">
-      <p style="font-size:18px;font-weight:700;margin:0 0 6px">使い続けてもらうための道具ではありません。</p>
-      <p>
-        bridgey は<b>通過点</b>です。モダンフレームワークへ <b>“渡り切る”</b> ための橋。ゴールは、あなたが bridgey を<b>卒業する</b>こと。<br>
-        橋を渡り終えたら、捨ててくれて構いません。気づいたら<b>本物のモダンフレームワーク</b>を書けている。それがこのライブラリの目的です。
-      </p>
-      <div class="steps" style="margin-top:18px">
-        <div class="step">
-          <div class="n"></div>
-          <div><b><code>$$</code> で触る</b>
-            <p style="margin:2px 0 0;color:var(--muted);font-size:13.5px">jQueryの手癖のまま、イベント・クラス・テキストを動かす。</p>
-          </div>
-        </div>
-        <div class="step">
-          <div class="n"></div>
-          <div><b><code>state</code> / <code>computed</code> で反応させる</b>
-            <p style="margin:2px 0 0;color:var(--muted);font-size:13.5px">「変えたら自動で反映」。手で書き直す作業から解放される。</p>
-          </div>
-        </div>
-        <div class="step">
-          <div class="n"></div>
-          <div><b><code>mount</code> で本物の部品を載せる</b>
-            <p style="margin:2px 0 0;color:var(--muted);font-size:13.5px">重い画面だけ本物のSvelte／Vueへ。DOM差分も後片付けもエンジン任せ。</p>
-          </div>
-        </div>
-        <div class="step">
-          <div class="n"></div>
-          <div><b>やがて <code>.svelte</code> / <code>.vue</code> を自分で書く</b>
-            <p style="margin:2px 0 0;color:var(--muted);font-size:13.5px">いつのまにか本物を書いている。このライブラリの卒業。</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+    <div class="eyebrow">段階的移行</div>
+    <h2>全部書き直さなくていい。1機能から。</h2>
+    <p class="sub">
+      レガシーな技術を止められない現場のために。これが最優先の設計です。<br />
+    </p>
 
-<!-- GETTING STARTED -->
-<section id="start" class="anchor">
-  <div class="wrap">
-    <div class="eyebrow">Install</div>
-    <h2>3分ではじめる</h2>
-    <p class="sub">CLIが、選んだフレームワークに配線済みのスタータを生成します。</p>
-    <div class="steps">
+    <div class="steps ladder">
       <div class="step">
         <div class="n"></div>
         <div>
-          <b>フレームワークを選んでスタータ生成</b>
-          <pre><code>npx brg init my-app
-<span class="tok-c">?</span> フレームワークを選択:  <span class="tok-k">1) svelte</span>   2) vue
-<span class="tok-c"># → App.(svelte|js) / main.js / build.mjs / index.html を生成</span></code></pre>
+          <b>いまのやり方（そのまま動く）</b>
+          <pre><code>$(<span class="tok-s">".tab"</span>).on(<span class="tok-s">"click"</span>, <span class="tok-k">function</span> () {
+  $(<span class="tok-s">".tab"</span>).removeClass(<span class="tok-s">"active"</span>);
+  $(<span class="tok-k">this</span>).addClass(<span class="tok-s">"active"</span>);
+});</code></pre>
         </div>
       </div>
       <div class="step">
         <div class="n"></div>
         <div>
-          <b>依存をまとめて導入</b>
-          <pre><code>cd my-app
-npm install          <span class="tok-c"># bridgey と svelte(or vue) が一緒に入る</span></code></pre>
+          <b>bridgey の JS API — 事故が減る（ARIA も自動で付く）</b>
+          <pre><code><span class="tok-k">const</span> current = $$.<span class="tok-f">state</span>(<span class="tok-s">"a"</span>);
+$$(<span class="tok-s">".tab"</span>).each((el) =&gt; $$(el)
+  .click(() =&gt; current(el.dataset.tab))
+  .selected(() =&gt; current() === el.dataset.tab));</code></pre>
         </div>
       </div>
       <div class="step">
         <div class="n"></div>
         <div>
-          <b>ビルドして開く</b>
-          <pre><code>npm run build        <span class="tok-c"># main.js(+部品) → bundle.js</span>
-npx serve .          <span class="tok-c"># index.html を開く</span></code></pre>
-        </div>
-      </div>
-    </div>
-    <p style="margin-top:24px"><a class="btn ghost" href="#/docs"><i class="fa-solid fa-book"></i> フルドキュメントを読む</a></p>
-  </div>
-</section>
+          <b>そのまま、事故の起きない形に寄せていく</b>
+          <pre><code><span class="tok-c">// 合計は「代入」ではなく「導出」にする → 更新漏れが消える</span>
+<span class="tok-k">const</span> total = $$.<span class="tok-f">computed</span>(() =&gt; picked().reduce((s, k) =&gt; s + PRICE[k], 0));
+$$(<span class="tok-s">"#total"</span>).text(total, $$.money, <span class="tok-s">"円"</span>);
 
-<!-- SAMPLES -->
-<section id="samples" class="anchor">
-  <div class="wrap">
-    <div class="eyebrow">Examples</div>
-    <h2>デモ</h2>
-    <p class="sub">jQueryの手癖のまま作った実務サンプルと、本物の部品のデモ。（ローカルで <code>node build.demo.mjs</code> 後に開けます）</p>
-    <div class="grid">
-      <a class="samp" href="#/examples#search">
-        <div class="top"><i class="fa-solid fa-magnifying-glass"></i></div>
-        <div class="body">
-          <h3>ライブ検索フィルタ</h3>
-          <p>入力のたびに絞り込み＋ハイライト。分類とのAND条件を <code>computed</code> で。</p>
-          <div class="go">見る →</div>
+<span class="tok-c">// 一覧は repeat に任せる → 入力途中もフォーカスも飛ばない</span>
+$$(<span class="tok-s">"#list"</span>).repeat(items, { key: (i) =&gt; i.id, tpl: <span class="tok-s">"#row"</span>, render: … });
+
+<span class="tok-c">// common.js は「登録」だけにする → 1つ壊れても他は動く</span>
+$$.<span class="tok-f">component</span>(<span class="tok-s">"tabs"</span>, ($el) =&gt; { … });</code></pre>
         </div>
-      </a>
-      <a class="samp" href="#/examples#cart">
-        <div class="top"><i class="fa-solid fa-cart-shopping"></i></div>
-        <div class="body">
-          <h3>ショッピングカート</h3>
-          <p>数量・クーポン・送料・合計。金額は全部 <code>computed</code> で自動再計算。</p>
-          <div class="go">見る →</div>
-        </div>
-      </a>
-      <a class="samp" href="#/examples#modal">
-        <div class="top"><i class="fa-solid fa-images"></i></div>
-        <div class="body">
-          <h3>モーダル・ギャラリー</h3>
-          <p>委譲で開くライトボックス。<code>fadeIn/fadeOut</code>・Esc・矢印キー対応。</p>
-          <div class="go">見る →</div>
-        </div>
-      </a>
-      <a class="samp" href="#/examples#rating">
-        <div class="top"><i class="fa-solid fa-star"></i></div>
-        <div class="body">
-          <h3>星評価・レビュー</h3>
-          <p>ホバー＆クリック評価、平均・分布・投稿。<code>.each</code>/<code>.toggleClass</code>。</p>
-          <div class="go">見る →</div>
-        </div>
-      </a>
-      <a class="samp" href="#/examples#form">
-        <div class="top"><i class="fa-solid fa-clipboard-check"></i></div>
-        <div class="body">
-          <h3>フォーム検証</h3>
-          <p>入力ごと検証・強度メーター・「全OKで送信」を <code>$$.post</code> で送信。</p>
-          <div class="go">見る →</div>
-        </div>
-      </a>
-      <a class="samp" href="#/examples#migrate">
-        <div class="top"><i class="fa-solid fa-bridge"></i></div>
-        <div class="body">
-          <h3>レガシー×Svelte（卒業ルート）</h3>
-          <p>入力はjQueryのまま、重い描画だけSvelteへ。共有 <code>state</code> で橋渡し。</p>
-          <div class="go">見る →</div>
-        </div>
-      </a>
-      <a class="samp" href="sample/deep/index.html">
-        <div class="top"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
-        <div class="body">
-          <h3>最小デモ（Svelte）</h3>
-          <p>カウンタ・<code>{#if}</code>・破棄。CSP有効、入力フォーカスも保持。</p>
-          <div class="go">開く →</div>
-        </div>
-      </a>
-      <a class="samp" href="sample/todoapp/index.html">
-        <div class="top"><i class="fa-solid fa-list-check"></i></div>
-        <div class="body">
-          <h3>ToDo（Svelte）</h3>
-          <p>keyed <code>{#each}</code> の差分更新。<code>$$</code>グルーで外のバッジも更新。</p>
-          <div class="go">開く →</div>
-        </div>
-      </a>
-      <a class="samp" href="sample/vue/index.html">
-        <div class="top"><i class="fa-brands fa-vuejs"></i></div>
-        <div class="body">
-          <h3>同じ画面をVueで</h3>
-          <p>利用者コードはSvelte版とほぼ同一。<code>useEngine(vueEngine)</code> を足すだけ。</p>
-          <div class="go">開く →</div>
-        </div>
-      </a>
+      </div>
     </div>
-    <p style="margin-top:24px">
-      <a class="btn primary" href="#/tutorial"><i class="fa-solid fa-graduation-cap"></i> チュートリアルで手を動かす</a>
-      <a class="btn ghost" href="#/examples"><i class="fa-regular fa-circle-play"></i> サンプル一覧（コード付き）</a>
+
+    <p style="color:var(--muted);font-size:13.5px;margin-top:18px">
+      ①で止めてもいい。②で止めてもいい。<b>止めたところまでの分だけ、事故が減っています。</b><br />
+      新しいフレームワークを入れる稟議も、ビルド環境の用意も、要りません。
     </p>
   </div>
 </section>
 
-<!-- DOWNLOAD -->
-<section id="download" class="anchor">
+<!-- START -->
+<section id="start" class="anchor">
   <div class="wrap">
-    <div class="eyebrow">ダウンロード</div>
-    <h2>2つの入り方</h2>
-    <p class="sub">きちんと作るなら npm。今すぐ試すなら <code>&lt;script&gt;</code> 一本（ビルド不要）。</p>
+    <div class="eyebrow">インストール</div>
+    <h2>&lt;script&gt; 1行から。</h2>
+    <p class="sub">今すぐ試すなら CDN。型が欲しくなったら npm。どちらでも機能は同じです。</p>
+
     <div class="two">
       <div class="card">
-        <div class="label"><i class="fa-brands fa-npm"></i> npm（本格運用）</div>
-        <pre><code>npx brg init my-app   <span class="tok-c"># svelte / vue を選ぶ</span>
-cd my-app
-npm install           <span class="tok-c"># bridgey と svelte(or vue) を一括で</span>
-npm run build         <span class="tok-c"># .svelte/.vue → bundle.js</span></code></pre>
-        <p style="color:var(--muted);font-size:13.5px;margin-top:12px"><code>brg init</code> が <code>package.json</code>
-          に svelte(or vue) まで書いた配線済みスタータを生成。<b>ライブラリを手で入れ足す必要はありません</b>。</p>
-      </div>
-      <div class="card">
-        <div class="label"><i class="fa-solid fa-bolt"></i> &lt;script&gt;（ビルド不要・CDN）</div>
-        <pre><code><span class="tok-c">&lt;!-- Vueフルビルド同梱。mountまで全部動く --&gt;</span>
-&lt;script src=<span class="tok-s">"…/bridgey.vue.js"</span>&gt;&lt;/script&gt;
+        <div class="label"><i class="fa-solid fa-bolt"></i> &lt;script&gt; 1行（ビルド不要）</div>
+        <pre><code>&lt;p&gt;合計 &lt;span id=<span class="tok-s">"total"</span>&gt;0&lt;/span&gt; 円&lt;/p&gt;
+&lt;button id=<span class="tok-s">"add"</span>&gt;追加する&lt;/button&gt;
+
+&lt;script src=<span class="tok-s">"https://cdn.jsdelivr.net/npm/bridgey@2"</span>&gt;&lt;/script&gt;
 &lt;script&gt;
-  <span class="tok-k">const</span> App = { data: () =&gt; ({ n: 0 }),
-    template: <span class="tok-s">`&lt;button @click="n++"&gt;{{ n }}&lt;/button&gt;`</span> };
-  <span class="tok-f">mount</span>(App, { target: <span class="tok-s">"#app"</span> });
+  <span class="tok-k">const</span> count = $$.<span class="tok-f">state</span>(0);
+  <span class="tok-k">const</span> total = $$.<span class="tok-f">computed</span>(() =&gt; count() * 1100);
+
+  $$(<span class="tok-s">"#total"</span>).text(total, $$.money);
+  $$(<span class="tok-s">"#add"</span>).click(() =&gt; count(n =&gt; n + 1));
 &lt;/script&gt;</code></pre>
         <p style="color:var(--muted);font-size:13.5px;margin-top:12px">
-          Vue公式のCDNフルビルドと同じ発想。<code>$$ / state / mount</code> が <code>window</code> に。軽量な
-          <code>bridgey</code>(Svelte・$$/state中心)版もあります。</p>
+          <code>$</code> を <code>$$</code> にするだけ。<b>増えた概念は1つだけ</b>です:
+          値を渡すと1回きり、<code>state</code> を渡すとずっと追いかける。
+        </p>
+      </div>
+      <div class="card">
+        <div class="label"><i class="fa-brands fa-npm"></i> npm（型が付きます）</div>
+        <pre><code>npm install bridgey</code></pre>
+        <pre><code><span class="tok-k">import</span> { $$ } <span class="tok-k">from</span> <span class="tok-s">"bridgey"</span>;
+<span class="tok-k">import</span> { $$ <span class="tok-k">as</span> $ } <span class="tok-k">from</span> <span class="tok-s">"bridgey"</span>;  <span class="tok-c">// 好きな名前に</span></code></pre>
+        <p style="color:var(--muted);font-size:13.5px;margin:12px 0 0">
+          TypeScript で書かれているので、型定義が実装とズレません。<br />
+          <code>&lt;script&gt;</code> で読むときは、<b>名前を1箇所で変えられます。</b>
+        </p>
+        <pre><code>&lt;script src=<span class="tok-s">"…/bridgey@2"</span>&gt;&lt;/script&gt;                       <span class="tok-c">// $$（既定）</span>
+&lt;script src=<span class="tok-s">"…/bridgey@2"</span> data-global=<span class="tok-s">"$"</span>&gt;&lt;/script&gt;      <span class="tok-c">// $ で呼べる</span>
+&lt;script src=<span class="tok-s">"…/bridgey@2"</span> data-global=<span class="tok-s">"brg"</span>&gt;&lt;/script&gt;    <span class="tok-c">// brg で呼べる</span>
+&lt;script src=<span class="tok-s">"…/bridgey@2"</span> data-global=<span class="tok-s">"brg,$$"</span>&gt;&lt;/script&gt; <span class="tok-c">// 両方の名前で呼べる</span></code></pre>
       </div>
     </div>
+
+  </div>
+</section>
+
+<!-- WORDS -->
+<section id="words" class="anchor">
+  <div class="wrap">
+    <div class="eyebrow">覚えること</div>
+    <h2>まず4語。</h2>
+    <p class="sub">残りは知らなくても詰まりません。必要になった場面で bridgey が教えます。</p>
+
+    <div class="card">
+      <ul class="accident">
+        <li><b><code>state</code> / <code>computed</code> / <code>when</code> / <code>repeat</code></b>
+          状態を作る・計算する・出し入れする・一覧を描く。<b>これで8割書けます。</b></li>
+        <li><b>困ったら: <code>form</code> / <code>group</code> / <code>component</code> / <code>resource</code></b>
+          フォームの事故・選択の管理・common.js の安全化・通信の競合。</li>
+        <li><b>残りは出会ったときに</b>
+          <code>mode</code> <code>vars</code> <code>selected</code> <code>expanded</code> <code>invalid</code> <code>busy</code>
+          <code>disabled</code> <code>action</code> <code>scope</code> <code>effect</code> <code>money</code> …<br />
+          <code>.addClass("active")</code> と書いた瞬間に「<code>.selected(state)</code> が使えます」と教えます。</li>
+      </ul>
+    </div>
+
+    <p style="margin-top:24px">
+      <a class="btn primary" href="#/tutorial"><i class="fa-solid fa-graduation-cap"></i> チュートリアルで手を動かす</a>
+      <a class="btn ghost" href="#/examples"><i class="fa-regular fa-circle-play"></i> 複雑なフォームの比較を見る</a>
+      <a class="btn ghost" href="#/docs"><i class="fa-solid fa-book"></i> ドキュメント</a>
+    </p>
+  </div>
+</section>
+
+<!-- NOT INCLUDED -->
+<section id="scope" class="anchor">
+  <div class="wrap">
+    <div class="eyebrow">jQuery 互換</div>
+    <h2>保守の手を止めず、<br />より安全な書き方へ。</h2>
+    <p class="sub">
+      <b>既存コードをコピペしても1行目で落ちません。</b>後方互換が無いと、レガシー現場では導入すらできないからです。<br />
+      そのうえで事故になりやすい書き方には、<b>開発時に1回だけヒント</b>が出ます（<code>$$.hints = false</code> で止まります）。
+    </p>
+    <div class="card" style="overflow-x:auto">
+      <table class="compare">
+        <thead><tr><th>そのまま動くもの</th><th>ヒントで案内する、より安全な書き方</th></tr></thead>
+        <tbody>
+          <tr><td><code>next</code> / <code>prev</code> / <code>siblings</code> / <code>eq</code> / <code>index</code></td><td><code>closest("@row").find("@price")</code>（構造ではなく名前で引く）</td></tr>
+          <tr><td><code>show</code> / <code>hide</code> / <code>toggle</code></td><td><code>when(state)</code>（表示を状態から導出する）</td></tr>
+          <tr><td><code>fadeIn</code> / <code>fadeOut</code> / <code>slideToggle</code></td><td>CSS の <code>transition</code> ＋ <code>.toggleClass("is-open", state)</code></td></tr>
+          <tr><td><code>$$.ajax</code> / <code>$$.get</code> / <code>$$.post</code></td><td><code>$$.resource()</code>（後着追い越しを防ぐ）／<code>$$.action()</code>（二重送信を防ぐ）</td></tr>
+          <tr><td><code>$$.each</code> / <code>$$.map</code> / <code>$$.extend</code> / <code>$$.trim</code></td><td>ヒントなし（危険ではないので、そのまま使ってください）</td></tr>
+          <tr><td><code>serialize</code> / <code>serializeArray</code></td><td>ヒントなし（検証は <code>form()</code> が担当します）</td></tr>
+          <tr><td><code>prepend</code> / <code>before</code> / <code>after</code> / <code>clone</code> / <code>wrap</code> / <code>detach</code></td><td>ヒントなし（一覧は <code>repeat()</code> の方が安全です）</td></tr>
+          <tr><td><code>width</code> / <code>height</code> / <code>offset</code> / <code>position</code> / <code>scrollTop</code></td><td>ヒントなし</td></tr>
+          <tr><td><code>one</code> / <code>trigger</code> / <code>hover</code> / <code>ready</code></td><td>ヒントなし</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="color:var(--muted);font-size:13px;margin-top:12px">
+      <b>入れないもの:</b> ルーター / SPA 化（URL の主権はサーバーに）・スコープ付き CSS・仮想DOM・SSR。<br />
+      jQuery プラグイン（slick / DataTables 等）は bridgey では動きません。jQuery 本体と<b>併用</b>してください（<code>$</code> は奪いません）。
+    </p>
   </div>
 </section>

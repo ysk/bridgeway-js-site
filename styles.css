@@ -441,6 +441,69 @@ td code {
   color: #e0b46a
 }
 
+/* HTML タグ（site.js のハイライタが付ける） */
+.tok-t {
+  color: #b04a8a
+}
+
+:root[data-theme="dark"] .tok-t {
+  color: #f0a3cf
+}
+
+/* examples の「class 名のタイポ」デモが、似ている名前として提示する対象。
+   ビュー側の <style> ではなくここに置く（bridgey は読み込み済みの CSS から
+   既知のクラス名を集めるので、常に読まれる styles.css に無いと候補にならない）。 */
+.ex-active {
+  outline: 2px solid var(--accent)
+}
+
+/* コードブロックが続くとき（npm install → import など）は間を空ける */
+pre+pre {
+  margin-top: 12px
+}
+
+/* 生成されたコード欄（実際に動いている関数を表示する場所） */
+pre>code {
+  white-space: pre;
+  tab-size: 2
+}
+
+/* 行番号。番号は ::before で描くので、コピーした文字列には入らない。
+   折り返した行にも番号は1つだけ付く（ぶら下げインデントになる）。 */
+pre>code {
+  counter-reset: line
+}
+
+pre>code>.line {
+  counter-increment: line;
+  display: block;
+  position: relative;
+  padding-left: 3.4em
+}
+
+pre>code>.line::before {
+  content: counter(line);
+  position: absolute;
+  left: 0;
+  width: 2.2em;
+  text-align: right;
+  color: var(--muted);
+  opacity: .5;
+  font-variant-numeric: tabular-nums;
+  user-select: none;
+  -webkit-user-select: none
+}
+
+/* 番号のすぐ右に細い区切りを置いて、コードと視覚的に分ける */
+pre.has-lines>code>.line::after {
+  content: "";
+  position: absolute;
+  left: 2.7em;
+  top: 0;
+  bottom: 0;
+  border-left: 1px solid var(--line)
+}
+
 .two {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -909,4 +972,77 @@ th {
 .example .code pre {
   border: 0;
   border-radius: 0
+}
+/* サンプル表示（HTML + JS を並べる） */
+.sample-part {
+  margin-bottom: 10px
+}
+
+.sample-part:last-child {
+  margin-bottom: 0
+}
+
+.sample-tag {
+  display: inline-block;
+  font-size: 10.5px;
+  letter-spacing: .06em;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 1px 6px;
+  margin-bottom: 5px
+}
+
+/* コード欄のタブ */
+.code-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+  flex-wrap: wrap
+}
+
+.code-tabs button {
+  font-size: 12.5px;
+  padding: 5px 12px;
+  border-radius: 7px;
+  cursor: pointer;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted)
+}
+
+.code-tabs button[data-selected] {
+  border-color: var(--accent);
+  color: var(--fg);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  font-weight: 700
+}
+
+/* コードのコピーボタン */
+pre.has-copy {
+  position: relative
+}
+
+pre .copy-code {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  border-radius: 6px;
+  padding: 3px 9px;
+  font-size: 11.5px;
+  opacity: 0;
+  transition: opacity .15s
+}
+
+pre.has-copy:hover .copy-code,
+pre .copy-code:focus-visible {
+  opacity: 1
+}
+
+@media(hover:none) {
+  pre .copy-code {
+    opacity: 1
+  }
 }
