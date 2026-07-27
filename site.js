@@ -312,10 +312,13 @@
   }
 
   /**
-   * サンプルを [HTML] [jQuery] [bridgey] のタブで表示する。
+   * サンプルを [bridgey] [HTML] [jQuery（参考）] のタブで表示する。
    *
    * ラベルは「JavaScript」ではなく「bridgey」。どちらも JavaScript なので、
    * 言語名では何も言っていない。読む人が知りたいのは jQuery か bridgey か。
+   *
+   * 最初に出すのは bridgey。このサイトで読ませたいのはそれで、
+   * jQuery は「同じ画面を今までの書き方で書くとこうなる」という参考なので末尾。
    *
    * jQuery 版は書き比べたい場所にだけ置く。同じ場所に
    *   <template data-brg="{target}-jquery"><pre><code>…</code></pre></template>
@@ -341,10 +344,9 @@
     const jqueryTemplate = document.querySelector(`template[data-brg="${target}-jquery"]`);
     const jqueryCode = jqueryTemplate?.content.querySelector("code")?.textContent ?? "";
 
-    const tabs = [];
+    const tabs = [{ id: "js", label: "bridgey", code: sample.js }];
     if (sample.html) tabs.push({ id: "html", label: "HTML", code: sample.html });
-    if (jqueryCode) tabs.push({ id: "jquery", label: "jQuery", code: jqueryCode.trim() });
-    tabs.push({ id: "js", label: "bridgey", code: sample.js });
+    if (jqueryCode) tabs.push({ id: "jquery", label: "jQuery（参考）", code: jqueryCode.trim() });
 
     // 1枚しかないなら、タブは出さない（押しても何も起きないボタンを置かない）
     const tabBar =

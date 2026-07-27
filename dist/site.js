@@ -225,10 +225,9 @@
       }
       const jqueryTemplate = document.querySelector(`template[data-brg="${target}-jquery"]`);
       const jqueryCode = jqueryTemplate?.content.querySelector("code")?.textContent ?? "";
-      const tabs = [];
+      const tabs = [{ id: "js", label: "bridgey", code: sample.js }];
       if (sample.html) tabs.push({ id: "html", label: "HTML", code: sample.html });
-      if (jqueryCode) tabs.push({ id: "jquery", label: "jQuery", code: jqueryCode.trim() });
-      tabs.push({ id: "js", label: "bridgey", code: sample.js });
+      if (jqueryCode) tabs.push({ id: "jquery", label: "jQuery（参考）", code: jqueryCode.trim() });
       const tabBar = tabs.length < 2 ? "" : `<div class="code-tabs">` + tabs.map((tab) => `<button type="button" data-tab="${tab.id}">${tab.label}</button>`).join("") + `</div>`;
       container.innerHTML = tabBar + tabs.map(
         (tab) => `<div data-pane="${tab.id}"><pre><code>${highlight(tab.code)}</code></pre></div>`

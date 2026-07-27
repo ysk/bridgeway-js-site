@@ -76,29 +76,6 @@
       <div class="card">
         <div class="label"><i class="fa-solid fa-code"></i> いま動いているコード</div>
         <div data-brg="home-demo-source"></div>
-        <template data-brg="home-demo-source-jquery"><pre><code>// ※ 同じ画面を jQuery で書いた場合。掴む先には id / class を振った前提です。
-var UNIT_PRICE = 1100;
-var quantity   = 1;
-
-// 表示を更新する関数を1つ作り、変えた場所すべてから呼ぶ
-function render() {
-  $("#qty").text(quantity);
-  $("#total").text((quantity * UNIT_PRICE).toLocaleString());  // 書き忘れると数値計算が合わない
-  $("#free").toggle(quantity >= 3);
-  $("#bar > i").css("width", Math.min(100, quantity * 20) + "%");
-}
-
-$("#inc").on("click", function () {
-  quantity = quantity + 1;
-  render();          // ← 呼び忘れたら画面が止まる
-});
-
-$("#dec").on("click", function () {
-  quantity = Math.max(1, quantity - 1);
-  render();          // ← 呼び忘れたら画面が止まる
-});
-
-render();            // 初期表示のためにもう1回</code></pre></template>
         <p style="color:var(--muted);font-size:13px;margin-top:10px">
           <code>total</code> に<b>代入している行はどこにもありません</b>。導出しているだけです。<br />
           だから「更新を忘れて数値計算が合わない」が起きません。
