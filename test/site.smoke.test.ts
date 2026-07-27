@@ -173,9 +173,9 @@ test("サイト: コード欄に実際に動いている関数が出ている", 
   const panel = document.querySelector('[data-brg="home-demo-source"]')!;
   const source = panel.textContent ?? "";
 
-  // HTML と bridgey のタブになっている（言語名ではなく書き方の名前を出す）
+  // トップは bridgey が先頭。jQuery 版は置かない（比較は examples の仕事）
   const labels = [...panel.querySelectorAll("[data-tab]")].map((b) => b.textContent);
-  assert.deepEqual(labels, ["HTML", "jQuery", "bridgey"], "タブ名は言語名ではない");
+  assert.deepEqual(labels, ["bridgey", "HTML"], "タブ名は言語名ではない");
   assert.match(source, /\$\$\.state\(1\)/, "JS が実装から取れている");
   assert.match(source, /data-brg="qty"/, "HTML も一緒に見せている");
   assert.equal(/function homeDemo/.test(source), false, "関数の外枠は外して中身だけ");
@@ -389,8 +389,9 @@ test("examples: コード比較タブ（bridgey / jQuery）が切り替わる", 
 });
 
 // タブの中にタブを作らない（読む人に2回選ばせない）。
-// 書き比べたい例は HTML / jQuery / bridgey の1列にまとめる。
-test("examples: 書き比べは1列のタブ（HTML / jQuery / bridgey）", { skip: !ready }, async () => {
+// 書き比べたい例は bridgey / HTML / jQuery の1列にまとめる。
+// 先頭は bridgey（読ませたいのはこちら）。jQuery は参考なので末尾。
+test("examples: 書き比べは1列のタブ（bridgey / HTML / jQuery）", { skip: !ready }, async () => {
   const { window, document } = openSite("#/examples");
   await wait(80);
 
@@ -398,7 +399,7 @@ test("examples: 書き比べは1列のタブ（HTML / jQuery / bridgey）", { sk
     const panel = document.querySelector<HTMLElement>(`[data-brg="${target}"]`)!;
     const labels = [...panel.querySelectorAll("[data-tab]")].map((b) => b.textContent);
 
-    assert.deepEqual(labels, ["HTML", "jQuery", "bridgey"], `${target} のタブ`);
+    assert.deepEqual(labels, ["bridgey", "HTML", "jQuery（参考）"], `${target} のタブ`);
   }
 
   // 比較タブの中にサンプル欄が入っている（＝入れ子タブ）状態を作らない

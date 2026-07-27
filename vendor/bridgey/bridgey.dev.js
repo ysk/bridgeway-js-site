@@ -1,4 +1,4 @@
-/*! bridgey v2.0.0-beta.1 | MIT License
+/*! bridgey v2.0.0 | MIT License
  * jQuery の書き味で、モダンな状態管理。依存ゼロ・ビルド不要・CSPセーフ。
  */
 "use strict";
@@ -2872,7 +2872,7 @@
     return Number.isNaN(num) ? String(value) : num.toLocaleString();
   };
   $$.fn = Bridgey.prototype;
-  $$.version = true ? "2.0.0-beta.1" : "dev";
+  $$.version = true ? "2.0.0" : "dev";
   Object.defineProperty($$, "hints", {
     get: () => hintsEnabled,
     set: (v) => {
