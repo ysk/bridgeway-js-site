@@ -180,6 +180,14 @@ test("サイト: コード欄に実際に動いている関数が出ている", 
   assert.match(source, /data-brg="qty"/, "HTML も一緒に見せている");
   assert.equal(/function homeDemo/.test(source), false, "関数の外枠は外して中身だけ");
   assert.equal(/3e4|\(i\) =>/.test(source), false, "バンドル後のコードを見せていない");
+
+  // 抽出が関数の終端を越えると、site.js の残り全部が貼られる（CRLF で実際に起きた）。
+  // homeDemo の中では component を登録していないので、出てきたら行き過ぎている。
+  assert.equal(
+    /\$\$\.component\(|function showSample/.test(source),
+    false,
+    "関数の外まで拾っていない"
+  );
 });
 
 test("サイト: コードブロックに行番号が付く（コピーには入らない）", { skip: !ready }, async () => {

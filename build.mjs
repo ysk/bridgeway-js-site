@@ -22,15 +22,22 @@ await mkdir(new URL("./dist/", import.meta.url), { recursive: true });
 //   ・「ビルド不要」を看板にしているサイトが、閲覧にサーバーを要求しないようにする
 const VIEWS = ["home", "docs", "tutorial", "examples"];
 const embedded = {};
+
+// 改行コードは LF に正規化してから扱う。Windows で git が CRLF に書き換えると、
+// 下の抽出が終端（"\n  }\n"）を見つけられず、サンプル欄に
+// 「関数の中身」のつもりでファイルの残り全部が入る（実際に起きた）。
+const CR = String.fromCharCode(13);
+const readSource = async (url) => (await readFile(url, "utf8")).split(CR).join("");
+
 for (const name of VIEWS) {
-  embedded[name] = await readFile(new URL(`./views/${name}.html`, import.meta.url), "utf8");
+  embedded[name] = await readSource(new URL(`./views/${name}.html`, import.meta.url));
 }
 // サンプルの「HTML + JS」を抜き出して埋め込む。
 //   ・JS は site.js の**元のソース**から取る（バンドル後のコードを見せると
 //     変数名が変わったり 30000 が 3e4 になったりして、サンプルとして読めない）
 //   ・HTML は view の <!-- sample:名前:start / end --> の間
 // こうしておくと、実装を直したらサンプルの表示も必ず一緒に変わる。
-const siteSource = await readFile(new URL("./site.js", import.meta.url), "utf8");
+const siteSource = await readSource(new URL("./site.js", import.meta.url));
 
 function extractFunctionBody(source, name) {
   const head = `function ${name}($el) {`;
@@ -38,6 +45,8 @@ function extractFunctionBody(source, name) {
   if (start === -1) throw new Error(`関数が見つかりません: ${name}`);
   const bodyStart = start + head.length;
   const bodyEnd = source.indexOf("\n  }\n", bodyStart);
+  // 見つからないまま進むと、関数の中身のつもりでファイルの残り全部を貼ってしまう
+  if (bodyEnd === -1) throw new Error(`関数の終端が見つかりません: ${name}`);
   const body = source.slice(bodyStart, bodyEnd);
   const lines = body.replace(/\t/g, "  ").split("\n");
   const indent = Math.min(
