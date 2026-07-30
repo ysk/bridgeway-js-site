@@ -13,6 +13,10 @@
   .ex-inline { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
   .ex-inline label { display: inline-flex; gap: 6px; align-items: center; color: inherit; font-size: 14px; }
   .ex-opts { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+  /* styles.css の `.content ul { padding-left: 20px }` は本文の箇条書き向け。
+     UI として使っている一覧（カート・ToDo・オプション）には掛けない
+     ＝ 行の左端が小計・送料の行と揃う。 */
+  .content ul.ex-opts { padding-left: 0; }
   .ex-opts li { display: flex; align-items: center; gap: 8px; padding: 7px 9px; border-radius: 8px; }
   .ex-opts li[data-selected] { background: color-mix(in srgb, var(--accent) 12%, transparent); }
   .ex-total { display: flex; justify-content: space-between; align-items: baseline;
@@ -38,6 +42,54 @@
   .vs .label { font-size: 12px; }
   .bad { color: #d1242f; } .good { color: #1a7f37; }
   [data-theme="dark"] .good { color: #3fb950; } [data-theme="dark"] .bad { color: #ff7b72; }
+
+  @media (max-width: 720px) {
+    /* 1列目を nowrap のままにすると、表が画面幅を越えて伸びる。狭い画面では折り返す。 */
+    .diff td:first-child { white-space: normal; }
+    .diff { font-size: 12.5px; }
+    .diff th, .diff td { padding: 8px 6px; }
+
+    /* カートの1行は「品名 + 単価 + 数量 + 金額 + 削除」の5つ。390px には並びきらず、
+       flex のまま縮めると品名が1文字幅まで潰れる。2行のグリッドに組み替える。
+
+         品名 ........................ ×
+         単価        [− 2 +]      3,300円
+
+       grid にすると子の inline style の flex:1 は無効になるので、
+       HTML 側（＝サンプルとして表示している側）を触らずに組み替えられる。 */
+    .ex-opts li[data-brg="row"] {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      align-items: center;
+      /* 左右 9px の余白は 320px では入りきらない。外すと小計・送料の行と
+         左端が揃うので、狭い画面ではこの方が読みやすい。 */
+      padding-left: 0;
+      padding-right: 0;
+    }
+    .ex-opts li[data-brg="row"] > [data-brg="name"] { grid-area: 1 / 1 / 2 / 3; }
+    /* 削除ボタンは金額と同じ列。伸ばすと「×」だけの幅広ボタンになるので右端に寄せる */
+    .ex-opts li[data-brg="row"] > [data-brg="del"]  { grid-area: 1 / 3 / 2 / 4; justify-self: end; }
+    .ex-opts li[data-brg="row"] > [data-brg="unit"] { grid-area: 2 / 1 / 3 / 2; }
+    .ex-opts li[data-brg="row"] > .ex-qty           { grid-area: 2 / 2 / 3 / 3; }
+    .ex-opts li[data-brg="row"] > [data-brg="line"] { grid-area: 2 / 3 / 3 / 4; }
+
+    /* ToDo の1行も同じ。メモ欄(9em)がある分、タイトルに幅が残らない。
+         [x] タイトル                 ×
+             [ メモ ]                   */
+    .ex-opts li[data-brg="item"] {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      row-gap: 6px;
+    }
+    .ex-opts li[data-brg="item"] > [data-brg="check"] { grid-area: 1 / 1 / 2 / 2; }
+    .ex-opts li[data-brg="item"] > [data-brg="title"] { grid-area: 1 / 2 / 2 / 3; }
+    .ex-opts li[data-brg="item"] > [data-brg="del"]   { grid-area: 1 / 3 / 2 / 4; }
+    .ex-opts li[data-brg="item"] > [data-brg="memo"]  { grid-area: 2 / 2 / 3 / 4; }
+
+    .ex-price { font-size: 21px; }
+    .vs pre { font-size: 11.5px; }
+  }
 </style>
 
 <div class="wrap">
@@ -580,7 +632,7 @@ $("#mail-err").text(ok ? "" : "入力してください");
           <li data-brg="row" style="gap:12px">
             <span data-brg="name" style="flex:1"></span>
             <span class="ex-hidden-note" data-brg="unit"></span>
-            <span style="display:inline-flex;align-items:center;gap:8px">
+            <span class="ex-qty" style="display:inline-flex;align-items:center;gap:8px">
               <button type="button" data-brg="dec" aria-label="減らす">−</button>
               <b data-brg="qty" style="min-width:1.6em;text-align:center"></b>
               <button type="button" data-brg="inc" aria-label="増やす">＋</button>

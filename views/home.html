@@ -22,6 +22,15 @@
   .compare th { font-weight: 600; opacity: .7; font-size: 12.5px; }
   .compare code { font-size: 12.5px; }
   .compare tr td:first-child { white-space: nowrap; }
+
+  @media (max-width: 720px) {
+    /* 1列目を nowrap のままにすると、表が画面幅を越えて伸びる。狭い画面では折り返す。 */
+    .compare tr td:first-child { white-space: normal; }
+    .compare th, .compare td { padding: 8px 6px; }
+    .compare, .compare code { font-size: 12.5px; }
+    .demo-price { font-size: 22px; }
+    .demo-qty { gap: 10px; }
+  }
 </style>
 
 <div class="wrap">

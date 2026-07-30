@@ -396,15 +396,6 @@ pre {
   max-width: 100%
 }
 
-/* スマホでは長いソースコードを折り返して画面外にはみ出さないようにする */
-@media(max-width:720px) {
-  pre {
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-    word-break: break-word
-  }
-}
-
 code {
   font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   font-size: 13.5px;
@@ -494,6 +485,15 @@ pre>code>.line::before {
   -webkit-user-select: none
 }
 
+/* 空行は中身が無いので高さ0に潰れる。番号(::before)は絶対配置なので高さを作らず、
+   結果として番号だけが飛んで見える（1, 3, 4, 5, 7 …）。1行分の高さを与えて、
+   ソースの段落分けを画面でも残す。空行だけが対象なので他の行の行送りは変わらない。
+   1lh が読めない古いブラウザ向けに em の近似値を先に置く（line-height は 1.75）。 */
+pre>code>.line:empty {
+  min-height: 1.75em;
+  min-height: 1lh
+}
+
 /* 番号のすぐ右に細い区切りを置いて、コードと視覚的に分ける */
 pre.has-lines>code>.line::after {
   content: "";
@@ -502,6 +502,76 @@ pre.has-lines>code>.line::after {
   top: 0;
   bottom: 0;
   border-left: 1px solid var(--line)
+}
+
+/* ── スマホ: 長いソースコードを折り返す ──
+   `pre` だけを pre-wrap にしても効かない。すぐ上の `pre>code` が
+   white-space:pre を**自分で**持っているので、親の値は継承されない
+   （＝この指定は pre>code / .line より後ろに書く必要もある）。
+   折り返す対象3つ（pre / code / 行）に、全部書く。 */
+@media(max-width:720px) {
+
+  pre,
+  pre>code,
+  pre>code>.line {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere
+  }
+
+  /* 画面が狭いぶん、コードに使える幅を増やす */
+  pre {
+    padding: 14px 12px
+  }
+
+  /* 文中の `code` は1語として扱われるので、長いものが1つあるだけで
+     段落や表のセルが画面幅を越えて伸びる（表がはみ出す原因はこれ）。
+     狭い画面では語の途中でも割る。 */
+  code {
+    font-size: 12.5px;
+    overflow-wrap: anywhere
+  }
+
+  /* 行番号の桁を詰める。折り返した行は番号のぶんだけ
+     ぶら下げインデントになるので、幅の取り合いがそのまま読みやすさに効く。 */
+  pre>code>.line {
+    padding-left: 2.6em
+  }
+
+  pre>code>.line::before {
+    width: 1.6em
+  }
+
+  pre.has-lines>code>.line::after {
+    left: 2.1em
+  }
+}
+
+/* 列を揃えて読ませるコード欄（左が v1・右が v2 のような対応表）だけは折り返さない。
+   折り返すと列の対応が崩れて、書いてある意味そのものが消える。横スクロールに任せる。
+   .cols のほうが詳細度が高いので、上の @media より後ろでも前でも勝つ。 */
+pre.cols,
+pre.cols>code,
+pre.cols>code>.line {
+  white-space: pre;
+  overflow-wrap: normal
+}
+
+/* グリッドの列は、既定（min-width:auto）だと中の <pre> の最小幅より狭くなれない。
+   コード1行が長いだけで列が広がり、ページ全体が横スクロールする（768px 付近で起きた）。
+   0 を明示して、はみ出しは pre 自身の overflow:auto に任せる。
+   （.content が min-width:0 を持っているのと同じ理由） */
+.two>*,
+.step>*,
+.grid>* {
+  min-width: 0
+}
+
+/* タッチ端末では copy ボタンが出たままなので、1行目が下に潜らないよう空ける
+   （hover がある端末では hover するまで透明なので、詰めたままでいい） */
+@media(max-width:720px) and (hover:none) {
+  pre.has-copy {
+    padding-top: 38px
+  }
 }
 
 .two {
@@ -1044,5 +1114,103 @@ pre .copy-code:focus-visible {
 @media(hover:none) {
   pre .copy-code {
     opacity: 1
+  }
+}
+
+/* ══ スマホ（〜720px）の詰め直し ══
+   狭い画面では余白が「読める幅」を食う。余白を削って本文とコードに回す。
+   コードの折り返しは上の pre のブロックで指定している。 */
+@media(max-width:720px) {
+  .wrap {
+    padding: 0 16px
+  }
+
+  .hero {
+    padding: 40px 0 28px
+  }
+
+  .hero .mark {
+    width: 68px;
+    height: 68px;
+    margin-bottom: 14px
+  }
+
+  section {
+    padding: 40px 0
+  }
+
+  section .sub {
+    margin-bottom: 22px
+  }
+
+  /* カードの内側 22px は、390px 幅だと左右で 44px 消える */
+  .card {
+    padding: 16px
+  }
+
+  .btn {
+    padding: 11px 18px
+  }
+
+  /* CTA のボタンは横並びだと文字が詰まるので、幅いっぱいに縦積みする */
+  .cta {
+    flex-direction: column;
+    align-items: stretch
+  }
+
+  .cta .btn {
+    justify-content: center
+  }
+
+  /* 番号の丸を小さくして、コードに回す */
+  .step {
+    grid-template-columns: 28px 1fr;
+    gap: 10px
+  }
+
+  .step .n {
+    width: 28px;
+    height: 28px;
+    font-size: 14px
+  }
+
+  .layout {
+    gap: 24px;
+    padding: 22px 0
+  }
+
+  .content h1 {
+    font-size: 26px
+  }
+
+  .content h2 {
+    font-size: 20px;
+    margin-top: 34px
+  }
+
+  table {
+    font-size: 13px
+  }
+
+  th,
+  td {
+    padding: 8px 8px
+  }
+
+  /* 前後ページは横並びだと1つ 130px ほどになり、日本語の見出しが読めない */
+  .pager {
+    flex-direction: column
+  }
+
+  .pager a.next {
+    text-align: left
+  }
+
+  .tut-hero {
+    padding: 18px 16px
+  }
+
+  .example iframe {
+    height: 260px
   }
 }

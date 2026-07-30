@@ -532,7 +532,8 @@ $$.fn.myPlugin = <span class="tok-k">function</span> () { … };       <span cla
 
       <h2 id="v1" class="anchor">v1 からの移行</h2>
       <p>v2 は破壊的変更です。Svelte / Vue への依存は廃止しました。</p>
-      <pre><code><span class="tok-c">// v1                                    v2</span>
+      <!-- 左が v1・右が v2 の対応表。折り返すと列が崩れて読めないので .cols を付ける -->
+      <pre class="cols"><code><span class="tok-c">// v1                                    v2</span>
 useEngine(svelteEngine)              <span class="tok-c">// 削除（エンジンの概念そのものが無い）</span>
 mount(Component, { target })         <span class="tok-c">// 削除 → component() / repeat()</span>
 state(0) → count.value               <span class="tok-c">// $$.state(0) → count() / count(5)</span>
